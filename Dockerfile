@@ -1,0 +1,9 @@
+FROM node:16
+
+WORKDIR /app
+COPY . /app
+
+ENV PORT=80
+EXPOSE 80
+
+ENTRYPOINT npm start

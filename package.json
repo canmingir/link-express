@@ -1,0 +1,43 @@
+{
+  "name": "nuc-platform-express",
+  "version": "0.0.11",
+  "description": "",
+  "main": "index.js",
+  "author": "NucTeam",
+  "scripts": {
+    "prepare": "node prepare.js",
+    "dev": "node server --dev",
+    "start": "node server",
+    "test": "mocha 'src/**/*.spec.js' --forbid-only --forbid-pending",
+    "lint": "eslint . --ext .js"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.1480.0",
+    "axios": "^0.27.1",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.0",
+    "express": "^5.0.0-beta.1",
+    "helmet": "^6.0.1",
+    "joi": "^17.7.0",
+    "joi-to-swagger": "^6.2.0",
+    "json-server": "^0.17.3",
+    "jsonwebtoken": "9.0.0",
+    "morgan": "^1.10.0",
+    "openai": "^3.1.0",
+    "sequelize": "^6.33.0",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.0",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "axios-mock-adapter": "^1.21.1",
+    "eslint": "^8.16.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "mocha": "10.1.0",
+    "prettier": "^2.6.2",
+    "sqlite3": "^5.1.6",
+    "supertest": "^6.2.3"
+  }
+}

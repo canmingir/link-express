@@ -1,0 +1,35 @@
+const express = require("express");
+const bodyParser = require("body-parser");
+const cors = require("cors");
+const morgan = require("morgan");
+const helmet = require("helmet");
+const app = express();
+
+const oauth = require("./routes/oauth");
+const metrics = require("./routes/metrics");
+
+const swaggerUi = require("swagger-ui-express");
+const openapi = require("./openapi");
+
+app.use(helmet());
+app.use(cors());
+app.use(morgan("tiny"));
+
+app.use(express.json(), (err, req, res, next) =>
+  err ? res.status(422).end() : next()
+);
+
+app.use(bodyParser.urlencoded(), (err, req, res, next) =>
+  err ? res.status(422).end() : next()
+);
+
+app.use("/oauth", oauth);
+app.use("/openapi", swaggerUi.serve, swaggerUi.setup(openapi));
+
+app.use("/metrics", metrics);
+
+/*
+app.use((req, res) => res.status(404).end());
+app.use(error.handle);
+*/
+module.exports = app;
