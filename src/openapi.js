@@ -1,5 +1,5 @@
 const swaggerJsdoc = require("swagger-jsdoc");
-const { get } = require("../config");
+const { get } = require("./config");
 const j2s = require("joi-to-swagger");
 
 const swaggerSpec = swaggerJsdoc({

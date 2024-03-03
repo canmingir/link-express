@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const { AuthorizationError } = require("./error");
-const { config } = require("../config");
+const { config } = require("./config");
 
 function verify(req, res, next) {
   if (config.profile === "TEST") {

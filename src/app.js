@@ -10,6 +10,7 @@ const metrics = require("./routes/metrics");
 
 const swaggerUi = require("swagger-ui-express");
 const openapi = require("./openapi");
+const error = require("./error");
 
 app.use(helmet());
 app.use(cors());
@@ -25,11 +26,12 @@ app.use(bodyParser.urlencoded(), (err, req, res, next) =>
 
 app.use("/oauth", oauth);
 app.use("/openapi", swaggerUi.serve, swaggerUi.setup(openapi));
-
 app.use("/metrics", metrics);
 
-/*
-app.use((req, res) => res.status(404).end());
-app.use(error.handle);
-*/
+// TODO Add oauth verification
+
+setImmediate(() => {
+  app.use((req, res) => res.status(404).end());
+  app.use(error.handle);
+});
 module.exports = app;

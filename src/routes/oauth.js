@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const jwt = require("jsonwebtoken");
 const axios = require("axios");
-const config = require("../../config");
+const config = require("../config");
 const { AuthenticationError } = require("../error");
 const provider = config?.get()?.oauth[config?.get()?.oauth?.oauth_provider];
 

@@ -1,5 +1,5 @@
 {
-  "name": "nuc-platform-express",
+  "name": "@nucleoidai/platform-express",
   "version": "0.0.11",
   "description": "",
   "main": "index.js",
@@ -23,6 +23,7 @@
     "joi-to-swagger": "^6.2.0",
     "json-server": "^0.17.3",
     "jsonwebtoken": "9.0.0",
+    "lodash": "^4.17.21",
     "morgan": "^1.10.0",
     "openai": "^3.1.0",
     "sequelize": "^6.33.0",
