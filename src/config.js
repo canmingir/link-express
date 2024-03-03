@@ -5,6 +5,7 @@ function init(config = {}) {
   _config = _.merge(
     {
       oauth: null,
+      openapi: {},
       sequelize: {},
       dynamodb: {},
     },

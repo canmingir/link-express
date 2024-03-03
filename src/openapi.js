@@ -1,13 +1,11 @@
-const path = require("path");
-const packagePath = path.join(__dirname, "package.json");
-const { name, version } = require(packagePath);
+const { title, version } = require("./config")();
 const swaggerJsdoc = require("swagger-jsdoc");
 const j2s = require("joi-to-swagger");
 
 const swaggerSpec = swaggerJsdoc({
   definition: {
     openapi: "3.0.0",
-    info: { title: name, version: version },
+    info: { title, version },
     servers: [{ url: "/api" }],
   },
 
