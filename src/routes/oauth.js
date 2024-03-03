@@ -3,24 +3,33 @@ const jwt = require("jsonwebtoken");
 const axios = require("axios");
 const config = require("../config");
 const { AuthenticationError } = require("../error");
-const provider = config?.get()?.oauth[config?.get()?.oauth?.oauth_provider];
+const {
+  oauth: {
+    client_id,
+    client_secret,
+    redirect_uri,
+    user_url,
+    token_url,
+    jwt_secret,
+  },
+} = config();
 
 const getAccessToken = async (code) => {
   const params = new URLSearchParams();
 
-  params.append("client_id", provider.client_id);
-  params.append("client_secret", provider.client_secret);
+  params.append("client_id", client_id);
+  params.append("client_secret", client_secret);
   params.append("code", code);
   params.append("grant_type", "authorization_code");
-  params.append("redirect_uri", provider.redirect_uri);
+  params.append("redirect_uri", redirect_uri);
 
-  return axios.post(provider.token_url, params.toString(), {
+  return axios.post(token_url, params.toString(), {
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
   });
 };
 
 const getUser = async (token) => {
-  return axios.get(provider.user_url, {
+  return axios.get(user_url, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -28,13 +37,9 @@ const getUser = async (token) => {
 };
 
 const generateJwtToken = (userId) => {
-  return jwt.sign(
-    { sub: userId, iss: "nuc" },
-    config?.get()?.oauth?.jwt_secret,
-    {
-      expiresIn: "24h",
-    }
-  );
+  return jwt.sign({ sub: userId, iss: "nuc" }, jwt_secret, {
+    expiresIn: "24h",
+  });
 };
 
 router.post("/", async (req, res, next) => {

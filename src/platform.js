@@ -2,7 +2,7 @@ let _app;
 let _sequelize;
 let _docClient;
 
-function init(config) {
+function init(config = {}) {
   const { sequelize, dynamodb } = require("./config").init(config);
 
   _app = require("./app");

@@ -12,6 +12,8 @@ const swaggerUi = require("swagger-ui-express");
 const openapi = require("./openapi");
 const error = require("./error");
 
+const config = require("./config")();
+
 app.use(helmet());
 app.use(cors());
 app.use(morgan("tiny"));
@@ -24,7 +26,10 @@ app.use(bodyParser.urlencoded(), (err, req, res, next) =>
   err ? res.status(422).end() : next()
 );
 
-app.use("/oauth", oauth);
+if (config.oauth) {
+  app.use("/oauth", oauth);
+}
+
 app.use("/openapi", swaggerUi.serve, swaggerUi.setup(openapi));
 app.use("/metrics", metrics);
 

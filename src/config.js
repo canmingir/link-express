@@ -4,6 +4,7 @@ let _config = {};
 function init(config = {}) {
   _config = _.merge(
     {
+      oauth: null,
       sequelize: {},
       dynamodb: {},
     },
