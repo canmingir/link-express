@@ -5,9 +5,7 @@ const morgan = require("morgan");
 const helmet = require("helmet");
 const app = express();
 
-const oauth = require("./routes/oauth");
 const metrics = require("./routes/metrics");
-
 const swaggerUi = require("swagger-ui-express");
 const openapi = require("./openapi");
 const error = require("./error");
@@ -27,6 +25,7 @@ app.use(bodyParser.urlencoded(), (err, req, res, next) =>
 );
 
 if (config.oauth) {
+  const oauth = require("./routes/oauth");
   app.use("/oauth", oauth);
 }
 

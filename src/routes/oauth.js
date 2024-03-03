@@ -4,32 +4,25 @@ const axios = require("axios");
 const config = require("../config");
 const { AuthenticationError } = require("../error");
 const {
-  oauth: {
-    client_id,
-    client_secret,
-    redirect_uri,
-    user_url,
-    token_url,
-    jwt_secret,
-  },
+  oauth: { clientId, clientSecret, redirectUri, userUrl, tokenUrl, jwtSecret },
 } = config();
 
 const getAccessToken = async (code) => {
   const params = new URLSearchParams();
 
-  params.append("client_id", client_id);
-  params.append("client_secret", client_secret);
+  params.append("clientId", clientId);
+  params.append("clientSecret", clientSecret);
   params.append("code", code);
   params.append("grant_type", "authorization_code");
-  params.append("redirect_uri", redirect_uri);
+  params.append("redirectUri", redirectUri);
 
-  return axios.post(token_url, params.toString(), {
+  return axios.post(tokenUrl, params.toString(), {
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
   });
 };
 
 const getUser = async (token) => {
-  return axios.get(user_url, {
+  return axios.get(userUrl, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -37,7 +30,7 @@ const getUser = async (token) => {
 };
 
 const generateJwtToken = (userId) => {
-  return jwt.sign({ sub: userId, iss: "nuc" }, jwt_secret, {
+  return jwt.sign({ sub: userId, iss: "nuc" }, jwtSecret, {
     expiresIn: "24h",
   });
 };
