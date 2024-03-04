@@ -30,9 +30,9 @@ const handle = (err, req, res, next) => {
   else res.status(500).send(err);
 };
 
-class AuthorizationError {}
-class AuthenticationError {}
-class NotFoundError {}
+class AuthorizationError extends Error {}
+class AuthenticationError extends Error {}
+class NotFoundError extends Error {}
 
 module.exports = {
   handle,
