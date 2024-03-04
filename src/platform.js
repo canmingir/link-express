@@ -1,11 +1,11 @@
-let _app;
+let _express;
 let _sequelize;
 let _docClient;
 
 function init(config = {}) {
   const { sequelize, dynamodb } = require("./config").init(config);
 
-  _app = require("./app");
+  _express = require("./express");
 
   if (sequelize) {
     _sequelize = require("./sequelize");
@@ -16,9 +16,6 @@ function init(config = {}) {
   }
 }
 
-module.exports = {
-  init,
-  app: _app,
-  sequelize: _sequelize,
-  dynamodb: _docClient,
-};
+module.exports = () => ({ sequelize: _sequelize, docClient: _docClient });
+module.exports.init = init;
+module.exports.express = () => _express;
