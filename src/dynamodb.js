@@ -1,16 +1,10 @@
-const AWS = require("aws-sdk");
+const { DynamoDBClient } = require("@aws-sdk/client-dynamodb");
+const { DynamoDBDocumentClient } = require("@aws-sdk/lib-dynamodb");
+
 const config = require("./config");
+const { dynamodb } = config();
 
-const {
-  dynamodb: { region, accessKeyId, secretAccessKey },
-} = config();
-
-AWS.config.update({
-  region: region,
-  accessKeyId: accessKeyId,
-  secretAccessKey: secretAccessKey,
-});
-
-const docClient = new AWS.DynamoDB.DocumentClient({ apiVersion: "2012-08-10" });
+const client = new DynamoDBClient(dynamodb);
+const docClient = DynamoDBDocumentClient.from(client);
 
 module.exports = { docClient };

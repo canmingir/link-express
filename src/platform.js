@@ -26,10 +26,29 @@ module.exports = {
   init,
   express: () => _express,
   module: () => ({
-    Postgres: { sequelize: _sequelize },
+    Postgres: _sequelize,
     DynamoDB: {
       docClient: _docClient,
     },
     Kafka: {},
   }),
+  require: (pkg) => {
+    if (pkg === "express") {
+      return require("express");
+    }
+
+    if (pkg === "sequelize") {
+      return require("sequelize");
+    }
+
+    if (pkg === "@aws-sdk/lib-dynamodb") {
+      return require("@aws-sdk/lib-dynamodb");
+    }
+
+    if (pkg === "@aws-sdk/client-dynamodb") {
+      return require("@aws-sdk/client-dynamodb");
+    }
+
+    throw new Error(`Cannot find module '${pkg}'`);
+  },
 };

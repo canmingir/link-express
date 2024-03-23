@@ -12,7 +12,8 @@
     "lint": "eslint . --ext .js"
   },
   "dependencies": {
-    "aws-sdk": "^2.1480.0",
+    "@aws-sdk/client-dynamodb": "^3.540.0",
+    "@aws-sdk/lib-dynamodb": "^3.540.0",
     "axios": "^0.27.1",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
