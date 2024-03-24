@@ -33,7 +33,4 @@ module.exports = {
     Kafka: {},
   }),
   require: (pkg) => require(pkg),
-  lib: () => ({
-    validate: require("./lib/validate"),
-  }),
 };
