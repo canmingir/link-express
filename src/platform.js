@@ -26,7 +26,9 @@ module.exports = {
   init,
   express: () => _express,
   module: () => ({
-    Postgres: _sequelize,
+    Postgres: {
+      sequelize: _sequelize,
+    },
     DynamoDB: {
       docClient: _docClient,
     },
