@@ -27,7 +27,7 @@ const handle = (err, req, res, next) => {
   }
 
   if (err.error) res.status(400).json(err);
-  else res.status(500).send(err);
+  else res.status(500).send(err.toString());
 };
 
 class AuthorizationError extends Error {}
