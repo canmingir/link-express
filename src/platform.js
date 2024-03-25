@@ -1,8 +1,8 @@
 const fs = require("fs");
 
 let _express;
-let _sequelize;
-let _docClient;
+let _postgres;
+let _dynamodb;
 
 function init(config = {}) {
   require.extensions[".md"] = function (module, filename) {
@@ -14,11 +14,11 @@ function init(config = {}) {
   _express = require("./express");
 
   if (sequelize) {
-    _sequelize = require("./sequelize");
+    _postgres = require("./postgres");
   }
 
   if (dynamodb) {
-    _docClient = require("./dynamodb");
+    _dynamodb = require("./dynamodb");
   }
 }
 
@@ -26,12 +26,8 @@ module.exports = {
   init,
   express: () => _express,
   module: () => ({
-    Postgres: {
-      sequelize: _sequelize,
-    },
-    DynamoDB: {
-      docClient: _docClient,
-    },
+    Postgres: _postgres,
+    DynamoDB: _dynamodb,
     Kafka: {},
   }),
   require: (pkg) => require(pkg),
