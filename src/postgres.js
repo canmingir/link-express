@@ -14,14 +14,18 @@ Model.prototype.destroy = function (options = {}) {
   });
 };
 
-module.exports = {
-  sequelize: new Sequelize(uri, {
-    logging: debug,
-    define: {
-      freezeTableName: true,
-      underscored: true,
-      timestamps: true,
-      paranoid: true,
-    },
-  }),
-};
+const sequelize = new Sequelize(uri, {
+  logging: debug,
+  define: {
+    freezeTableName: true,
+    underscored: true,
+    timestamps: true,
+    paranoid: true,
+  },
+});
+
+setImmediate(async () => {
+  await sequelize.sync({ force: true });
+});
+
+module.exports = { sequelize };

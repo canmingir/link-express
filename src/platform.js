@@ -20,6 +20,8 @@ function init(config = {}) {
   if (dynamodb) {
     _dynamodb = require("./dynamodb");
   }
+
+  return new Promise((resolve) => resolve());
 }
 
 module.exports = {
