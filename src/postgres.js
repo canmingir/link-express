@@ -2,7 +2,7 @@ const { Sequelize, Model } = require("sequelize");
 const config = require("./config");
 
 const {
-  sequelize: { uri, debug = false },
+  postgres: { uri, debug = false },
 } = config();
 
 const originalDestroy = Model.prototype.destroy;
