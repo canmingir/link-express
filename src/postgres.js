@@ -19,8 +19,8 @@ const sequelize = new Sequelize(uri, {
   define: {
     freezeTableName: true,
     underscored: true,
-    timestamps: true,
-    paranoid: true,
+    timestamps: false,
+    paranoid: false,
   },
 });
 
