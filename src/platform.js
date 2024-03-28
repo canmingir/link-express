@@ -9,11 +9,11 @@ function init(config = {}) {
     module.exports = fs.readFileSync(filename, "utf8").trim();
   };
 
-  const { sequelize, dynamodb } = require("./config").init(config);
+  const { postgres, dynamodb } = require("./config").init(config);
 
   _express = require("./express");
 
-  if (sequelize) {
+  if (postgres) {
     _postgres = require("./postgres");
   }
 

@@ -6,7 +6,7 @@ function init(config = {}) {
     {
       oauth: null,
       openapi: {},
-      sequelize: null,
+      postgres: null,
       dynamodb: null,
     },
     config
