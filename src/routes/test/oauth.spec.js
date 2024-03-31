@@ -1,80 +1,109 @@
-/*
 require("dotenv").config({ path: ".env.test" });
 
+const oauth = {
+  secret: "q8fvthcTaz8qKQDAS7hJRKDS",
+  identifier: "id",
+  tokenUrl: "https://github.com/login/oauth/access_token",
+  userUrl: "https://api.github.com/user",
+  clientId: "0c2844d3d19dc9293fc5",
+  clientSecret: "53b08fe45a3c616a9ce3e05174ea82e502df6baf",
+  redirectUri: "http://localhost:5173/callback",
+};
+const config = require("../../config");
+config.init({ oauth });
+
+const express = require("express");
+const app = express();
+const error = require("../../error");
+
+app.use(express.json());
+app.use(express.urlencoded());
+app.use("/oauth", require("../../routes/oauth"));
+app.use(error.handle);
+
+app.use((err, req, res, next) => {
+  if (err instanceof String) {
+    return res.status(400).json({ error: err });
+  } else {
+    res.status(500).send(err.toString());
+  }
+});
 const request = require("supertest");
-const app = require("../../app");
 const axios = require("axios");
 const MockAdapter = require("axios-mock-adapter");
 const jwt = require("jsonwebtoken");
-const config = require("../../../config.json");
 const { equal } = require("assert");
-const github = require("./github.json");
 
 const mock = new MockAdapter(axios);
 
-const user = new Date().valueOf();
-const provider = config[config.oauth_provider];
-
-describe("Oauth service", () => {
-  it("returns access_token and refresh_token with code", async () => {
+describe("Oauth", () => {
+  it("returns accessToken and refreshToken with code", async () => {
     mock
-      .onPost(provider.token_url)
+      .onPost(oauth.tokenUrl)
       .reply(
         200,
-        "access_token=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&scope=user&token_type=bearer"
+        "access_token=c9Q2KuluvCGdM4YZiUnGWxImvuFnbv&scope=user&token_type=bearer"
       );
 
-    mock.onGet(provider.user_url).reply(200, { id: user, ...github });
+    mock.onGet(oauth.userUrl).reply(200, { email: "test@nucleoid.com" });
 
     const {
-      body: { access_token, refresh_token },
+      body: { accessToken, refreshToken },
     } = await request(app)
       .post("/oauth")
-      .send({ code: "1234567890" })
+      .send({ code: "vImIDQtMVcYnUCI3Brp6" })
       .expect(200);
 
-    const payload = jwt.decode(access_token);
+    const payload = jwt.decode(accessToken);
 
-    equal(payload.sub, user);
+    equal(payload.sub, "test@nucleoid.com");
     equal(payload.iss, "nuc");
-    equal(refresh_token, "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");
+    equal(refreshToken, "c9Q2KuluvCGdM4YZiUnGWxImvuFnbv");
   });
 
-  it("returns access_token and refresh_token with refresh token", async () => {
-    mock.onGet(provider.user_url).reply(200, { id: user, ...github });
+  it("returns accessToken and refreshToken with refresh token", async () => {
+    mock.onGet(oauth.userUrl).reply(200, { email: "test@nucleoid.com" });
 
     const {
-      body: { access_token, refresh_token },
+      body: { accessToken, refreshToken },
     } = await request(app)
       .post("/oauth")
-      .send({ refresh_token: "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" })
+      .send({ refreshToken: "lzk7FZGga5hHrfiAePtswijiJHIOev" })
       .expect(200);
 
-    const payload = jwt.decode(access_token);
+    const payload = jwt.decode(accessToken);
 
-    equal(payload.sub, user);
+    equal(payload.sub, "test@nucleoid.com");
     equal(payload.iss, "nuc");
-    equal(refresh_token, "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");
+    equal(refreshToken, "lzk7FZGga5hHrfiAePtswijiJHIOev");
   });
 
-  it("returns 401 if code is invalid", async () => {
-    mock.onPost(provider.token_url).reply(200, "error=bad_verification_code");
-    mock.onGet(provider.user_url).reply(401);
-
-    const res1 = await request(app).post("/oauth").send({ code: "1234567890" });
-    equal(res1.status, 401);
+  it("returns 400 if code and refreshToken are missing", async () => {
+    await request(app).post("/oauth").send({}).expect(400);
   });
 
-  it("returns 503 if Oauth Provider is not accessible", async () => {
-    mock.onPost(provider.token_url).networkError();
-    mock.onGet(provider.user_url).networkError();
+  it.skip("returns 401 if code is invalid", async () => {
+    mock.onPost(oauth.tokenUrl).reply(200, "error=bad_verification_code");
+    mock.onGet(oauth.userUrl).reply(401);
+
+    const res = await request(app)
+      .post("/oauth")
+      .send({ code: "ZpodRqsLu2EJxbVrcqnV" });
+    equal(res.status, 401);
+  });
+
+  it.skip("returns 503 if Oauth Provider is not accessible", async () => {
+    mock.onPost(oauth.tokenUrl).networkError();
+    mock.onGet(oauth.userUrl).networkError();
 
     await request(app)
       .post("/oauth")
-      .send({ refresh_token: "REFRESH_TOKEN" })
+      .send({ refreshToken: "WnhGHF55s6HFRgpRL9AcV2N2VcYemj" })
       .expect(503);
 
-    await request(app).post("/oauth").send({ code: "CODE" }).expect(503);
+    await request(app)
+      .post("/oauth")
+      .send({ code: "RwlaK2waOdbAa4tt19RF" })
+      .expect(503);
   });
 });
-*/
