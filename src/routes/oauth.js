@@ -16,7 +16,7 @@ router.post("/", async (req, res) => {
   );
 
   if (!code && !refreshToken) {
-    return res.status(400).send("Missing OAuth Code or Refresh Token");
+    return res.status(400).send("Missing OAuth Code and Refresh Token");
   }
 
   if (code) {

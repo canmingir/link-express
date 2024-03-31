@@ -26,8 +26,11 @@ const handle = (err, req, res, next) => {
     return res.status(err.response?.status || 503).end();
   }
 
-  if (err.error) res.status(400).json(err);
-  else res.status(500).send(err.toString());
+  if (err.error) {
+    res.status(400).json(err);
+  } else {
+    res.status(500).send(err.toString());
+  }
 };
 
 class AuthorizationError extends Error {}

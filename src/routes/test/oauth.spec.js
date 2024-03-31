@@ -2,7 +2,6 @@ require("dotenv").config({ path: ".env.test" });
 
 const oauth = {
   secret: "q8fvthcTaz8qKQDAS7hJRKDS",
-  identifier: "id",
   tokenUrl: "https://github.com/login/oauth/access_token",
   userUrl: "https://api.github.com/user",
   clientId: "0c2844d3d19dc9293fc5",
@@ -13,6 +12,8 @@ const config = require("../../config");
 config.init({ oauth });
 
 const express = require("express");
+require("express-async-errors");
+
 const app = express();
 const error = require("../../error");
 
@@ -83,7 +84,7 @@ describe("Oauth", () => {
     await request(app).post("/oauth").send({}).expect(400);
   });
 
-  it.skip("returns 401 if code is invalid", async () => {
+  it("returns 401 if code is invalid", async () => {
     mock.onPost(oauth.tokenUrl).reply(200, "error=bad_verification_code");
     mock.onGet(oauth.userUrl).reply(401);
 
@@ -93,7 +94,7 @@ describe("Oauth", () => {
     equal(res.status, 401);
   });
 
-  it.skip("returns 503 if Oauth Provider is not accessible", async () => {
+  it("returns 503 if Oauth Provider is not accessible", async () => {
     mock.onPost(oauth.tokenUrl).networkError();
     mock.onGet(oauth.userUrl).networkError();
 
