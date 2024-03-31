@@ -20,13 +20,15 @@ app.use(morgan("tiny"));
 app.use(express.json(), (err, req, res, next) =>
   err ? res.status(422).end() : next()
 );
-app.use(express.urlencoded(), (err, req, res, next) =>
-  err ? res.status(422).end() : next()
-);
 
 if (config.oauth) {
   const oauth = require("./routes/oauth");
-  app.use("/oauth", oauth);
+  app.use(
+    "/oauth",
+    express.urlencoded(),
+    (err, req, res, next) => (err ? res.status(422).end() : next()),
+    oauth
+  );
 }
 
 app.use("/openapi", swaggerUi.serve, swaggerUi.setup(openapi));

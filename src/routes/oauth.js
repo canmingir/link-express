@@ -12,7 +12,9 @@ router.post("/", async (req, res) => {
     Joi.object({
       code: Joi.string(),
       refreshToken: Joi.string(),
-    }).required()
+    })
+      .required()
+      .options({ stripUnknown: true })
   );
 
   if (!code && !refreshToken) {
