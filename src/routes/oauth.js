@@ -6,7 +6,7 @@ const config = require("../config");
 const { AuthenticationError } = require("../error");
 const { oauth } = config();
 
-router.post("/", async (req, res, next) => {
+router.post("/", async (req, res) => {
   let { code, refreshToken } = Joi.attempt(
     req.body,
     Joi.object({

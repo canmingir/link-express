@@ -21,6 +21,7 @@ app.use(express.urlencoded());
 app.use("/oauth", require("../../routes/oauth"));
 app.use(error.handle);
 
+// eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
   if (err instanceof String) {
     return res.status(400).json({ error: err });
