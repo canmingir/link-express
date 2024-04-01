@@ -48,9 +48,11 @@ router.post("/", async (req, res) => {
     },
   });
 
-  const accessToken = jwt.sign({ sub: data.email, iss: "nuc" }, oauth.secret, {
-    expiresIn: "12h",
-  });
+  const accessToken = jwt.sign(
+    { sub: data[oauth.jwt.identifier], iss: "nuc" },
+    oauth.jwt.secret,
+    { expiresIn: "12h" }
+  );
 
   res.status(200).json({ accessToken, refreshToken });
 });

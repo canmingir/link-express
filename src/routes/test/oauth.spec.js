@@ -1,7 +1,10 @@
 require("dotenv").config({ path: ".env.test" });
 
 const oauth = {
-  secret: "q8fvthcTaz8qKQDAS7hJRKDS",
+  jwt: {
+    identifier: "email",
+    secret: "q8fvthcTaz8qKQDAS7hJRK",
+  },
   tokenUrl: "https://github.com/login/oauth/access_token",
   userUrl: "https://api.github.com/user",
   clientId: "0c2844d3d19dc9293fc5",
