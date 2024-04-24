@@ -5,6 +5,7 @@ const axios = require("axios");
 const config = require("../config");
 const { AuthenticationError } = require("../error");
 const { oauth } = config();
+require("dotenv").config();
 
 router.post("/", async (req, res) => {
   let { code, refreshToken } = Joi.attempt(
@@ -24,7 +25,7 @@ router.post("/", async (req, res) => {
   if (code) {
     const params = new URLSearchParams();
     params.append("client_id", oauth.clientId);
-    params.append("client_secret", oauth.clientSecret);
+    params.append("client_secret", process.env.OAUTH_CLIENT_SECRET);
     params.append("code", code);
     params.append("grant_type", "authorization_code");
     params.append("redirect_uri", oauth.redirectUri);
@@ -50,7 +51,7 @@ router.post("/", async (req, res) => {
 
   const accessToken = jwt.sign(
     { sub: data[oauth.jwt.identifier], iss: "nuc" },
-    oauth.jwt.secret,
+    process.env.JWT_SECRET,
     { expiresIn: "12h" }
   );
 
