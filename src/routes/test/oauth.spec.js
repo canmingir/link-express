@@ -102,4 +102,3 @@ describe("Oauth", () => {
       .expect(503);
   });
 });
-
