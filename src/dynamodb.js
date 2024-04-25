@@ -9,8 +9,8 @@ const { dynamodb } = config();
 const client = new DynamoDBClient({
   region: dynamodb.region,
   credentials: {
-    accessKeyId: process.env.awsaccesskeyid,
-    secretAccessKey: process.env.awssecretaccesskey,
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
   },
 });
 const docClient = DynamoDBDocumentClient.from(client);
