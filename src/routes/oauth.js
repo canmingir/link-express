@@ -51,7 +51,7 @@ router.post("/", async (req, res) => {
 
   const accessToken = jwt.sign(
     { sub: data[oauth.jwt.identifier], iss: "nuc" },
-    process.env.JWT_SECRET,
+    process.env.JWTSECRET,
     { expiresIn: "12h" }
   );
 
