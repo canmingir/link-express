@@ -26,7 +26,7 @@ function verify(req, res, next) {
   try {
     const { sub } = jwt.verify(
       token,
-      process.env.JWTSECRET || config.jwt_secret
+      process.env.jwtsecret || config.jwt_secret
     );
     req.userId = sub;
   } catch (error) {

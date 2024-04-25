@@ -14,7 +14,7 @@ Model.prototype.destroy = function (options = {}) {
   });
 };
 
-const sequelize = new Sequelize(process.env.PG || uri, {
+const sequelize = new Sequelize(process.env.pg || uri, {
   logging: debug,
   define: {
     freezeTableName: true,

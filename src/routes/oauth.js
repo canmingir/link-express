@@ -25,7 +25,7 @@ router.post("/", async (req, res) => {
   if (code) {
     const params = new URLSearchParams();
     params.append("client_id", oauth.clientId);
-    params.append("client_secret", process.env.OAUTHCLIENTSECRET);
+    params.append("client_secret", process.env.oauthclientsecret);
     params.append("code", code);
     params.append("grant_type", "authorization_code");
     params.append("redirect_uri", oauth.redirectUri);
@@ -51,7 +51,7 @@ router.post("/", async (req, res) => {
 
   const accessToken = jwt.sign(
     { sub: data[oauth.jwt.identifier], iss: "nuc" },
-    process.env.JWTSECRET,
+    process.env.jwtsecret,
     { expiresIn: "12h" }
   );
 
