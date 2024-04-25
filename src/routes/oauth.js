@@ -11,8 +11,8 @@ router.post("/", async (req, res) => {
   let { code, refreshToken } = Joi.attempt(
     req.body,
     Joi.object({
-      code: Joi.string(),
-      refreshToken: Joi.string(),
+      code: Joi.string().optional(),
+      refreshToken: Joi.string().optional(),
     })
       .required()
       .options({ stripUnknown: true })
