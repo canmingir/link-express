@@ -3,12 +3,10 @@ require("dotenv").config({ path: ".env.test" });
 const oauth = {
   jwt: {
     identifier: "email",
-    secret: "q8fvthcTaz8qKQDAS7hJRK",
   },
   tokenUrl: "https://github.com/login/oauth/access_token",
   userUrl: "https://api.github.com/user",
   clientId: "0c2844d3d19dc9293fc5",
-  clientSecret: "53b08fe45a3c616a9ce3e05174ea82e502df6baf",
   redirectUri: "http://localhost:5173/callback",
 };
 const config = require("../../config");
