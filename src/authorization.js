@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const { AuthorizationError } = require("./error");
 const { config } = require("./config");
+require("dotenv").config();
 
 function verify(req, res, next) {
   if (config.profile === "TEST") {
@@ -23,7 +24,7 @@ function verify(req, res, next) {
   const token = parts[1];
 
   try {
-    const { sub } = jwt.verify(token, config.jwt_secret);
+    const { sub } = jwt.verify(token, process.env.jwtsecret);
     req.userId = sub;
   } catch (error) {
     throw new AuthorizationError();
