@@ -7,7 +7,6 @@ const oauth = {
   tokenUrl: "https://github.com/login/oauth/access_token",
   userUrl: "https://api.github.com/user",
   clientId: "0c2844d3d19dc9293fc5",
-  redirectUri: "http://localhost:5173/callback",
 };
 const config = require("../../config");
 config.init({ oauth });
@@ -46,7 +45,10 @@ describe("Oauth", () => {
       body: { accessToken, refreshToken },
     } = await request(app)
       .post("/oauth")
-      .send({ code: "vImIDQtMVcYnUCI3Brp6" })
+      .send({
+        code: "vImIDQtMVcYnUCI3Brp6",
+        redirect_uri: "http://localhost:5173/callback",
+      })
       .expect(200);
 
     const payload = jwt.decode(accessToken);
