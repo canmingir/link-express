@@ -47,7 +47,6 @@ describe("Oauth", () => {
       .post("/oauth")
       .send({
         code: "vImIDQtMVcYnUCI3Brp6",
-        redirect_uri: "http://localhost:5173/callback",
       })
       .expect(200);
 
