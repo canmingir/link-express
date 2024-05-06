@@ -8,11 +8,10 @@ const { oauth } = config();
 require("dotenv").config();
 
 router.post("/", async (req, res) => {
-  let { code, redirect_uri, refreshToken } = Joi.attempt(
+  let { code, refreshToken } = Joi.attempt(
     req.body,
     Joi.object({
       code: Joi.string().optional(),
-      redirect_uri: Joi.string().optional(),
       refreshToken: Joi.string().optional(),
     })
       .required()
@@ -23,13 +22,12 @@ router.post("/", async (req, res) => {
     return res.status(400).send("Missing OAuth Code and Refresh Token");
   }
 
-  if (code && redirect_uri) {
+  if (code) {
     const params = new URLSearchParams();
     params.append("client_id", oauth.clientId);
     params.append("client_secret", process.env.OAUTH_CLIENT_SECRET);
     params.append("code", code);
     params.append("grant_type", "authorization_code");
-    params.append("redirect_uri", redirect_uri);
 
     const { data } = await axios.post(oauth.tokenUrl, params.toString(), {
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
