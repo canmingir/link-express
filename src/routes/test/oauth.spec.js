@@ -7,6 +7,7 @@ const oauth = {
   tokenUrl: "https://github.com/login/oauth/access_token",
   userUrl: "https://api.github.com/user",
   clientId: "0c2844d3d19dc9293fc5",
+  redirectUri: "http://localhost:5173/callback",
 };
 const config = require("../../config");
 config.init({ oauth });
@@ -46,6 +47,7 @@ describe("Oauth", () => {
     } = await request(app)
       .post("/oauth")
       .send({
+        redirectUri: oauth.redirectUri,
         code: "vImIDQtMVcYnUCI3Brp6",
       })
       .expect(200);
