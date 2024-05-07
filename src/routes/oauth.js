@@ -8,11 +8,12 @@ const { oauth } = config();
 require("dotenv").config();
 
 router.post("/", async (req, res) => {
-  let { code, refreshToken } = Joi.attempt(
+  let { code, refreshToken, redirectUri } = Joi.attempt(
     req.body,
     Joi.object({
       code: Joi.string().optional(),
       refreshToken: Joi.string().optional(),
+      redirectUri: Joi.string().optional(),
     })
       .required()
       .options({ stripUnknown: true })
@@ -21,20 +22,19 @@ router.post("/", async (req, res) => {
   if (!code && !refreshToken) {
     return res.status(400).send("Missing OAuth Code and Refresh Token");
   }
-
-  if (code) {
+  if (code && redirectUri) {
     const params = new URLSearchParams();
     params.append("client_id", oauth.clientId);
     params.append("client_secret", process.env.OAUTH_CLIENT_SECRET);
     params.append("code", code);
+    params.append("redirect_uri", redirectUri);
     params.append("grant_type", "authorization_code");
-
     const { data } = await axios.post(oauth.tokenUrl, params.toString(), {
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
     });
 
     const urlParams = new URLSearchParams(data);
-
+    console.log(urlParams);
     if (urlParams.get("error")) {
       throw new AuthenticationError(urlParams.get("error_description"));
     }
@@ -47,7 +47,7 @@ router.post("/", async (req, res) => {
       Authorization: `Bearer ${refreshToken}`,
     },
   });
-
+  console.log(data, "data");
   const accessToken = jwt.sign(
     { sub: data[oauth.jwt.identifier], iss: "nuc" },
     process.env.JWT_SECRET,
