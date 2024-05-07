@@ -34,7 +34,7 @@ router.post("/", async (req, res) => {
     });
 
     const urlParams = new URLSearchParams(data);
-    console.log(urlParams);
+
     if (urlParams.get("error")) {
       throw new AuthenticationError(urlParams.get("error_description"));
     }
@@ -47,7 +47,6 @@ router.post("/", async (req, res) => {
       Authorization: `Bearer ${refreshToken}`,
     },
   });
-  console.log(data, "data");
   const accessToken = jwt.sign(
     { sub: data[oauth.jwt.identifier], iss: "nuc" },
     process.env.JWT_SECRET,
