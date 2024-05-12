@@ -1,4 +1,5 @@
 const fs = require("fs");
+const authorization = require("./authorization");
 
 let _express;
 let _postgres;
@@ -33,4 +34,5 @@ module.exports = {
     Kafka: {},
   }),
   require: (pkg) => require(pkg),
+  authorization,
 };

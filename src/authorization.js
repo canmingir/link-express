@@ -1,10 +1,8 @@
 const jwt = require("jsonwebtoken");
 const { AuthorizationError } = require("./error");
-const { config } = require("./config");
-require("dotenv").config();
 
 function verify(req, res, next) {
-  if (config.profile === "TEST") {
+  if (process.env.PROFILE === "TEST") {
     req.userId = 100001;
     return next();
   }

@@ -34,8 +34,6 @@ if (config.oauth) {
 app.use("/openapi", swaggerUi.serve, swaggerUi.setup(openapi));
 app.use("/metrics", metrics);
 
-// TODO Add oauth verification
-
 setImmediate(() => {
   app.use((req, res) => res.status(404).end());
   app.use(error.handle);
