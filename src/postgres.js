@@ -2,7 +2,7 @@ const { Sequelize, Model } = require("sequelize");
 const config = require("./config");
 
 const {
-  postgres: { uri, debug = false },
+  postgres: { uri, debug = false, sync },
 } = config();
 
 const originalDestroy = Model.prototype.destroy;
@@ -24,8 +24,10 @@ const sequelize = new Sequelize(process.env.PG || uri, {
   },
 });
 
-setImmediate(async () => {
-  await sequelize.sync({ force: true });
-});
+if (sync) {
+  setImmediate(async () => {
+    await sequelize.sync({ force: true });
+  });
+}
 
 module.exports = { sequelize };
