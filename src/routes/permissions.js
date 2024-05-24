@@ -87,3 +87,5 @@ router.get("/item/:itemId", async (req, res) => {
   });
   res.status(200).json(permissions);
 });
+
+module.exports = router;

@@ -6,7 +6,9 @@
   "author": "NucTeam",
   "exports":{
     ".": "./index.js",
-    "./models":"./src/models/index.js"
+    "./models":"./src/models/index.js",
+    "./routes":"./src/routes/index.js"
+  },
   "scripts": {
     "prepare": "node prepare.js",
     "dev": "node server --dev",
@@ -45,3 +47,4 @@
     "sqlite3": "^5.1.6",
     "supertest": "^7.0.0"
   }
+}
