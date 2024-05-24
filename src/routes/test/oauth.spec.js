@@ -1,35 +1,8 @@
 require("dotenv").config({ path: ".env.test" });
-
-const oauth = {
-  jwt: {
-    identifier: "email",
-  },
-  tokenUrl: "https://github.com/login/oauth/access_token",
-  userUrl: "https://api.github.com/user",
-  clientId: "0c2844d3d19dc9293fc5",
-  redirectUri: "http://localhost:5173/callback",
-};
-const config = require("../../config");
-config.init({ oauth });
-
-const express = require("express");
-require("express-async-errors");
-
-const app = express();
-const error = require("../../error");
-
-app.use(express.json());
-app.use(express.urlencoded());
-app.use("/oauth", require("../../routes/oauth"));
-app.use(error.handle);
-
-const request = require("supertest");
-const axios = require("axios");
-const MockAdapter = require("axios-mock-adapter");
+const { app, mock, oauth } = require("./initTest");
 const jwt = require("jsonwebtoken");
 const { equal } = require("assert");
-
-const mock = new MockAdapter(axios);
+const request = require("supertest");
 
 describe("Oauth", () => {
   it("returns accessToken and refreshToken with code", async () => {
