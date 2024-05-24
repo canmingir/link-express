@@ -8,7 +8,7 @@ router.post("/", async (req, res) => {
     req.body,
     Joi.object({
       userId: Joi.number().required(),
-      itemId: Joi.number().required(),
+      itemId: Joi.string().guid().required(),
       group: Joi.string().required(),
     })
       .required()
@@ -89,3 +89,4 @@ router.get("/item/:itemId", async (req, res) => {
 });
 
 module.exports = router;
+

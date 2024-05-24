@@ -13,7 +13,7 @@ const Permission = sequelize.define("Permission", {
     allowNull: false,
   },
   itemId: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.UUID,
     allowNull: false,
   },
   group: {
