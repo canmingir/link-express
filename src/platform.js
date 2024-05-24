@@ -16,6 +16,8 @@ function init(config = {}) {
 
   if (postgres) {
     _postgres = require("./postgres");
+    //TODO can we do this more elegantly?
+    const Permission = require("./models/Permission");
   }
 
   if (dynamodb) {
