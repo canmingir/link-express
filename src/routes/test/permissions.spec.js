@@ -96,4 +96,3 @@ describe("Permissions", () => {
     equal(text, "Permission not found");
   });
 });
-
