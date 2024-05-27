@@ -33,6 +33,35 @@ const seed = async () => {
   const seedDir = path.join(currentWorkingDirectory, "src", "seed");
   const fileNames = fs.readdirSync(baseDir);
 
+  const baseInternalModelDir = path.join(__dirname, "models");
+  const internalSeedDir = path.join(__dirname, "..", "seed");
+  const internalFileNames = fs.readdirSync(baseInternalModelDir);
+
+  internalFileNames.forEach(async (fileName) => {
+    if (path.extname(fileName) !== ".js") return;
+    if (fileName === "index.js" || fileName === "models.js") return;
+
+    let seedName = `${fileName.toLowerCase().split(".")[0]}s`;
+    const seederPath = path.join(seedDir, `${seedName}.json`);
+    const filePath = path.join(baseInternalModelDir, fileName);
+
+    const model = require(filePath);
+    let seedData;
+
+    if (fs.existsSync(seederPath)) {
+      seedData = require(seederPath);
+    } else {
+      console.info(
+        `Unable to locate external seed data at path: ${seederPath}. Falling back to use internal seed data.`
+      );
+      seedData = require(path.join(internalSeedDir, `${seedName}.json`));
+    }
+
+    const seed = seedData[seedName];
+
+    await model.bulkCreate(seed);
+  });
+
   fileNames.forEach(async (fileName) => {
     if (path.extname(fileName) !== ".js") return;
     if (fileName === "index.js" || fileName === "models.js") return;
@@ -65,3 +94,4 @@ if (sync) {
 }
 
 module.exports = { sequelize };
+
