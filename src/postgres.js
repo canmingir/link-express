@@ -1,5 +1,7 @@
 const { Sequelize, Model } = require("sequelize");
 const config = require("./config");
+const path = require("path");
+const fs = require("fs");
 
 const {
   postgres: { uri, debug = false, sync },
@@ -24,9 +26,41 @@ const sequelize = new Sequelize(process.env.PG || uri, {
   },
 });
 
+const seed = async () => {
+  const currentWorkingDirectory = process.cwd();
+
+  const baseDir = path.join(currentWorkingDirectory, "src", "models");
+  const seedDir = path.join(currentWorkingDirectory, "src", "seed");
+  const fileNames = fs.readdirSync(baseDir);
+
+  fileNames.forEach(async (fileName) => {
+    if (path.extname(fileName) !== ".js") return;
+    if (fileName === "index.js" || fileName === "models.js") return;
+
+    let seedName = `${fileName.toLowerCase().split(".")[0]}s`;
+    const seederPath = path.join(seedDir, `${seedName}.json`);
+    const filePath = path.join(baseDir, fileName);
+
+    const model = require(filePath);
+    let seedData;
+
+    if (fs.existsSync(seederPath)) {
+      seedData = require(seederPath);
+    } else {
+      console.error(`Failed to load seed data from ${seederPath}`);
+      return;
+    }
+
+    const seed = seedData[seedName];
+
+    await model.bulkCreate(seed);
+  });
+};
+
 if (sync) {
   setImmediate(async () => {
     await sequelize.sync({ force: true });
+    await seed();
   });
 }
 
