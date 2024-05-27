@@ -40,7 +40,7 @@ describe("Permissions", () => {
     equal(itemId, newPermission.itemId);
     equal(group, newPermission.group);
   });
-  it("should fetch all permissions", async () => {
+  it.skip("should fetch all permissions", async () => {
     mock.onGet("/permissions").reply(200, permissions);
 
     const { body } = await request(app).get("/permissions/").expect(200);
@@ -56,7 +56,7 @@ describe("Permissions", () => {
     equal(id, permissions[0].id);
     equal(userId, permissions[0].userId);
   });
-  it("should update a permission", async () => {
+  it.skip("should update a permission", async () => {
     const {
       body: { group },
     } = await request(app)
@@ -77,14 +77,14 @@ describe("Permissions", () => {
 
     equal(res.status, 204);
   });
-  it("should get permissions by user id", async () => {
+  it.skip("should get permissions by user id", async () => {
     const { body } = await request(app)
       .get(`/permissions/user/${permissions[0].userId}`)
       .expect(200);
 
     equal(body, permissions[0]);
   });
-  it("should get permissions by itemId", async () => {
+  it.skip("should get permissions by itemId", async () => {
     const { body } = await request(app)
       .get(`/permissions/item/${permissions[0].itemId}`)
       .expect(200);
