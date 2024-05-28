@@ -30,11 +30,26 @@ const seed = async () => {
   const currentWorkingDirectory = process.cwd();
 
   const baseDir = path.join(currentWorkingDirectory, "src", "models");
-  const seedDir = path.join(currentWorkingDirectory, "src", "seed");
+  const seedDir = path.join(currentWorkingDirectory, "src", "seeds");
+
+  if (!fs.existsSync(seedDir)) {
+    console.log(
+      `\x1b[31m[PE] Seed directory not found at path: ${seedDir}\x1b[0m`
+    );
+    return;
+  }
+
+  if (!fs.existsSync(baseDir)) {
+    console.log(
+      `\x1b[31m[PE] Model directory not found at path: ${baseDir}\x1b[0m`
+    );
+    return;
+  }
+
   const fileNames = fs.readdirSync(baseDir);
 
   const baseInternalModelDir = path.join(__dirname, "models");
-  const internalSeedDir = path.join(__dirname, "..", "seed");
+  const internalSeedDir = path.join(__dirname, "..", "seeds");
   const internalFileNames = fs.readdirSync(baseInternalModelDir);
 
   internalFileNames.forEach(async (fileName) => {
@@ -50,9 +65,10 @@ const seed = async () => {
 
     if (fs.existsSync(seederPath)) {
       seedData = require(seederPath);
+      console.log(`\x1b[32m[PE] Loading seed data for ${fileName}\x1b[0m`);
     } else {
-      console.info(
-        `Unable to locate external seed data at path: ${seederPath}. Falling back to use internal seed data.`
+      console.log(
+        `\x1b[33m[PE] Unable to locate external seed data for ${fileName}. Falling back to use internal seed data.\x1b[0m`
       );
       seedData = require(path.join(internalSeedDir, `${seedName}.json`));
     }
@@ -75,8 +91,11 @@ const seed = async () => {
 
     if (fs.existsSync(seederPath)) {
       seedData = require(seederPath);
+      console.log(`\x1b[32m[PE] Loading seed data for ${fileName}\x1b[0m`);
     } else {
-      console.error(`Failed to load seed data from ${seederPath}`);
+      console.log(
+        `\x1b[31m[PE] Failed to load seed data from ${seederPath}\x1b[0m`
+      );
       return;
     }
 
