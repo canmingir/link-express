@@ -5,7 +5,6 @@ const axios = require("axios");
 const config = require("../config");
 const { AuthenticationError } = require("../error");
 const { oauth } = config();
-require("dotenv").config();
 
 router.post("/", async (req, res) => {
   let { code, refreshToken, redirectUri } = Joi.attempt(

@@ -16,16 +16,11 @@ function init(config = {}) {
 
   if (postgres) {
     _postgres = require("./postgres");
-    //TODO can we do this more elegantly?
-    //eslint-disable-next-line
-    const Permission = require("./models/Permission");
   }
 
   if (dynamodb) {
     _dynamodb = require("./dynamodb");
   }
-
-  return new Promise((resolve) => resolve());
 }
 
 module.exports = {

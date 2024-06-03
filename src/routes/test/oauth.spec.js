@@ -1,10 +1,23 @@
-require("dotenv").config({ path: ".env.test" });
-const { app, mock, oauth } = require("./initTest");
+const test = require("../../lib/test");
+
+const platform = require("../../platform");
+const app = platform.express();
+
+const request = require("supertest");
 const jwt = require("jsonwebtoken");
 const { equal } = require("assert");
-const request = require("supertest");
+const config = require("../../config");
+const { oauth } = config();
 
-describe("Oauth", () => {
+const axios = require("axios");
+const MockAdapter = require("axios-mock-adapter");
+const mock = new MockAdapter(axios);
+
+describe("OAuth", () => {
+  beforeEach(async () => {
+    await test.reset();
+  });
+
   it("returns accessToken and refreshToken with code", async () => {
     mock
       .onPost(oauth.tokenUrl)
@@ -63,7 +76,7 @@ describe("Oauth", () => {
     equal(res.status, 401);
   });
 
-  it("returns 503 if Oauth Provider is not accessible", async () => {
+  it("returns 503 if OAuth Provider is not accessible", async () => {
     mock.onPost(oauth.tokenUrl).networkError();
     mock.onGet(oauth.userUrl).networkError();
 

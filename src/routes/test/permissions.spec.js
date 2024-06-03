@@ -1,98 +1,67 @@
+const test = require("../../lib/test");
+
+const platform = require("../../platform");
+const app = platform.express();
+
 const request = require("supertest");
-const { app, mock } = require("./initTest");
-const Permission = require("../../models/Permission");
-const { permissions } = require("../../../seed/permissions.json");
-const { equal } = require("assert");
+const { deepEqual, equal, ok } = require("assert");
 
 describe("Permissions", () => {
   beforeEach(async () => {
-    try {
-      await Permission.bulkCreate(permissions);
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  });
-  afterEach(async () => {
-    try {
-      await Permission.destroy({ truncate: true });
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
+    await test.reset();
   });
 
-  it("should create a new permission", async () => {
-    const newPermission = {
-      userId: 5,
-      itemId: "c7b1e1e1-7e3b-4c2b-8e9d-9e9e9e9e9e9e",
-      group: "user",
-    };
-    mock.onPost("/permissions").reply(201, {
-      newPermission,
-    });
-
+  it("creates permission", async () => {
     const {
-      body: { userId, itemId, group },
-    } = await request(app).post("/permissions").send(newPermission).expect(201);
-
-    equal(userId, newPermission.userId);
-    equal(itemId, newPermission.itemId);
-    equal(group, newPermission.group);
-  });
-  it.skip("should fetch all permissions", async () => {
-    mock.onGet("/permissions").reply(200, permissions);
-
-    const { body } = await request(app).get("/permissions/").expect(200);
-
-    equal(Array.isArray(body), true);
-    equal(body, permissions);
-  });
-  it("should fetch a permission by id", async () => {
-    const {
-      body: { userId, id },
-    } = await request(app).get(`/permissions/${permissions[0].id}`).expect(200);
-
-    equal(id, permissions[0].id);
-    equal(userId, permissions[0].userId);
-  });
-  it.skip("should update a permission", async () => {
-    const {
-      body: { group },
+      body: { id, projectId, userId, role },
     } = await request(app)
-      .put(`/permissions/${permissions[0].id}`)
+      .post("/permissions")
       .send({
-        itemId: "a166cc16-5c76-4aac-819e-118207a5dfa9",
-        userId: 100001,
-        group: "WOW",
+        appId: "977f5f57-8936-4388-8eb0-00a512cf01cc",
+        projectId: "cb16e069-6214-47f1-9922-1f7fe7629525",
+        userId: "lucas@imaginecoffee.shop",
+        role: "OWNER",
+      })
+      .expect(201);
+
+    ok(id);
+    equal(projectId, "cb16e069-6214-47f1-9922-1f7fe7629525");
+    equal(userId, "lucas@imaginecoffee.shop");
+    equal(role, "OWNER");
+  });
+
+  it("list permissions by appId, projectId and userId", async () => {
+    const { body: permissions } = await request(app)
+      .get("/permissions")
+      .query({
+        appId: "977f5f57-8936-4388-8eb0-00a512cf01cc",
+        projectId: "cb16e069-6214-47f1-9922-1f7fe7629525",
+        userId: "liam@imaginecoffee.shop",
       })
       .expect(200);
 
-    equal(group, "personel");
+    deepEqual(permissions, [
+      {
+        id: "e81887da-d05f-4959-9def-6cd137857088",
+        appId: "977f5f57-8936-4388-8eb0-00a512cf01cc",
+        projectId: "cb16e069-6214-47f1-9922-1f7fe7629525",
+        userId: "liam@imaginecoffee.shop",
+        role: "OWNER",
+      },
+    ]);
   });
-  it("should delete a permission", async () => {
-    const res = await request(app)
-      .delete(`/permissions/${permissions[0].id}`)
+
+  it("deletes permission", async () => {
+    await request(app)
+      .delete(`/permissions/e81887da-d05f-4959-9def-6cd137857088`)
       .expect(204);
 
-    equal(res.status, 204);
-  });
-  it.skip("should get permissions by user id", async () => {
-    const { body } = await request(app)
-      .get(`/permissions/user/${permissions[0].userId}`)
-      .expect(200);
+    const { body: permissions } = await request(app).get("/permissions").query({
+      appId: "977f5f57-8936-4388-8eb0-00a512cf01cc",
+      projectId: "cb16e069-6214-47f1-9922-1f7fe7629525",
+      userId: "liam@imaginecoffee.shop",
+    });
 
-    equal(body, permissions[0]);
-  });
-  it.skip("should get permissions by itemId", async () => {
-    const { body } = await request(app)
-      .get(`/permissions/item/${permissions[0].itemId}`)
-      .expect(200);
-
-    equal(body, permissions[0]);
-  });
-  it("should return 404 with a message if permission not found", async () => {
-    const { text } = await request(app).get(`/permissions/999`).expect(404);
-    equal(text, "Permission not found");
+    ok(!permissions.length);
   });
 });
