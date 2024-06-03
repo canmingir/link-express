@@ -1,22 +1,26 @@
-const { DataTypes } = require("sequelize");
 const { sequelize } = require("../postgres");
+const { DataTypes, UUIDV4 } = require("sequelize");
 
 const Permission = sequelize.define("Permission", {
   id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.UUID,
+    defaultValue: UUIDV4,
     primaryKey: true,
     allowNull: false,
-    autoIncrement: true,
   },
-  userId: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
-  itemId: {
+  appId: {
     type: DataTypes.UUID,
     allowNull: false,
   },
-  group: {
+  projectId: {
+    type: DataTypes.UUID,
+    allowNull: false,
+  },
+  userId: {
+    type: DataTypes.UUID,
+    allowNull: false,
+  },
+  role: {
     type: DataTypes.STRING,
     allowNull: false,
   },

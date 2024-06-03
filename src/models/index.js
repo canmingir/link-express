@@ -1,1 +1,5 @@
-module.exports = require("./Permission.js");
+async function init() {
+  require("./Permission");
+}
+
+module.exports = { init };
