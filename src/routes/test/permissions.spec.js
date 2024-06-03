@@ -30,7 +30,7 @@ describe("Permissions", () => {
     equal(role, "OWNER");
   });
 
-  it("list permissions by appId, projectId and userId", async () => {
+  it("lists permissions by appId, projectId and userId", async () => {
     const { body: permissions } = await request(app)
       .get("/permissions")
       .query({
