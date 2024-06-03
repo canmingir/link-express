@@ -7,6 +7,7 @@ const helmet = require("helmet");
 const app = express();
 
 const metrics = require("./routes/metrics");
+const permissions = require("./routes/permissions");
 const swaggerUi = require("swagger-ui-express");
 const openapi = require("./openapi");
 const error = require("./error");
@@ -35,6 +36,7 @@ app.use("/openapi", swaggerUi.serve, swaggerUi.setup(openapi));
 app.use("/metrics", metrics);
 
 setImmediate(() => {
+  app.use("/permissions", permissions);
   app.use((req, res) => res.status(404).end());
   app.use(error.handle);
 });

@@ -4,6 +4,11 @@
   "description": "",
   "main": "index.js",
   "author": "NucTeam",
+  "exports":{
+    ".": "./index.js",
+    "./models":"./src/models/index.js",
+    "./routes":"./src/routes/index.js"
+  },
   "scripts": {
     "prepare": "node prepare.js",
     "dev": "node server --dev",
