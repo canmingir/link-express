@@ -2,10 +2,6 @@ const { Sequelize, Model } = require("sequelize");
 const config = require("./config");
 const path = require("path");
 const fs = require("fs");
-const chalk = require("chalk");
-
-const error = chalk.bold.red;
-const success = chalk.bold.green;
 
 const {
   postgres: { uri, debug = false, sync },
@@ -37,12 +33,12 @@ const seed = async () => {
   const seedDir = path.join(currentWorkingDirectory, "src", "seeds");
 
   if (!fs.existsSync(seedDir)) {
-    console.log(error(`[PE] Seed directory not found at path: ${seedDir}`));
+    console.error(`[NUC] Seed directory not found at path: ${seedDir}`);
     return;
   }
 
   if (!fs.existsSync(baseDir)) {
-    console.log(error(`[PE] Model directory not found at path: ${seedDir}`));
+    console.error(`[NUC] Model directory not found at path: ${seedDir}`);
     return;
   }
 
@@ -65,12 +61,10 @@ const seed = async () => {
 
     if (fs.existsSync(seederPath)) {
       seedData = require(seederPath);
-      console.log(success(`[PE] Loading seed data for ${fileName}`));
+      console.log(`[NUC] Loading seed data for ${fileName}`);
     } else {
       console.log(
-        success(
-          `[PE] Unable to locate external seed data for ${fileName}. Falling back to use internal seed data.`
-        )
+        `[NUC] Unable to locate external seed data for ${fileName}. Falling back to use internal seed data.`
       );
       seedData = require(path.join(internalSeedDir, `${seedName}.json`));
     }
@@ -93,11 +87,9 @@ const seed = async () => {
 
     if (fs.existsSync(seederPath)) {
       seedData = require(seederPath);
-      console.log(success(`[PE] Loading seed data for ${fileName}`));
+      console.log(`[NUC] Loading seed data for ${fileName}`);
     } else {
-      console.log(
-        error(`[31m[PE] Failed to load seed data from ${seederPath}`)
-      );
+      console.error(`[NUC] Failed to load seed data from ${seederPath}`);
       return;
     }
 
