@@ -1,5 +1,7 @@
 const { Sequelize, Model } = require("sequelize");
 const config = require("./config");
+const path = require("path");
+const fs = require("fs");
 
 const {
   postgres: { uri, debug = false, sync },
@@ -24,9 +26,83 @@ const sequelize = new Sequelize(process.env.PG || uri, {
   },
 });
 
+const seed = async () => {
+  const currentWorkingDirectory = process.cwd();
+
+  const baseDir = path.join(currentWorkingDirectory, "src", "models");
+  const seedDir = path.join(currentWorkingDirectory, "src", "seeds");
+
+  if (!fs.existsSync(seedDir)) {
+    console.error(`[NUC] Seed directory not found at path: ${seedDir}`);
+    return;
+  }
+
+  if (!fs.existsSync(baseDir)) {
+    console.error(`[NUC] Model directory not found at path: ${seedDir}`);
+    return;
+  }
+
+  const fileNames = fs.readdirSync(baseDir);
+
+  const baseInternalModelDir = path.join(__dirname, "models");
+  const internalSeedDir = path.join(__dirname, "..", "seeds");
+  const internalFileNames = fs.readdirSync(baseInternalModelDir);
+
+  internalFileNames.forEach(async (fileName) => {
+    if (path.extname(fileName) !== ".js") return;
+    if (fileName === "index.js" || fileName === "models.js") return;
+
+    let seedName = `${fileName.toLowerCase().split(".")[0]}s`;
+    const seederPath = path.join(seedDir, `${seedName}.json`);
+    const filePath = path.join(baseInternalModelDir, fileName);
+
+    const model = require(filePath);
+    let seedData;
+
+    if (fs.existsSync(seederPath)) {
+      seedData = require(seederPath);
+      console.log(`[NUC] Loading seed data for ${fileName}`);
+    } else {
+      console.log(
+        `[NUC] Unable to locate external seed data for ${fileName}. Falling back to use internal seed data.`
+      );
+      seedData = require(path.join(internalSeedDir, `${seedName}.json`));
+    }
+
+    const seed = seedData[seedName];
+
+    await model.bulkCreate(seed);
+  });
+
+  fileNames.forEach(async (fileName) => {
+    if (path.extname(fileName) !== ".js") return;
+    if (fileName === "index.js" || fileName === "models.js") return;
+
+    let seedName = `${fileName.toLowerCase().split(".")[0]}s`;
+    const seederPath = path.join(seedDir, `${seedName}.json`);
+    const filePath = path.join(baseDir, fileName);
+
+    const model = require(filePath);
+    let seedData;
+
+    if (fs.existsSync(seederPath)) {
+      seedData = require(seederPath);
+      console.log(`[NUC] Loading seed data for ${fileName}`);
+    } else {
+      console.error(`[NUC] Failed to load seed data from ${seederPath}`);
+      return;
+    }
+
+    const seed = seedData[seedName];
+
+    await model.bulkCreate(seed);
+  });
+};
+
 if (sync) {
   setImmediate(async () => {
     await sequelize.sync({ force: true });
+    await seed();
   });
 }
 
