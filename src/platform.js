@@ -18,21 +18,29 @@ let _postgres;
 let _dynamodb;
 
 function init(config = {}) {
-  require.extensions[".md"] = function (module, filename) {
-    module.exports = fs.readFileSync(filename, "utf8").trim();
-  };
+  return new Promise((resolve, reject) => {
+    try {
+      require.extensions[".md"] = function (module, filename) {
+        module.exports = fs.readFileSync(filename, "utf8").trim();
+      };
 
-  const { postgres, dynamodb } = require("./config").init(config);
+      const { postgres, dynamodb } = require("./config").init(config);
 
-  _express = require("./express");
+      _express = require("./express");
 
-  if (postgres) {
-    _postgres = require("./postgres");
-  }
+      if (postgres) {
+        _postgres = require("./postgres");
+      }
 
-  if (dynamodb) {
-    _dynamodb = require("./dynamodb");
-  }
+      if (dynamodb) {
+        _dynamodb = require("./dynamodb");
+      }
+
+      resolve();
+    } catch (err) {
+      reject(err);
+    }
+  });
 }
 
 module.exports = {
