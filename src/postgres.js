@@ -2,6 +2,10 @@ const { Sequelize, Model } = require("sequelize");
 const config = require("./config");
 const path = require("path");
 const fs = require("fs");
+const chalk = require("chalk");
+
+const error = chalk.bold.red;
+const success = chalk.bold.green;
 
 const {
   postgres: { uri, debug = false, sync },
@@ -33,16 +37,12 @@ const seed = async () => {
   const seedDir = path.join(currentWorkingDirectory, "src", "seeds");
 
   if (!fs.existsSync(seedDir)) {
-    console.log(
-      `\x1b[31m[PE] Seed directory not found at path: ${seedDir}\x1b[0m`
-    );
+    console.log(error(`[PE] Seed directory not found at path: ${seedDir}`));
     return;
   }
 
   if (!fs.existsSync(baseDir)) {
-    console.log(
-      `\x1b[31m[PE] Model directory not found at path: ${baseDir}\x1b[0m`
-    );
+    console.log(error(`[PE] Model directory not found at path: ${seedDir}`));
     return;
   }
 
@@ -65,10 +65,12 @@ const seed = async () => {
 
     if (fs.existsSync(seederPath)) {
       seedData = require(seederPath);
-      console.log(`\x1b[32m[PE] Loading seed data for ${fileName}\x1b[0m`);
+      console.log(success(`[PE] Loading seed data for ${fileName}`));
     } else {
       console.log(
-        `\x1b[33m[PE] Unable to locate external seed data for ${fileName}. Falling back to use internal seed data.\x1b[0m`
+        success(
+          `[PE] Unable to locate external seed data for ${fileName}. Falling back to use internal seed data.`
+        )
       );
       seedData = require(path.join(internalSeedDir, `${seedName}.json`));
     }
@@ -91,10 +93,10 @@ const seed = async () => {
 
     if (fs.existsSync(seederPath)) {
       seedData = require(seederPath);
-      console.log(`\x1b[32m[PE] Loading seed data for ${fileName}\x1b[0m`);
+      console.log(success(`[PE] Loading seed data for ${fileName}`));
     } else {
       console.log(
-        `\x1b[31m[PE] Failed to load seed data from ${seederPath}\x1b[0m`
+        error(`[31m[PE] Failed to load seed data from ${seederPath}`)
       );
       return;
     }
