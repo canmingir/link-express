@@ -44,59 +44,68 @@ const seed = async () => {
 
   const fileNames = fs.readdirSync(baseDir);
 
-  const baseInternalModelDir = path.join(__dirname, "models");
-  const internalSeedDir = path.join(__dirname, "..", "seeds");
-  const internalFileNames = fs.readdirSync(baseInternalModelDir);
+  const Company = require("./models/Company");
+  const companies = require("./seeds/companies.json");
 
-  internalFileNames.forEach(async (fileName) => {
+  const companiesSeed = companies["companies"];
+
+  await Company.bulkCreate(companiesSeed);
+
+  console.log(`[NUC] Loading internal seed data for Company`);
+
+  if (fs.existsSync(path.join(seedDir, "companies.json"))) {
+    const seedData = require(path.join(seedDir, "companies.json"));
+    const seed = seedData["companies"];
+    const model = require("./models/Company");
+    model.bulkCreate(seed);
+    console.log(`[NUC] Loading seed data for Company`);
+  }
+
+  let fileSequences = [];
+
+  fileNames.forEach((fileName) => {
     if (path.extname(fileName) !== ".js") return;
     if (fileName === "index.js" || fileName === "models.js") return;
 
     let seedName = `${fileName.toLowerCase().split(".")[0]}s`;
     const seederPath = path.join(seedDir, `${seedName}.json`);
-    const filePath = path.join(baseInternalModelDir, fileName);
-
-    const model = require(filePath);
-    let seedData;
 
     if (fs.existsSync(seederPath)) {
-      seedData = require(seederPath);
-      console.log(`[NUC] Loading seed data for ${fileName}`);
-    } else {
-      console.log(
-        `[NUC] Unable to locate external seed data for ${fileName}. Falling back to use internal seed data.`
-      );
-      seedData = require(path.join(internalSeedDir, `${seedName}.json`));
+      let seedData = require(seederPath);
+      fileSequences.push({ sequence: seedData.sequence, fileName });
     }
-
-    const seed = seedData[seedName];
-
-    await model.bulkCreate(seed);
   });
 
-  fileNames.forEach(async (fileName) => {
-    if (path.extname(fileName) !== ".js") return;
-    if (fileName === "index.js" || fileName === "models.js") return;
+  fileSequences
+    .sort((a, b) => a.sequence - b.sequence)
+    .forEach(async ({ fileName }) => {
+      let seedName = `${fileName.toLowerCase().split(".")[0]}s`;
+      const seederPath = path.join(seedDir, `${seedName}.json`);
+      const filePath = path.join(baseDir, fileName);
 
-    let seedName = `${fileName.toLowerCase().split(".")[0]}s`;
-    const seederPath = path.join(seedDir, `${seedName}.json`);
-    const filePath = path.join(baseDir, fileName);
+      const model = require(filePath);
+      let seedData;
 
-    const model = require(filePath);
-    let seedData;
+      if (fs.existsSync(seederPath)) {
+        seedData = require(seederPath);
+        console.log(`[NUC] Loading seed data for ${fileName}`);
+      } else {
+        console.error(`[NUC] Failed to load seed data from ${seederPath}`);
+        return;
+      }
 
-    if (fs.existsSync(seederPath)) {
-      seedData = require(seederPath);
-      console.log(`[NUC] Loading seed data for ${fileName}`);
-    } else {
-      console.error(`[NUC] Failed to load seed data from ${seederPath}`);
-      return;
-    }
+      const seed = seedData[seedName];
 
-    const seed = seedData[seedName];
+      await model.bulkCreate(seed);
+    });
 
-    await model.bulkCreate(seed);
-  });
+  console.log(`[NUC] Loading internal seed data for Permission`);
+
+  const Permission = require("./models/Permission");
+  const permissions = require("./seeds/permissions.json");
+
+  const permissionsSeed = permissions["permissions"];
+  await Permission.bulkCreate(permissionsSeed);
 };
 
 if (sync) {
