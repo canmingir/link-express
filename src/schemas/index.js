@@ -1,3 +1,3 @@
 const Permission = require("./Permission");
-
-module.exports = { Permission };
+const Company = require("./Company");
+module.exports = { Permission, Company };
