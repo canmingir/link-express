@@ -4,10 +4,10 @@ const jwt = require("jsonwebtoken");
 const axios = require("axios");
 const config = require("../config");
 const { AuthenticationError } = require("../error");
+const Permission = require("../models/Permission");
 const { oauth } = config();
 
 router.post("/", async (req, res) => {
-  let { code, refreshToken, redirectUri } = Joi.attempt(
   let { appId, projectId, code, refreshToken, redirectUri } = Joi.attempt(
     req.body,
     Joi.object({
@@ -20,7 +20,6 @@ router.post("/", async (req, res) => {
       .required()
       .options({ stripUnknown: true })
   );
-
   if (!code && !refreshToken) {
     return res.status(400).send("Missing OAuth Code and Refresh Token");
   }
@@ -49,11 +48,46 @@ router.post("/", async (req, res) => {
       Authorization: `Bearer ${refreshToken}`,
     },
   });
-  const accessToken = jwt.sign(
-    { sub: data[oauth.jwt.identifier], iss: "nuc" },
-    process.env.JWT_SECRET,
-    { expiresIn: "12h" }
-  );
+
+  const userId = data[oauth.jwt.identifier];
+
+  let accessToken;
+
+  if (projectId) {
+    const permissions = await Permission.findAll({
+      where: { userId, projectId, appId },
+    });
+    if (!permissions.length) {
+      accessToken = jwt.sign(
+        { sub: userId, iss: "nuc" },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: "12h",
+        }
+      );
+    } else {
+      accessToken = jwt.sign(
+        {
+          sub: userId,
+          iss: "nuc",
+          aud: projectId,
+          cid: permissions[0].companyId,
+          aid: appId,
+          roles: permissions.map((permission) => permission.role),
+        },
+        process.env.JWT_SECRET,
+        { expiresIn: "12h" }
+      );
+    }
+  } else {
+    accessToken = jwt.sign(
+      { sub: userId, iss: "nuc" },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "12h",
+      }
+    );
+  }
 
   res.status(200).json({ accessToken, refreshToken });
 });
