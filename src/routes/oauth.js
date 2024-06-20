@@ -8,8 +8,11 @@ const { oauth } = config();
 
 router.post("/", async (req, res) => {
   let { code, refreshToken, redirectUri } = Joi.attempt(
+  let { appId, projectId, code, refreshToken, redirectUri } = Joi.attempt(
     req.body,
     Joi.object({
+      appId: Joi.string().required(),
+      projectId: Joi.string().optional(),
       code: Joi.string().optional(),
       refreshToken: Joi.string().optional(),
       redirectUri: Joi.string().optional(),
