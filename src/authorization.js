@@ -3,7 +3,13 @@ const { AuthorizationError } = require("./error");
 
 function verify(req, res, next) {
   if (process.env.PROFILE === "TEST") {
-    req.userId = 100001;
+    req.session = {
+      projectId: "cb16e069-6214-47f1-9922-1f7fe7629525",
+      userId: 100001,
+      roles: ["ADMIN"],
+      appId: "977f5f57-8936-4388-8eb0-00a512cf01cc",
+      companyId: "dfb990bb-81dd-4584-82ce-050eb8f6a12f",
+    };
     return next();
   }
 
