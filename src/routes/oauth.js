@@ -73,7 +73,7 @@ router.post("/", async (req, res) => {
           aud: projectId,
           cid: permissions[0].companyId,
           aid: appId,
-          roles: permissions.map((permission) => permission.role),
+          rls: permissions.map((permission) => permission.role),
         },
         process.env.JWT_SECRET,
         { expiresIn: "12h" }

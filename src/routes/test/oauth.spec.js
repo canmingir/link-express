@@ -45,7 +45,7 @@ describe("OAuth", () => {
     equal(payload.iss, "nuc");
     equal(payload.aud, "cb16e069-6214-47f1-9922-1f7fe7629525");
     equal(payload.sub, "liam@imaginecoffee.shop");
-    equal(payload.roles, "OWNER");
+    equal(payload.rls, "OWNER");
     equal(payload.aid, "977f5f57-8936-4388-8eb0-00a512cf01cc");
     equal(payload.cid, "dfb990bb-81dd-4584-82ce-050eb8f6a12f");
     equal(refreshToken, "c9Q2KuluvCGdM4YZiUnGWxImvuFnbv");

@@ -28,14 +28,14 @@ function verify(req, res, next) {
   const token = parts[1];
 
   try {
-    const { sub, aud, roles, aid, cid } = jwt.verify(
+    const { sub, aud, rls, aid, cid } = jwt.verify(
       token,
       process.env.JWT_SECRET
     );
     req.session = {
       projectId: aud,
       userId: sub,
-      roles,
+      roles: rls,
       appId: aid,
       companyId: cid,
     };
