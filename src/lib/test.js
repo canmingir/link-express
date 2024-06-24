@@ -14,7 +14,7 @@ init({
   postgres: {
     uri: "sqlite::memory:",
     debug: true,
-    sync: true,
+    sync: false,
   },
 });
 
@@ -27,13 +27,17 @@ async function reset() {
   await sequelize.sync({ force: true });
 
   const Permission = require("../models/Permission");
+  const Company = require("../models/Company");
 
   await Permission.destroy({ truncate: true });
+  await Company.destroy({ truncate: true });
 
   async function seed() {
-    const { permissions } = require("../seeds/permissions.json");
+    const { seed: permissions } = require("../seeds/permissions.json");
+    const { seed: companies } = require("../seeds/companies.json");
 
     await Permission.bulkCreate(permissions);
+    await Company.bulkCreate(companies);
   }
 
   await seed();

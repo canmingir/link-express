@@ -3,7 +3,13 @@ const { AuthorizationError } = require("./error");
 
 function verify(req, res, next) {
   if (process.env.PROFILE === "TEST") {
-    req.userId = 100001;
+    req.session = {
+      projectId: "cb16e069-6214-47f1-9922-1f7fe7629525",
+      userId: 100001,
+      roles: ["ADMIN"],
+      appId: "977f5f57-8936-4388-8eb0-00a512cf01cc",
+      companyId: "dfb990bb-81dd-4584-82ce-050eb8f6a12f",
+    };
     return next();
   }
 
@@ -22,8 +28,17 @@ function verify(req, res, next) {
   const token = parts[1];
 
   try {
-    const { sub } = jwt.verify(token, process.env.JWT_SECRET);
-    req.userId = sub;
+    const { sub, aud, rls, aid, cid } = jwt.verify(
+      token,
+      process.env.JWT_SECRET
+    );
+    req.session = {
+      projectId: aud,
+      userId: sub,
+      roles: rls,
+      appId: aid,
+      companyId: cid,
+    };
   } catch (error) {
     throw new AuthorizationError();
   }

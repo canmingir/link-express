@@ -26,13 +26,15 @@ describe("OAuth", () => {
         "access_token=c9Q2KuluvCGdM4YZiUnGWxImvuFnbv&scope=user&token_type=bearer"
       );
 
-    mock.onGet(oauth.userUrl).reply(200, { email: "test@nucleoid.com" });
+    mock.onGet(oauth.userUrl).reply(200, { email: "liam@imaginecoffee.shop" });
 
     const {
       body: { accessToken, refreshToken },
     } = await request(app)
       .post("/oauth")
       .send({
+        appId: "977f5f57-8936-4388-8eb0-00a512cf01cc",
+        projectId: "cb16e069-6214-47f1-9922-1f7fe7629525",
         redirectUri: oauth.redirectUri,
         code: "vImIDQtMVcYnUCI3Brp6",
       })
@@ -40,24 +42,31 @@ describe("OAuth", () => {
 
     const payload = jwt.decode(accessToken);
 
-    equal(payload.sub, "test@nucleoid.com");
     equal(payload.iss, "nuc");
+    equal(payload.aud, "cb16e069-6214-47f1-9922-1f7fe7629525");
+    equal(payload.sub, "liam@imaginecoffee.shop");
+    equal(payload.rls, "OWNER");
+    equal(payload.aid, "977f5f57-8936-4388-8eb0-00a512cf01cc");
+    equal(payload.cid, "dfb990bb-81dd-4584-82ce-050eb8f6a12f");
     equal(refreshToken, "c9Q2KuluvCGdM4YZiUnGWxImvuFnbv");
   });
 
   it("returns accessToken and refreshToken with refresh token", async () => {
-    mock.onGet(oauth.userUrl).reply(200, { email: "test@nucleoid.com" });
+    mock.onGet(oauth.userUrl).reply(200, { email: "liam@imaginecoffee.shop" });
 
     const {
       body: { accessToken, refreshToken },
     } = await request(app)
       .post("/oauth")
-      .send({ refreshToken: "lzk7FZGga5hHrfiAePtswijiJHIOev" })
+      .send({
+        appId: "977f5f57-8936-4388-8eb0-00a512cf01cc",
+        refreshToken: "lzk7FZGga5hHrfiAePtswijiJHIOev",
+      })
       .expect(200);
 
     const payload = jwt.decode(accessToken);
 
-    equal(payload.sub, "test@nucleoid.com");
+    equal(payload.sub, "liam@imaginecoffee.shop");
     equal(payload.iss, "nuc");
     equal(refreshToken, "lzk7FZGga5hHrfiAePtswijiJHIOev");
   });
@@ -70,9 +79,10 @@ describe("OAuth", () => {
     mock.onPost(oauth.tokenUrl).reply(200, "error=bad_verification_code");
     mock.onGet(oauth.userUrl).reply(401);
 
-    const res = await request(app)
-      .post("/oauth")
-      .send({ code: "ZpodRqsLu2EJxbVrcqnV" });
+    const res = await request(app).post("/oauth").send({
+      appId: "977f5f57-8936-4388-8eb0-00a512cf01cc",
+      code: "ZpodRqsLu2EJxbVrcqnV",
+    });
     equal(res.status, 401);
   });
 
@@ -82,12 +92,18 @@ describe("OAuth", () => {
 
     await request(app)
       .post("/oauth")
-      .send({ refreshToken: "WnhGHF55s6HFRgpRL9AcV2N2VcYemj" })
+      .send({
+        appId: "977f5f57-8936-4388-8eb0-00a512cf01cc",
+        refreshToken: "WnhGHF55s6HFRgpRL9AcV2N2VcYemj",
+      })
       .expect(503);
 
     await request(app)
       .post("/oauth")
-      .send({ code: "RwlaK2waOdbAa4tt19RF" })
+      .send({
+        appId: "977f5f57-8936-4388-8eb0-00a512cf01cc",
+        code: "RwlaK2waOdbAa4tt19RF",
+      })
       .expect(503);
   });
 });
