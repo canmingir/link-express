@@ -33,8 +33,8 @@ async function reset() {
   await Company.destroy({ truncate: true });
 
   async function seed() {
-    const { permissions } = require("../seeds/permissions.json");
-    const { companies } = require("../seeds/companies.json");
+    const { seed: permissions } = require("../seeds/permissions.json");
+    const { seed: companies } = require("../seeds/companies.json");
 
     await Permission.bulkCreate(permissions);
     await Company.bulkCreate(companies);
