@@ -45,9 +45,7 @@ const seed = async () => {
   const fileNames = fs.readdirSync(baseDir);
 
   const Company = require("./models/Company");
-  const companies = require("./seeds/companies.json");
-
-  const companiesSeed = companies["companies"];
+  const { seed: companiesSeed } = require("./seeds/companies.json");
 
   await Company.bulkCreate(companiesSeed);
 
@@ -55,7 +53,7 @@ const seed = async () => {
 
   if (fs.existsSync(path.join(seedDir, "companies.json"))) {
     const seedData = require(path.join(seedDir, "companies.json"));
-    const seed = seedData["companies"];
+    const seed = seedData["seed"];
     const model = require("./models/Company");
     model.bulkCreate(seed);
     console.log(`[NUC] Loading seed data for Company`);
@@ -94,7 +92,7 @@ const seed = async () => {
         return;
       }
 
-      const seed = seedData[seedName];
+      const seed = seedData["seed"];
 
       await model.bulkCreate(seed);
     });
@@ -102,9 +100,8 @@ const seed = async () => {
   console.log(`[NUC] Loading internal seed data for Permission`);
 
   const Permission = require("./models/Permission");
-  const permissions = require("./seeds/permissions.json");
+  const { seed: permissionsSeed } = require("./seeds/permissions.json");
 
-  const permissionsSeed = permissions["permissions"];
   await Permission.bulkCreate(permissionsSeed);
 };
 
