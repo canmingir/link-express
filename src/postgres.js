@@ -5,6 +5,7 @@ const fs = require("fs");
 
 const {
   postgres: { uri, debug = false, sync },
+  link: { appId },
 } = config();
 
 const originalDestroy = Model.prototype.destroy;
@@ -58,6 +59,12 @@ const seed = async () => {
     model.bulkCreate(seed);
     console.log(`[NUC] Loading seed data for Company`);
   }
+
+  const Project = require("./models/Project");
+  const { seed: projectSeed } = require("./seeds/projects.json");
+
+  console.log(`[NUC] Loading internal seed data for Project`);
+  Project.bulkCreate(projectSeed);
 
   let fileSequences = [];
 
