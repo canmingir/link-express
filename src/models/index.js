@@ -1,6 +1,3 @@
-async function init() {
-  require("./Permission");
-  require("./Company");
-}
+const Project = require("./Project");
 
-module.exports = { init };
+module.exports = Project;
