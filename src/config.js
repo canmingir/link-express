@@ -4,6 +4,7 @@ let _config = {};
 function init(config = {}) {
   _config = _.merge(
     {
+      link: {},
       oauth: null,
       openapi: {},
       postgres: null,
