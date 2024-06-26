@@ -1,3 +1,11 @@
 const Project = require("./Project");
+const Company = require("./Company");
+const Permission = require("./Permission");
 
-module.exports = Project;
+async function init() {
+  Project;
+  Company;
+  Permission;
+}
+
+module.exports = { Project, Company, Permission, init };
