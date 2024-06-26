@@ -13,12 +13,12 @@ describe("Company", () => {
     await test.reset();
   });
   it("lists companies", async () => {
-    const { body: res } = await request(app).get("/companies").expect(200);
+    const { body: res } = await request(app).get("/link/companies").expect(200);
     deepEqual(res, companies);
   });
   it("gets company by id", async () => {
     const { body: res } = await request(app)
-      .get(`/companies/${companies[0].id}`)
+      .get(`/link/companies/${companies[0].id}`)
       .expect(200);
     deepEqual(res, companies[0]);
   });
