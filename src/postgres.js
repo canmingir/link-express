@@ -5,7 +5,6 @@ const fs = require("fs");
 
 const {
   postgres: { uri, debug = false, sync },
-  link: { appId },
 } = config();
 
 const originalDestroy = Model.prototype.destroy;
