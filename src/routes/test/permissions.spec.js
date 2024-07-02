@@ -13,12 +13,12 @@ describe("Permissions", () => {
 
   it("creates permission", async () => {
     const {
-      body: { id, projectId, userId, companyId, role },
+      body: { id, projectId, userId, organizationId, role },
     } = await request(app)
       .post("/link/permissions")
       .send({
         appId: "977f5f57-8936-4388-8eb0-00a512cf01cc",
-        companyId: "1c063446-7e78-432a-a273-34f481d0f0c3",
+        organizationId: "1c063446-7e78-432a-a273-34f481d0f0c3",
         projectId: "cb16e069-6214-47f1-9922-1f7fe7629525",
         userId: "lucas@imaginecoffee.shop",
         role: "OWNER",
@@ -26,7 +26,7 @@ describe("Permissions", () => {
       .expect(201);
 
     ok(id);
-    equal(companyId, "1c063446-7e78-432a-a273-34f481d0f0c3");
+    equal(organizationId, "1c063446-7e78-432a-a273-34f481d0f0c3");
     equal(projectId, "cb16e069-6214-47f1-9922-1f7fe7629525");
     equal(userId, "lucas@imaginecoffee.shop");
     equal(role, "OWNER");
@@ -37,7 +37,7 @@ describe("Permissions", () => {
       .get("/link/permissions")
       .query({
         appId: "977f5f57-8936-4388-8eb0-00a512cf01cc",
-        companyId: "dfb990bb-81dd-4584-82ce-050eb8f6a12f",
+        organizationId: "dfb990bb-81dd-4584-82ce-050eb8f6a12f",
         projectId: "cb16e069-6214-47f1-9922-1f7fe7629525",
         userId: "liam@imaginecoffee.shop",
       })
@@ -47,7 +47,7 @@ describe("Permissions", () => {
       {
         id: "e81887da-d05f-4959-9def-6cd137857088",
         appId: "977f5f57-8936-4388-8eb0-00a512cf01cc",
-        companyId: "dfb990bb-81dd-4584-82ce-050eb8f6a12f",
+        organizationId: "dfb990bb-81dd-4584-82ce-050eb8f6a12f",
         projectId: "cb16e069-6214-47f1-9922-1f7fe7629525",
         userId: "liam@imaginecoffee.shop",
         role: "OWNER",

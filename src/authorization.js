@@ -8,7 +8,7 @@ function verify(req, res, next) {
       userId: 100001,
       roles: ["ADMIN"],
       appId: "977f5f57-8936-4388-8eb0-00a512cf01cc",
-      companyId: "dfb990bb-81dd-4584-82ce-050eb8f6a12f",
+      organizationId: "dfb990bb-81dd-4584-82ce-050eb8f6a12f",
     };
     return next();
   }
@@ -37,7 +37,7 @@ function verify(req, res, next) {
       userId: sub,
       roles: rls,
       appId: aid,
-      companyId: cid,
+      organizationId: cid,
     };
   } catch (error) {
     throw new AuthorizationError();

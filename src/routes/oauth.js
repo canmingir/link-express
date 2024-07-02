@@ -71,7 +71,7 @@ router.post("/", async (req, res) => {
           sub: userId,
           iss: "nuc",
           aud: projectId,
-          cid: permissions[0].companyId,
+          cid: permissions[0].organizationId,
           aid: appId,
           rls: permissions.map((permission) => permission.role),
         },

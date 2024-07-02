@@ -8,7 +8,7 @@ const app = express();
 
 const metrics = require("./routes/metrics");
 const permissions = require("./routes/permissions");
-const companies = require("./routes/companies");
+const organizations = require("./routes/organizations");
 const projects = require("./routes/projects");
 const swaggerUi = require("swagger-ui-express");
 const openapi = require("./openapi");
@@ -42,7 +42,7 @@ setImmediate(() => {
   process.env.PROFILE === "TEST" && app.use(authorization.verify);
 
   app.use("/link/projects", projects);
-  app.use("/link/companies", companies);
+  app.use("/link/organizations", organizations);
   app.use("/link/permissions", permissions);
   app.use((req, res) => res.status(404).end());
   app.use(error.handle);

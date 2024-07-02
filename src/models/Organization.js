@@ -1,7 +1,7 @@
 const { sequelize } = require("../postgres");
 const { DataTypes, UUIDV4 } = require("sequelize");
 
-const Company = sequelize.define("Company", {
+const Organization = sequelize.define("Organization", {
   id: {
     type: DataTypes.UUID,
     defaultValue: UUIDV4,
@@ -14,4 +14,4 @@ const Company = sequelize.define("Company", {
   },
 });
 
-module.exports = Company;
+module.exports = Organization;

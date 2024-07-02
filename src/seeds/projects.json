@@ -6,7 +6,7 @@
             "description": "A coffee shop that serves the best coffee in town.",
             "icon": ":coffee:",
             "type": "SINGLE",
-            "companyId": "dfb990bb-81dd-4584-82ce-050eb8f6a12f"
+            "organizationId": "dfb990bb-81dd-4584-82ce-050eb8f6a12f"
         },
         {
             "id": "0c756054-2d28-4f87-9b12-8023a79136a5",
@@ -14,15 +14,15 @@
             "description": "The best bank on the planet.",
             "icon": ":bank:",
             "type": "MULTI",
-            "companyId": "1c063446-7e78-432a-a273-34f481d0f0c3"
+            "organizationId": "1c063446-7e78-432a-a273-34f481d0f0c3"
         },
         {
             "id": "21d2530b-4657-4ac0-b8cd-1a9f82786e32",
             "name": "Fire Logistics",
-            "description": "A logistics company that delivers goods on time.",
+            "description": "A logistics organization that delivers goods on time.",
             "icon": ":truck:",
             "type": "SINGLE",
-            "companyId": "5459ab03-204a-4627-bdde-667b7802cb35"
+            "organizationId": "5459ab03-204a-4627-bdde-667b7802cb35"
         }
     ]
 }

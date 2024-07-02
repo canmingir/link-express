@@ -12,7 +12,7 @@ const Permission = sequelize.define("Permission", {
     type: DataTypes.UUID,
     allowNull: false,
   },
-  companyId: {
+  organizationId: {
     type: DataTypes.UUID,
     allowNull: false,
   },
