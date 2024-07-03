@@ -4,7 +4,7 @@
     {
       "id": "e81887da-d05f-4959-9def-6cd137857088",
       "appId": "977f5f57-8936-4388-8eb0-00a512cf01cc",
-      "companyId": "dfb990bb-81dd-4584-82ce-050eb8f6a12f",
+      "organizationId": "dfb990bb-81dd-4584-82ce-050eb8f6a12f",
       "projectId": "cb16e069-6214-47f1-9922-1f7fe7629525",
       "userId": "liam@imaginecoffee.shop",
       "role": "OWNER"
@@ -12,7 +12,7 @@
     {
       "id": "b8e498d4-2d79-4e6e-b098-6a97e1d89a94",
       "appId": "10b7bc8c-a49c-4002-b0ec-63599e4b5210",
-      "companyId": "dfb990bb-81dd-4584-82ce-050eb8f6a12f",
+      "organizationId": "dfb990bb-81dd-4584-82ce-050eb8f6a12f",
       "projectId": "add6dfa4-45ba-4da2-bc5c-5a529610b52f",
       "userId": "liam@imaginecoffee.shop",
       "role": "OWNER"
@@ -20,7 +20,7 @@
     {
       "id": "30044ea7-aa19-4696-876b-26fa76bb91f3",
       "appId": "977f5f57-8936-4388-8eb0-00a512cf01cc",
-      "companyId": "1c063446-7e78-432a-a273-34f481d0f0c3",
+      "organizationId": "1c063446-7e78-432a-a273-34f481d0f0c3",
       "projectId": "0c756054-2d28-4f87-9b12-8023a79136a5",
       "userId": "james_miller@gb.com",
       "role": "OWNER"
@@ -28,7 +28,7 @@
     {
       "id": "973dfaff-0718-4d2d-a714-587cf7a44b98",
       "appId": "10b7bc8c-a49c-4002-b0ec-63599e4b5210",
-      "companyId": "1c063446-7e78-432a-a273-34f481d0f0c3",
+      "organizationId": "1c063446-7e78-432a-a273-34f481d0f0c3",
       "projectId": "e6d4744d-a11b-4c75-acad-e24a02903729",
       "userId": "emily_davis@gb.com",
       "role": "OWNER"
@@ -36,7 +36,7 @@
     {
       "id": "4ecc380a-b480-4faa-ad47-878dd2ee4264",
       "appId": "977f5f57-8936-4388-8eb0-00a512cf01cc",
-      "companyId": "5459ab03-204a-4627-bdde-667b7802cb35",
+      "organizationId": "5459ab03-204a-4627-bdde-667b7802cb35",
       "projectId": "21d2530b-4657-4ac0-b8cd-1a9f82786e32",
       "userId": "robertlewis@firelogistics.com",
       "role": "OWNER"

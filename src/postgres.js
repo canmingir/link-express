@@ -44,20 +44,26 @@ const seed = async () => {
 
   const fileNames = fs.readdirSync(baseDir);
 
-  const Company = require("./models/Company");
-  const { seed: companiesSeed } = require("./seeds/companies.json");
+  const Organization = require("./models/Organization");
+  const { seed: companiesSeed } = require("./seeds/organizations.json");
 
-  await Company.bulkCreate(companiesSeed);
+  await Organization.bulkCreate(companiesSeed);
 
-  console.log(`[NUC] Loading internal seed data for Company`);
+  console.log(`[NUC] Loading internal seed data for Organization`);
 
-  if (fs.existsSync(path.join(seedDir, "companies.json"))) {
-    const seedData = require(path.join(seedDir, "companies.json"));
+  if (fs.existsSync(path.join(seedDir, "organizations.json"))) {
+    const seedData = require(path.join(seedDir, "organizations.json"));
     const seed = seedData["seed"];
-    const model = require("./models/Company");
+    const model = require("./models/Organization");
     model.bulkCreate(seed);
-    console.log(`[NUC] Loading seed data for Company`);
+    console.log(`[NUC] Loading seed data for Organization`);
   }
+
+  const Project = require("./models/Project");
+  const { seed: projectSeed } = require("./seeds/projects.json");
+
+  console.log(`[NUC] Loading internal seed data for Project`);
+  Project.bulkCreate(projectSeed);
 
   let fileSequences = [];
 

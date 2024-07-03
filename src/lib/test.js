@@ -26,18 +26,22 @@ async function reset() {
   await models.init();
   await sequelize.sync({ force: true });
 
+  const Project = require("../models/Project");
   const Permission = require("../models/Permission");
-  const Company = require("../models/Company");
+  const Organization = require("../models/Organization");
 
+  await Project.destroy({ truncate: true });
   await Permission.destroy({ truncate: true });
-  await Company.destroy({ truncate: true });
+  await Organization.destroy({ truncate: true });
 
   async function seed() {
     const { seed: permissions } = require("../seeds/permissions.json");
-    const { seed: companies } = require("../seeds/companies.json");
+    const { seed: organizations } = require("../seeds/organizations.json");
+    const { seed: projects } = require("../seeds/projects.json");
 
+    await Project.bulkCreate(projects);
     await Permission.bulkCreate(permissions);
-    await Company.bulkCreate(companies);
+    await Organization.bulkCreate(organizations);
   }
 
   await seed();

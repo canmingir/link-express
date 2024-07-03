@@ -1,6 +1,11 @@
+const Project = require("./Project");
+const Organization = require("./Organization");
+const Permission = require("./Permission");
+
 async function init() {
-  require("./Permission");
-  require("./Company");
+  Project;
+  Organization;
+  Permission;
 }
 
-module.exports = { init };
+module.exports = { Project, Organization, Permission, init };
