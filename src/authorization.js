@@ -28,7 +28,7 @@ function verify(req, res, next) {
   const token = parts[1];
 
   try {
-    const { sub, aud, rls, aid, cid } = jwt.verify(
+    const { sub, aud, rls, aid, oid } = jwt.verify(
       token,
       process.env.JWT_SECRET
     );
@@ -37,7 +37,7 @@ function verify(req, res, next) {
       userId: sub,
       roles: rls,
       appId: aid,
-      organizationId: cid,
+      organizationId: oid,
     };
   } catch (error) {
     throw new AuthorizationError();
