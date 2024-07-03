@@ -9,9 +9,8 @@ router.get("/", async (req, res) => {
 
 router.get("/:organizationId", async (req, res) => {
   const { organizationId } = req.session;
-  Organization.findByPk(organizationId).then((organization) => {
-    res.status(200).json(organization);
-  });
+  const organization = await Organization.findByPk(organizationId);
+  res.status(200).json(organization);
 });
 
 module.exports = router;
