@@ -3,8 +3,13 @@ const Organization = require("./Organization");
 const Permission = require("./Permission");
 
 async function init() {
-  Project;
-  Organization;
+  Project.belongsTo(Organization, {
+    foreignKey: "organizationId",
+  });
+
+  Organization.hasMany(Project, {
+    foreignKey: "organizationId",
+  });
   Permission;
 }
 
