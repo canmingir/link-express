@@ -10,6 +10,15 @@ async function init() {
   Organization.hasMany(Project, {
     foreignKey: "organizationId",
   });
+
+  Organization.addHook("beforeDestroy", async (organization) => {
+    await Project.destroy({
+      where: {
+        organizationId: organization.id,
+      },
+    });
+  });
+
   Permission;
 }
 
