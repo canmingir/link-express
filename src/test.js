@@ -24,6 +24,10 @@ const seedsDir = path.join(workingDir, "src", "seeds");
 
 const models = require(modelsDir);
 
+function project(id) {
+  process.env.PROJECT_ID = id;
+}
+
 async function reset(serviceLabel) {
   const {
     Postgres: { sequelize },
