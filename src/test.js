@@ -1,5 +1,6 @@
 require("dotenv").config({ path: ".env.test" });
 const path = require("path");
+const fs = require("fs");
 
 const platform = require("./platform");
 
@@ -19,6 +20,7 @@ platform
   });
 
 const workingDir = process.cwd();
+
 const modelsDir = path.join(workingDir, "src", "models");
 const seedsDir = path.join(workingDir, "src", "seeds");
 
@@ -28,7 +30,7 @@ function project(id) {
   process.env.PROJECT_ID = id;
 }
 
-async function reset(serviceLabel) {
+async function reset() {
   const {
     Postgres: { sequelize },
   } = platform.module();
@@ -36,27 +38,36 @@ async function reset(serviceLabel) {
   await sequelize.sync({ force: true });
 
   const { Project } = require("./models");
-  const Service = require(path.join(
-    modelsDir,
-    serviceLabel.charAt(0).toUpperCase() + serviceLabel.slice(1)
-  ));
-
   await Project.destroy({ truncate: true });
-  await Service.destroy({ truncate: true });
+
+  const modelFileNames = fs.readdirSync(modelsDir);
+
+  modelFileNames.forEach(async (fileName) => {
+    if (fileName === "index.js") return;
+    if (fileName === "models.js") return;
+    const model = require(path.join(modelsDir, fileName));
+
+    await model.destroy({ truncate: true });
+  });
 
   async function seed() {
     const { seed: projects } = require("./seeds/projects.json");
-    const { seed: serviceSeed } = require(path.join(
-      seedsDir,
-      `${serviceLabel}s.json`
-    ));
-
     await Project.bulkCreate(projects);
-    await Service.bulkCreate(serviceSeed);
+
+    modelFileNames.forEach((fileName) => {
+      if (fileName === "index.js") return;
+      if (fileName === "models.js") return;
+
+      const seedFileName = `${fileName.split(".")[0]}s.json`;
+
+      const { seed } = require(path.join(seedsDir, seedFileName));
+      const model = require(path.join(modelsDir, fileName));
+
+      model.bulkCreate(seed);
+    });
   }
 
   await seed();
 }
 
 module.exports = { reset, project };
-
