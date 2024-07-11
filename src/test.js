@@ -51,9 +51,9 @@ async function reset() {
   });
 
   async function seed() {
-    const { seed: projects } = require("./seeds/projects.json");
-    const { seed: organizations } = require("./seeds/organizations.json");
-    const { seed: permissions } = require("./seeds/permissions.json");
+    const { seed: projects } = require("./seeds/Project.json");
+    const { seed: organizations } = require("./seeds/Organization.json");
+    const { seed: permissions } = require("./seeds/Permission.json");
 
     await Organization.bulkCreate(organizations);
     await Project.bulkCreate(projects);
@@ -65,9 +65,9 @@ async function reset() {
       if (seedFileName === "index.js") return;
 
       const { sequence, seed } = require(path.join(seedsDir, seedFileName));
-      const modelName =
-        seedFileName.charAt(0).toUpperCase() +
-        seedFileName.slice(1).split(".")[0];
+
+      const modelName = seedFileName.split(".")[0];
+
       orderedSeeds.push({ sequence, seed, modelName });
     });
 
