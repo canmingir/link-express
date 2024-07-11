@@ -3,13 +3,35 @@ const { AuthorizationError } = require("./error");
 
 function verify(req, res, next) {
   if (process.env.PROFILE === "TEST") {
-    req.session = {
-      projectId: "cb16e069-6214-47f1-9922-1f7fe7629525",
-      userId: 100001,
-      roles: ["ADMIN"],
-      appId: "977f5f57-8936-4388-8eb0-00a512cf01cc",
-      organizationId: "dfb990bb-81dd-4584-82ce-050eb8f6a12f",
-    };
+    switch (process.env.PROJECT_ID) {
+      case "0c756054-2d28-4f87-9b12-8023a79136a5":
+        req.session = {
+          projectId: "0c756054-2d28-4f87-9b12-8023a79136a5",
+          userId: 100001,
+          roles: ["ADMIN"],
+          appId: "977f5f57-8936-4388-8eb0-00a512cf01cc",
+          organizationId: "1c063446-7e78-432a-a273-34f481d0f0c3",
+        };
+        break;
+      case "21d2530b-4657-4ac0-b8cd-1a9f82786e32":
+        req.session = {
+          projectId: "21d2530b-4657-4ac0-b8cd-1a9f82786e32",
+          userId: 100001,
+          roles: ["ADMIN"],
+          appId: "977f5f57-8936-4388-8eb0-00a512cf01cc",
+          organizationId: "5459ab03-204a-4627-bdde-667b7802cb35",
+        };
+        break;
+      default:
+        req.session = {
+          projectId: "cb16e069-6214-47f1-9922-1f7fe7629525",
+          userId: 100001,
+          roles: ["ADMIN"],
+          appId: "977f5f57-8936-4388-8eb0-00a512cf01cc",
+          organizationId: "dfb990bb-81dd-4584-82ce-050eb8f6a12f",
+        };
+        break;
+    }
     return next();
   }
 
