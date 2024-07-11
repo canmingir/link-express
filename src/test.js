@@ -67,7 +67,7 @@ async function reset() {
       const { sequence, seed } = require(path.join(seedsDir, seedFileName));
       const modelName =
         seedFileName.charAt(0).toUpperCase() +
-        seedFileName.slice(1).split(".")[0].split("s")[0];
+        seedFileName.slice(1).split(".")[0];
       orderedSeeds.push({ sequence, seed, modelName });
     });
 

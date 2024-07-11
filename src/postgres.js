@@ -71,7 +71,7 @@ const seed = async () => {
     if (path.extname(fileName) !== ".js") return;
     if (fileName === "index.js" || fileName === "models.js") return;
 
-    let seedName = `${fileName.toLowerCase().split(".")[0]}s`;
+    let seedName = `${fileName.toLowerCase().split(".")[0]}`;
     const seederPath = path.join(seedDir, `${seedName}.json`);
 
     if (fs.existsSync(seederPath)) {
@@ -83,7 +83,7 @@ const seed = async () => {
   fileSequences
     .sort((a, b) => a.sequence - b.sequence)
     .forEach(async ({ fileName }) => {
-      let seedName = `${fileName.toLowerCase().split(".")[0]}s`;
+      let seedName = `${fileName.toLowerCase().split(".")[0]}`;
       const seederPath = path.join(seedDir, `${seedName}.json`);
       const filePath = path.join(baseDir, fileName);
 
