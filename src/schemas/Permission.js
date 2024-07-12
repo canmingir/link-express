@@ -1,6 +1,6 @@
 const Joi = require("joi");
 
-const Permission = Joi.object({
+const Permission = {
   create: Joi.object({
     appId: Joi.string().required(),
     organizationId: Joi.string().required(),
@@ -14,6 +14,6 @@ const Permission = Joi.object({
     projectId: Joi.string().guid().required(),
     userId: Joi.string().required(),
   }).required(),
-});
+};
 
 module.exports = Permission;
