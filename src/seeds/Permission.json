@@ -6,7 +6,7 @@
       "appId": "977f5f57-8936-4388-8eb0-00a512cf01cc",
       "organizationId": "dfb990bb-81dd-4584-82ce-050eb8f6a12f",
       "projectId": "cb16e069-6214-47f1-9922-1f7fe7629525",
-      "userId": "liam@imaginecoffee.shop",
+      "userId": 100001,
       "role": "OWNER"
     },
     {
@@ -14,7 +14,7 @@
       "appId": "10b7bc8c-a49c-4002-b0ec-63599e4b5210",
       "organizationId": "dfb990bb-81dd-4584-82ce-050eb8f6a12f",
       "projectId": "add6dfa4-45ba-4da2-bc5c-5a529610b52f",
-      "userId": "liam@imaginecoffee.shop",
+      "userId": 100001,
       "role": "OWNER"
     },
     {
