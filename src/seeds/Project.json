@@ -9,6 +9,20 @@
             "organizationId": "dfb990bb-81dd-4584-82ce-050eb8f6a12f"
         },
         {
+            "id": "add6dfa4-45ba-4da2-bc5c-5a529610b52f",
+            "name": "Imagine Coffee Shop Team",
+            "coach": "Elijah",
+            "icon": ":beans:",
+            "organizationId": "dfb990bb-81dd-4584-82ce-050eb8f6a12f"
+        },
+        {
+            "id": "e6d4744d-a11b-4c75-acad-e24a02903729",
+            "name": "Good Bank Customer Service Team",
+            "coach": "Emily",
+            "icon": ":support:",
+            "organizationId": "1c063446-7e78-432a-a273-34f481d0f0c3"
+        },
+        {
             "id": "0c756054-2d28-4f87-9b12-8023a79136a5",
             "name": "Good Bank Corp.",
             "description": "The best bank on the planet.",
