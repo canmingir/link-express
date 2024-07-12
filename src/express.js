@@ -41,9 +41,9 @@ app.use("/metrics", metrics);
 setImmediate(() => {
   process.env.PROFILE === "TEST" && app.use(authorization.verify);
 
-  app.use("/link/projects", projects);
-  app.use("/link/organizations", organizations);
-  app.use("/link/permissions", permissions);
+  app.use("/projects", projects);
+  app.use("/organizations", organizations);
+  app.use("/permissions", permissions);
   app.use((req, res) => res.status(404).end());
   app.use(error.handle);
 });
