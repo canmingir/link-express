@@ -1,17 +1,25 @@
 const Joi = require("joi");
 const router = require("express").Router();
 const Project = require("../models/Project");
+const Organization = require("../models/Organization");
 const schemas = require("../schemas");
 const config = require("../config");
 
 router.post("/", async (req, res) => {
   const project = Joi.attempt(req.body, schemas.Project);
 
-  if (config.link.project.type) {
+  const organization = await Organization.create({
+    name: `${project.name}-organization`,
+  });
+
+  if (config.link && config.link.project) {
     Joi.attempt(project.type, config.link.project.type);
   }
 
+  project.organizationId = organization.id;
+
   const projectInstance = await Project.create(project);
+
   res.status(201).json(projectInstance);
 });
 
