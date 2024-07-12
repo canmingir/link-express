@@ -5,7 +5,6 @@ const schemas = require("../schemas");
 
 router.post("/", async (req, res) => {
   const permission = Joi.attempt(req.body, schemas.Permission.create);
-
   const permissionInstance = await Permission.create(permission);
   res.status(201).json(permissionInstance);
 });
@@ -31,3 +30,4 @@ router.delete("/:id", async (req, res) => {
 });
 
 module.exports = router;
+
