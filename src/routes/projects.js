@@ -68,29 +68,56 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.patch("/:id", async (req, res) => {
-  const project = await Project.findByPk(req.params.id);
+router.delete("/:id", async (req, res) => {
+  const { userId } = req.session;
+  const { id } = req.params;
 
-  if (project) {
-    const updatedProject = Joi.attempt(req.body, schemas.Project);
+  const isPermittedProject = (
+    await Permission.findAll({
+      where: { userId },
+      attributes: ["projectId"],
+      raw: true,
+    })
+  ).find((p) => p.projectId === id);
 
-    await project.update(updatedProject);
-    res.status(200).json(project);
+  if (isPermittedProject) {
+    const project = await Project.findByPk(req.params.id);
+
+    if (project) {
+      await project.destroy();
+      res.status(204).end();
+    } else {
+      res.status(404).end("Project not found");
+    }
   } else {
-    res.status(404).end("Project not found");
+    res.status(403).end("Forbidden");
   }
 });
 
-router.delete("/:id", async (req, res) => {
-  const project = await Project.findByPk(req.params.id);
+router.patch("/:id", async (req, res) => {
+  const { userId } = req.session;
+  const { id } = req.params;
 
-  if (project) {
-    await project.destroy();
-    res.status(204).end();
+  const isPermittedProject = (
+    await Permission.findAll({
+      where: { userId },
+      attributes: ["projectId"],
+      raw: true,
+    })
+  ).find((p) => p.projectId === id);
+
+  if (isPermittedProject) {
+    const project = await Project.findByPk(id);
+    if (project) {
+      const updatedProject = Joi.attempt(req.body, schemas.Project);
+      await project.update(updatedProject);
+      res.status(200).json(project);
+    } else {
+      res.status(404).end("Project not found");
+    }
   } else {
-    res.status(404).end("Project not found");
+    res.status(403).end("Forbidden");
   }
 });
 
 module.exports = router;
-
