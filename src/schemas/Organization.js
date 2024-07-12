@@ -1,5 +1,6 @@
 const Joi = require("joi");
-module.exports = {
+
+const Organization = Joi.object({
   create: Joi.object({
     name: Joi.string().required(),
   }).required(),
@@ -7,4 +8,6 @@ module.exports = {
     id: Joi.string().guid({ version: "uuidv4" }),
     name: Joi.string(),
   }).required(),
-};
+});
+
+module.exports = Organization;

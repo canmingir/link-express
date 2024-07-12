@@ -1,3 +1,5 @@
 const Permission = require("./Permission");
 const Organization = require("./Organization");
-module.exports = { Permission, Organization };
+const Project = require("./Project");
+
+module.exports = { Permission, Organization, Project };
