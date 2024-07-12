@@ -2,6 +2,7 @@ const Joi = require("joi");
 const router = require("express").Router();
 const Project = require("../models/Project");
 const Organization = require("../models/Organization");
+const Permission = require("../models/Permission");
 const schemas = require("../schemas");
 const config = require("../config");
 
@@ -24,7 +25,19 @@ router.post("/", async (req, res) => {
 });
 
 router.get("/", async (req, res) => {
-  const projects = await Project.findAll();
+  const { userId } = req.session;
+
+  const projectIds = (
+    await Permission.findAll({
+      where: { userId },
+      attributes: ["projectId"],
+      raw: true,
+    })
+  ).map((p) => p.projectId);
+
+  const projects = await Project.findAll({
+    where: { id: projectIds },
+  });
 
   res.status(200).json(projects);
 });
@@ -64,3 +77,4 @@ router.delete("/:id", async (req, res) => {
 });
 
 module.exports = router;
+
