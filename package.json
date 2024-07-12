@@ -6,7 +6,8 @@
   "author": "NucTeam",
   "exports": {
     ".": "./index.js",
-    "./models": "./src/models/index.js"
+    "./models": "./src/models/index.js",
+    "./test": "./src/test.js"
   },
   "scripts": {
     "prepare": "node prepare.js",

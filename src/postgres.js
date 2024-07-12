@@ -45,14 +45,14 @@ const seed = async () => {
   const fileNames = fs.readdirSync(baseDir);
 
   const Organization = require("./models/Organization");
-  const { seed: companiesSeed } = require("./seeds/organizations.json");
+  const { seed: companiesSeed } = require("./seeds/Organization.json");
 
   await Organization.bulkCreate(companiesSeed);
 
   console.log(`[NUC] Loading internal seed data for Organization`);
 
-  if (fs.existsSync(path.join(seedDir, "organizations.json"))) {
-    const seedData = require(path.join(seedDir, "organizations.json"));
+  if (fs.existsSync(path.join(seedDir, "Organization.json"))) {
+    const seedData = require(path.join(seedDir, "Organization.json"));
     const seed = seedData["seed"];
     const model = require("./models/Organization");
     model.bulkCreate(seed);
@@ -60,7 +60,7 @@ const seed = async () => {
   }
 
   const Project = require("./models/Project");
-  const { seed: projectSeed } = require("./seeds/projects.json");
+  const { seed: projectSeed } = require("./seeds/Project.json");
 
   console.log(`[NUC] Loading internal seed data for Project`);
   Project.bulkCreate(projectSeed);
@@ -71,7 +71,7 @@ const seed = async () => {
     if (path.extname(fileName) !== ".js") return;
     if (fileName === "index.js" || fileName === "models.js") return;
 
-    let seedName = `${fileName.toLowerCase().split(".")[0]}s`;
+    let seedName = `${fileName.split(".")[0]}`;
     const seederPath = path.join(seedDir, `${seedName}.json`);
 
     if (fs.existsSync(seederPath)) {
@@ -83,7 +83,7 @@ const seed = async () => {
   fileSequences
     .sort((a, b) => a.sequence - b.sequence)
     .forEach(async ({ fileName }) => {
-      let seedName = `${fileName.toLowerCase().split(".")[0]}s`;
+      let seedName = `${fileName.split(".")[0]}`;
       const seederPath = path.join(seedDir, `${seedName}.json`);
       const filePath = path.join(baseDir, fileName);
 
@@ -106,7 +106,7 @@ const seed = async () => {
   console.log(`[NUC] Loading internal seed data for Permission`);
 
   const Permission = require("./models/Permission");
-  const { seed: permissionsSeed } = require("./seeds/permissions.json");
+  const { seed: permissionsSeed } = require("./seeds/Permission.json");
 
   await Permission.bulkCreate(permissionsSeed);
 };

@@ -6,7 +6,7 @@ const app = platform.express();
 const request = require("supertest");
 const { deepEqual } = require("assert");
 
-const { seed: organizations } = require("../../seeds/organizations");
+const { seed: organizations } = require("../../seeds/Organization");
 
 describe("Organization", () => {
   beforeEach(async () => {

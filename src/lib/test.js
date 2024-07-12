@@ -36,9 +36,9 @@ async function reset() {
   await Permission.destroy({ truncate: true });
 
   async function seed() {
-    const { seed: organizations } = require("../seeds/organizations.json");
-    const { seed: permissions } = require("../seeds/permissions.json");
-    const { seed: projects } = require("../seeds/projects.json");
+    const { seed: organizations } = require("../seeds/Organization.json");
+    const { seed: permissions } = require("../seeds/Permission.json");
+    const { seed: projects } = require("../seeds/Project.json");
 
     await Organization.bulkCreate(organizations);
     await Project.bulkCreate(projects);
