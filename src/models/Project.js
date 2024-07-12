@@ -26,7 +26,11 @@ const Project = sequelize.define("Project", {
   },
   organizationId: {
     type: DataTypes.UUID,
-    allowNull: false,
+    allowNull: true,
+  },
+  coach: {
+    type: DataTypes.STRING,
+    allowNull: true,
   },
 });
 

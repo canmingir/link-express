@@ -8,6 +8,7 @@ const Project = Joi.object({
   organizationId: Joi.string()
     .guid({ version: ["uuidv4"] })
     .optional(),
+  coach: Joi.string().optional(),
 });
 
 module.exports = Project;

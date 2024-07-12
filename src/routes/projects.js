@@ -10,7 +10,7 @@ router.post("/", async (req, res) => {
   const project = Joi.attempt(req.body, schemas.Project);
 
   const organization = await Organization.create({
-    name: `${project.name}-organization`,
+    name: `${project.name} Org`,
   });
 
   if (config.link && config.link.project) {
@@ -43,7 +43,23 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/:id", async (req, res) => {
-  const project = await Project.findByPk(req.params.id);
+  const { userId } = req.session;
+  const { id } = req.params;
+
+  const isPermittedProject = (
+    await Permission.findAll({
+      where: { userId },
+      attributes: ["projectId"],
+      raw: true,
+    })
+  ).find((p) => p.projectId === id);
+
+  if (!isPermittedProject) {
+    res.status(403).end("Forbidden");
+    return;
+  }
+
+  const project = await Project.findByPk(id);
 
   if (project) {
     res.status(200).json(project);
