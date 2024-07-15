@@ -19,7 +19,9 @@ async function init() {
     });
   });
 
-  Permission;
+  Project.hasMany(Permission, {
+    foreignKey: "projectId",
+  });
 }
 
 module.exports = { Project, Organization, Permission, init };

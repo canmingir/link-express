@@ -1,5 +1,6 @@
 const Joi = require("joi");
-module.exports = {
+
+const Organization = {
   create: Joi.object({
     name: Joi.string().required(),
   }).required(),
@@ -8,3 +9,5 @@ module.exports = {
     name: Joi.string(),
   }).required(),
 };
+
+module.exports = Organization;
