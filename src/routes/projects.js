@@ -27,16 +27,23 @@ router.post("/", async (req, res) => {
 router.get("/", async (req, res) => {
   const { userId } = req.session;
 
-  const projectIds = (
-    await Permission.findAll({
-      where: { userId },
-      attributes: ["projectId"],
-      raw: true,
-    })
-  ).map((p) => p.projectId);
-
   const projects = await Project.findAll({
-    where: { id: projectIds },
+    include: [
+      {
+        model: Permission,
+        where: { userId },
+        attributes: [],
+      },
+    ],
+    attributes: [
+      "id",
+      "name",
+      "description",
+      "icon",
+      "coach",
+      "type",
+      "organizationId",
+    ],
   });
 
   res.status(200).json(projects);
