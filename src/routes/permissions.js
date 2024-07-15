@@ -12,7 +12,7 @@ router.post("/", async (req, res) => {
 router.get("/", async (req, res) => {
   const permission = Joi.attempt(req.query, schemas.Permission.list);
 
-  const permissions = await Permission.findAll({
+  const permissions = await Permission.findOne({
     where: permission,
   });
   res.status(200).json(permissions);
@@ -30,3 +30,4 @@ router.delete("/:id", async (req, res) => {
 });
 
 module.exports = router;
+
