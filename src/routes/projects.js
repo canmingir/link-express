@@ -21,6 +21,14 @@ router.post("/", async (req, res) => {
 
   const projectInstance = await Project.create(project);
 
+  await Permission.create({
+    userId: req.session.userId,
+    organizationId: organization.id,
+    role: "OWNER",
+    projectId: projectInstance.id,
+    appId: req.session.appId,
+  });
+
   res.status(201).json(projectInstance);
 });
 
@@ -36,6 +44,7 @@ router.get("/", async (req, res) => {
       },
     ],
   });
+
   res.status(200).json(projects);
 });
 

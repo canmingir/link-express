@@ -12,7 +12,7 @@ describe("Project", () => {
   });
 
   it("create project", async () => {
-    const { body: res } = await request(app)
+    const { body: project } = await request(app)
       .post("/projects")
       .send({
         name: "NEW Imagine Coffee Shop",
@@ -20,7 +20,38 @@ describe("Project", () => {
         icon: ":NEWcoffee:",
       })
       .expect(201);
-    console.log(res);
+
+    const { body: projects } = await request(app).get(`/projects/`).expect(200);
+
+    deepEqual(projects, [
+      {
+        id: "cb16e069-6214-47f1-9922-1f7fe7629525",
+        name: "Imagine Coffee Shop",
+        icon: ":coffee:",
+        description: "A coffee shop that serves the best coffee in town.",
+        type: "SINGLE",
+        organizationId: "dfb990bb-81dd-4584-82ce-050eb8f6a12f",
+        coach: null,
+      },
+      {
+        id: "add6dfa4-45ba-4da2-bc5c-5a529610b52f",
+        name: "Imagine Coffee Shop Team",
+        icon: ":beans:",
+        description: null,
+        type: null,
+        organizationId: "dfb990bb-81dd-4584-82ce-050eb8f6a12f",
+        coach: "Elijah",
+      },
+      {
+        coach: null,
+        description: "NEW A coffee shop that serves the best coffee in town.",
+        icon: ":NEWcoffee:",
+        id: project.id,
+        name: "NEW Imagine Coffee Shop",
+        organizationId: project.organizationId,
+        type: null,
+      },
+    ]);
   });
 
   it("lists projects", async () => {
@@ -69,7 +100,7 @@ describe("Project", () => {
   });
 
   it("update project", async () => {
-    const { body: res } = await request(app)
+    await request(app)
       .patch("/projects/add6dfa4-45ba-4da2-bc5c-5a529610b52f")
       .send({
         name: "Updated Imagine Coffee Shop Team",
@@ -77,7 +108,12 @@ describe("Project", () => {
         icon: ":NEWbeans:",
       })
       .expect(200);
-    deepEqual(res, {
+
+    const { body: updatedProject } = await request(app)
+      .get(`/projects/add6dfa4-45ba-4da2-bc5c-5a529610b52f`)
+      .expect(200);
+
+    deepEqual(updatedProject, {
       id: "add6dfa4-45ba-4da2-bc5c-5a529610b52f",
       name: "Updated Imagine Coffee Shop Team",
       coach: "updated Elijah",
@@ -92,5 +128,9 @@ describe("Project", () => {
     await request(app)
       .delete("/projects/add6dfa4-45ba-4da2-bc5c-5a529610b52f")
       .expect(204);
+
+    await request(app)
+      .get(`/projects/add6dfa4-45ba-4da2-bc5c-5a529610b52f`)
+      .expect(404);
   });
 });
