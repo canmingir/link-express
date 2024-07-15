@@ -10,6 +10,7 @@ describe("Organization", () => {
   beforeEach(async () => {
     await test.reset();
   });
+
   it("lists organizations", async () => {
     const { body: res } = await request(app).get("/organizations").expect(200);
     deepEqual(res, [
@@ -27,6 +28,7 @@ describe("Organization", () => {
       },
     ]);
   });
+
   it("gets organization by id", async () => {
     const { body: res } = await request(app)
       .get(`/organizations/dfb990bb-81dd-4584-82ce-050eb8f6a12f`)

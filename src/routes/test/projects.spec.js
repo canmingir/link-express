@@ -10,6 +10,7 @@ describe("Project", () => {
   beforeEach(async () => {
     await test.reset();
   });
+
   it("create project", async () => {
     const { body: res } = await request(app)
       .post("/projects")
@@ -66,6 +67,7 @@ describe("Project", () => {
       .get("/projects/21d2530b-4657-4ac0-b8cd-1a9f82786e32")
       .expect(404);
   });
+
   it("update project", async () => {
     const { body: res } = await request(app)
       .patch("/projects/add6dfa4-45ba-4da2-bc5c-5a529610b52f")
@@ -85,6 +87,7 @@ describe("Project", () => {
       description: null,
     });
   });
+
   it("delete project", async () => {
     await request(app)
       .delete("/projects/add6dfa4-45ba-4da2-bc5c-5a529610b52f")
