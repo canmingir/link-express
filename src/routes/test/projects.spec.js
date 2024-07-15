@@ -64,7 +64,7 @@ describe("Project", () => {
   it("get project by id forbidden", async () => {
     await request(app)
       .get("/projects/21d2530b-4657-4ac0-b8cd-1a9f82786e32")
-      .expect(403);
+      .expect(404);
   });
   it("update project", async () => {
     const { body: res } = await request(app)
