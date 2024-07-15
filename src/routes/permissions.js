@@ -12,10 +12,14 @@ router.post("/", async (req, res) => {
 router.get("/", async (req, res) => {
   const permission = Joi.attempt(req.query, schemas.Permission.list);
 
-  const permissions = await Permission.findOne({
+  const permissions = await Permission.findAll({
     where: permission,
   });
-  res.status(200).json(permissions);
+  if (permissions.length === 0) {
+    res.status(404).end("Permission not found");
+  } else {
+    res.status(200).json(permissions);
+  }
 });
 
 router.delete("/:id", async (req, res) => {
@@ -30,3 +34,4 @@ router.delete("/:id", async (req, res) => {
 });
 
 module.exports = router;
+
