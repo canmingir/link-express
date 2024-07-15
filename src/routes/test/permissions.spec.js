@@ -33,14 +33,16 @@ describe("Permissions", () => {
       role: "OWNER",
     });
 
-    deepEqual(permission, {
-      id,
-      appId: "977f5f57-8936-4388-8eb0-00a512cf01cc",
-      organizationId: "1c063446-7e78-432a-a273-34f481d0f0c3",
-      projectId: "cb16e069-6214-47f1-9922-1f7fe7629525",
-      userId: "marcus@nucleoidai.com",
-      role: "OWNER",
-    });
+    deepEqual(permission, [
+      {
+        id,
+        appId: "977f5f57-8936-4388-8eb0-00a512cf01cc",
+        organizationId: "1c063446-7e78-432a-a273-34f481d0f0c3",
+        projectId: "cb16e069-6214-47f1-9922-1f7fe7629525",
+        userId: "marcus@nucleoidai.com",
+        role: "OWNER",
+      },
+    ]);
   });
 
   it("lists permissions by appId, projectId and userId", async () => {
@@ -75,8 +77,10 @@ describe("Permissions", () => {
       .get("/permissions")
       .query({
         appId: "977f5f57-8936-4388-8eb0-00a512cf01cc",
+        organizationId: "dfb990bb-81dd-4584-82ce-050eb8f6a12f",
         projectId: "cb16e069-6214-47f1-9922-1f7fe7629525",
-        userId: "liam@imaginecoffee.shop",
+        userId: "marcus@nucleoidai.com",
+        role: "OWNER",
       })
       .expect(404);
   });
