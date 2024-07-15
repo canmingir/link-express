@@ -13,7 +13,7 @@ const Permission = {
     organizationId: Joi.string().required(),
     projectId: Joi.string().guid().required(),
     userId: Joi.string().required(),
-    role: Joi.string().required(),
+    role: Joi.string().optional(),
   }).required(),
 };
 
