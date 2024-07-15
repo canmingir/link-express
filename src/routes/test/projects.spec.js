@@ -26,15 +26,6 @@ describe("Project", () => {
     const { body: res } = await request(app).get("/projects").expect(200);
     deepEqual(res, [
       {
-        id: "add6dfa4-45ba-4da2-bc5c-5a529610b52f",
-        name: "Imagine Coffee Shop Team",
-        coach: "Elijah",
-        icon: ":beans:",
-        description: null,
-        type: null,
-        organizationId: "dfb990bb-81dd-4584-82ce-050eb8f6a12f",
-      },
-      {
         id: "cb16e069-6214-47f1-9922-1f7fe7629525",
         name: "Imagine Coffee Shop",
         icon: ":coffee:",
@@ -42,6 +33,15 @@ describe("Project", () => {
         type: "SINGLE",
         organizationId: "dfb990bb-81dd-4584-82ce-050eb8f6a12f",
         coach: null,
+      },
+      {
+        id: "add6dfa4-45ba-4da2-bc5c-5a529610b52f",
+        name: "Imagine Coffee Shop Team",
+        coach: "Elijah",
+        icon: ":beans:",
+        description: null,
+        type: null,
+        organizationId: "dfb990bb-81dd-4584-82ce-050eb8f6a12f",
       },
     ]);
   });
