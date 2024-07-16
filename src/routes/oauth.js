@@ -57,6 +57,7 @@ router.post("/", async (req, res) => {
     const permissions = await Permission.findAll({
       where: { userId, projectId, appId },
     });
+
     if (!permissions.length) {
       accessToken = jwt.sign(
         { sub: userId, iss: "nuc" },
@@ -81,7 +82,7 @@ router.post("/", async (req, res) => {
     }
   } else {
     accessToken = jwt.sign(
-      { sub: userId, iss: "nuc" },
+      { sub: userId, iss: "nuc", aid: appId },
       process.env.JWT_SECRET,
       {
         expiresIn: "12h",
