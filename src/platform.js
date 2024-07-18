@@ -1,17 +1,5 @@
 const fs = require("fs");
 const authorization = require("./authorization");
-const chalk = require("chalk");
-
-const warn = console.warn;
-const error = console.error;
-
-console.warn = (...args) => {
-  warn(chalk.yellow(...args));
-};
-
-console.error = (...args) => {
-  error(chalk.red(...args));
-};
 
 let _express;
 let _postgres;
