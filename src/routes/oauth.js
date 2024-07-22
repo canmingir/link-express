@@ -49,7 +49,7 @@ router.post("/", async (req, res) => {
     },
   });
 
-  const userId = data[oauth.jwt.identifier];
+  const userId = data[oauth.jwt.identifier].toString();
 
   let accessToken;
 
