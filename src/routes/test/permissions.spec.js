@@ -52,7 +52,7 @@ describe("Permissions", () => {
         appId: "977f5f57-8936-4388-8eb0-00a512cf01cc",
         organizationId: "1c063446-7e78-432a-a273-34f481d0f0c3",
         projectId: "0c756054-2d28-4f87-9b12-8023a79136a5",
-        userId: "james_miller@gb.com",
+        userId: "1001",
       })
       .expect(200);
 
@@ -62,7 +62,7 @@ describe("Permissions", () => {
         appId: "977f5f57-8936-4388-8eb0-00a512cf01cc",
         organizationId: "1c063446-7e78-432a-a273-34f481d0f0c3",
         projectId: "0c756054-2d28-4f87-9b12-8023a79136a5",
-        userId: "james_miller@gb.com",
+        userId: "1001",
         role: "OWNER",
       },
     ]);
