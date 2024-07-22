@@ -26,7 +26,7 @@ describe("OAuth", () => {
         "access_token=c9Q2KuluvCGdM4YZiUnGWxImvuFnbv&scope=user&token_type=bearer"
       );
 
-    mock.onGet(oauth.userUrl).reply(200, { email: "marcus@nucleoidai.com" });
+    mock.onGet(oauth.userUrl).reply(200, { email: "1001" });
 
     const {
       body: { accessToken, refreshToken },
@@ -44,7 +44,7 @@ describe("OAuth", () => {
 
     equal(payload.iss, "nuc");
     equal(payload.aud, "cb16e069-6214-47f1-9922-1f7fe7629525");
-    equal(payload.sub, "marcus@nucleoidai.com");
+    equal(payload.sub, "1001");
     equal(payload.rls, "OWNER");
     equal(payload.aid, "977f5f57-8936-4388-8eb0-00a512cf01cc");
     equal(payload.oid, "dfb990bb-81dd-4584-82ce-050eb8f6a12f");
