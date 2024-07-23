@@ -33,15 +33,6 @@ describe("Project", () => {
         coach: null,
       },
       {
-        id: "add6dfa4-45ba-4da2-bc5c-5a529610b52f",
-        name: "Imagine Coffee Shop Team",
-        icon: ":beans:",
-        description: null,
-        type: null,
-        organizationId: "dfb990bb-81dd-4584-82ce-050eb8f6a12f",
-        coach: "Elijah",
-      },
-      {
         id: "0c756054-2d28-4f87-9b12-8023a79136a5",
         name: "Good Bank Corp.",
         icon: ":bank:",
@@ -49,15 +40,6 @@ describe("Project", () => {
         type: "MULTI",
         organizationId: "1c063446-7e78-432a-a273-34f481d0f0c3",
         coach: null,
-      },
-      {
-        id: "e6d4744d-a11b-4c75-acad-e24a02903729",
-        name: "Good Bank Customer Service Team",
-        icon: ":support:",
-        description: null,
-        type: null,
-        organizationId: "1c063446-7e78-432a-a273-34f481d0f0c3",
-        coach: "Emily",
       },
       {
         id: "21d2530b-4657-4ac0-b8cd-1a9f82786e32",
@@ -82,6 +64,8 @@ describe("Project", () => {
 
   it("lists projects", async () => {
     const { body: res } = await request(app).get("/projects").expect(200);
+    console.log(res);
+
     deepEqual(res, [
       {
         id: "cb16e069-6214-47f1-9922-1f7fe7629525",
@@ -93,15 +77,6 @@ describe("Project", () => {
         coach: null,
       },
       {
-        id: "add6dfa4-45ba-4da2-bc5c-5a529610b52f",
-        name: "Imagine Coffee Shop Team",
-        icon: ":beans:",
-        description: null,
-        type: null,
-        organizationId: "dfb990bb-81dd-4584-82ce-050eb8f6a12f",
-        coach: "Elijah",
-      },
-      {
         id: "0c756054-2d28-4f87-9b12-8023a79136a5",
         name: "Good Bank Corp.",
         icon: ":bank:",
@@ -109,15 +84,6 @@ describe("Project", () => {
         type: "MULTI",
         organizationId: "1c063446-7e78-432a-a273-34f481d0f0c3",
         coach: null,
-      },
-      {
-        id: "e6d4744d-a11b-4c75-acad-e24a02903729",
-        name: "Good Bank Customer Service Team",
-        icon: ":support:",
-        description: null,
-        type: null,
-        organizationId: "1c063446-7e78-432a-a273-34f481d0f0c3",
-        coach: "Emily",
       },
       {
         id: "21d2530b-4657-4ac0-b8cd-1a9f82786e32",

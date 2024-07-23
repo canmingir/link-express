@@ -33,13 +33,13 @@ router.post("/", async (req, res) => {
 });
 
 router.get("/", async (req, res) => {
-  const { userId } = req.session;
+  const { userId, appId } = req.session;
 
   const projects = await Project.findAll({
     include: [
       {
         model: Permission,
-        where: { userId },
+        where: { userId, appId },
         attributes: [],
       },
     ],
