@@ -1,6 +1,5 @@
 const jwt = require("jsonwebtoken");
 const { AuthorizationError } = require("./error");
-
 function verify(req, res, next) {
   if (process.env.PROFILE === "TEST") {
     switch (process.env.PROJECT_ID) {
@@ -85,4 +84,17 @@ function verify(req, res, next) {
 
   next();
 }
-module.exports = { verify };
+
+function authorize(role) {
+  return (req, res, next) => {
+    const { roles } = req.session;
+
+    if (roles.includes(role)) {
+      next();
+    } else {
+      throw new AuthorizationError();
+    }
+  };
+}
+
+module.exports = { verify, authorize };
