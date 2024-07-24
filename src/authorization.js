@@ -86,7 +86,7 @@ function verify(req, res, next) {
 }
 
 function authorize(role) {
-  return function (req, res, next) {
+  return (req, res, next) => {
     const { roles } = req.session;
 
     if (roles.includes(role)) {
