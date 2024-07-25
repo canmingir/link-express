@@ -89,7 +89,7 @@ function authorize(role) {
   return (req, res, next) => {
     const { roles } = req.session;
 
-    if (roles.includes(role)) {
+    if (!roles || roles.includes(role)) {
       next();
     } else {
       throw new AuthorizationError();
