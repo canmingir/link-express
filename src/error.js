@@ -29,9 +29,7 @@ const handle = (err, req, res, next) => {
 
   if (err instanceof DatabaseError) {
     console.error("Sequelize Database Error:", err);
-    return res
-      .status(500)
-      .json({ message: "Database Error", details: err.message });
+    return res.status(500).json({ message: "Database Error" });
   }
 
   if (err.error) {
