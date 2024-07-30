@@ -17,7 +17,7 @@ Model.prototype.destroy = function (options = {}) {
 };
 
 const sequelize = new Sequelize(process.env.PG || uri, {
-  logging: debug,
+  logging: debug && console.log,
   define: {
     freezeTableName: true,
     underscored: true,
