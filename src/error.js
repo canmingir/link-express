@@ -1,8 +1,9 @@
 const { ValidationError } = require("joi");
+const { DatabaseError } = require("sequelize");
 
 // eslint-disable-next-line no-unused-vars
 const handle = (err, req, res, next) => {
-  if (err instanceof String) {
+  if (typeof err === "string") {
     return res.status(400).json({ error: err });
   }
 
@@ -26,10 +27,17 @@ const handle = (err, req, res, next) => {
     return res.status(err.response?.status || 503).end();
   }
 
+  if (err instanceof DatabaseError) {
+    console.error("Sequelize Database Error:", err);
+    return res
+      .status(500)
+      .json({ message: "Database Error", details: err.message });
+  }
+
   if (err.error) {
-    res.status(400).json(err);
+    return res.status(400).json(err);
   } else {
-    res.status(500).send(err.toString());
+    return res.status(500).send(err.toString());
   }
 };
 
