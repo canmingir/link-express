@@ -35,7 +35,8 @@ const handle = (err, req, res, next) => {
   if (err.error) {
     return res.status(400).json(err);
   } else {
-    return res.status(500).send(err.toString());
+    console.error("Error:", err);
+    return res.status(500).send({ message: "Internal Server Error" });
   }
 };
 
