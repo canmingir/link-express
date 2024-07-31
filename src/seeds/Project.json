@@ -4,7 +4,7 @@
             "id": "cb16e069-6214-47f1-9922-1f7fe7629525",
             "name": "Imagine Coffee Shop",
             "description": "A coffee shop that serves the best coffee in town.",
-            "icon": ":coffee:",
+            "icon": ":ph:coffee-bean-duotone:",
             "type": "SINGLE",
             "organizationId": "dfb990bb-81dd-4584-82ce-050eb8f6a12f"
         },
@@ -12,21 +12,21 @@
             "id": "add6dfa4-45ba-4da2-bc5c-5a529610b52f",
             "name": "Imagine Coffee Shop Team",
             "coach": "Elijah",
-            "icon": ":beans:",
+            "icon": ":ph:coffee-bean-duotone:",
             "organizationId": "dfb990bb-81dd-4584-82ce-050eb8f6a12f"
         },
         {
             "id": "e6d4744d-a11b-4c75-acad-e24a02903729",
             "name": "Good Bank Customer Service Team",
             "coach": "Emily",
-            "icon": ":support:",
+            "icon": ":ph:bank-duotone:",
             "organizationId": "1c063446-7e78-432a-a273-34f481d0f0c3"
         },
         {
             "id": "0c756054-2d28-4f87-9b12-8023a79136a5",
             "name": "Good Bank Corp.",
             "description": "The best bank on the planet.",
-            "icon": ":bank:",
+            "icon": ":ph:bank-duotone:",
             "type": "MULTI",
             "organizationId": "1c063446-7e78-432a-a273-34f481d0f0c3"
         },
@@ -34,7 +34,7 @@
             "id": "21d2530b-4657-4ac0-b8cd-1a9f82786e32",
             "name": "Fire Logistics",
             "description": "A logistics organization that delivers goods on time.",
-            "icon": ":truck:",
+            "icon": ":ph:fire-simple-duotone:",
             "type": "SINGLE",
             "organizationId": "5459ab03-204a-4627-bdde-667b7802cb35"
         }

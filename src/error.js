@@ -28,14 +28,15 @@ const handle = (err, req, res, next) => {
   }
 
   if (err instanceof DatabaseError) {
-    console.error("Sequelize Database Error:", err);
-    return res.status(500).json({ message: "Database Error" });
+    console.error(err);
+    return res.status(500).end();
   }
 
   if (err.error) {
     return res.status(400).json(err);
   } else {
-    return res.status(500).send(err.toString());
+    console.error(err);
+    return res.status(500).end();
   }
 };
 
