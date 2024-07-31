@@ -27,11 +27,6 @@ const handle = (err, req, res, next) => {
     return res.status(err.response?.status || 503).end();
   }
 
-  if (err instanceof DatabaseError) {
-    console.error(err);
-    return res.status(500).end();
-  }
-
   if (err.error) {
     return res.status(400).json(err);
   } else {
