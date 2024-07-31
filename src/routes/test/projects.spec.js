@@ -26,7 +26,7 @@ describe("Project", () => {
       {
         id: "cb16e069-6214-47f1-9922-1f7fe7629525",
         name: "Imagine Coffee Shop",
-        icon: ":coffee:",
+        icon: ":ph:coffee-bean-duotone:",
         description: "A coffee shop that serves the best coffee in town.",
         type: "SINGLE",
         organizationId: "dfb990bb-81dd-4584-82ce-050eb8f6a12f",
@@ -35,7 +35,7 @@ describe("Project", () => {
       {
         id: "0c756054-2d28-4f87-9b12-8023a79136a5",
         name: "Good Bank Corp.",
-        icon: ":bank:",
+        icon: ":ph:bank-duotone:",
         description: "The best bank on the planet.",
         type: "MULTI",
         organizationId: "1c063446-7e78-432a-a273-34f481d0f0c3",
@@ -44,7 +44,7 @@ describe("Project", () => {
       {
         id: "21d2530b-4657-4ac0-b8cd-1a9f82786e32",
         name: "Fire Logistics",
-        icon: ":truck:",
+        icon: ":ph:fire-simple-duotone:",
         description: "A logistics organization that delivers goods on time.",
         type: "SINGLE",
         organizationId: "5459ab03-204a-4627-bdde-667b7802cb35",
@@ -70,7 +70,7 @@ describe("Project", () => {
       {
         id: "cb16e069-6214-47f1-9922-1f7fe7629525",
         name: "Imagine Coffee Shop",
-        icon: ":coffee:",
+        icon: ":ph:coffee-bean-duotone:",
         description: "A coffee shop that serves the best coffee in town.",
         type: "SINGLE",
         organizationId: "dfb990bb-81dd-4584-82ce-050eb8f6a12f",
@@ -79,7 +79,7 @@ describe("Project", () => {
       {
         id: "0c756054-2d28-4f87-9b12-8023a79136a5",
         name: "Good Bank Corp.",
-        icon: ":bank:",
+        icon: ":ph:bank-duotone:",
         description: "The best bank on the planet.",
         type: "MULTI",
         organizationId: "1c063446-7e78-432a-a273-34f481d0f0c3",
@@ -88,7 +88,7 @@ describe("Project", () => {
       {
         id: "21d2530b-4657-4ac0-b8cd-1a9f82786e32",
         name: "Fire Logistics",
-        icon: ":truck:",
+        icon: ":ph:fire-simple-duotone:",
         description: "A logistics organization that delivers goods on time.",
         type: "SINGLE",
         organizationId: "5459ab03-204a-4627-bdde-667b7802cb35",
@@ -105,7 +105,7 @@ describe("Project", () => {
       id: "add6dfa4-45ba-4da2-bc5c-5a529610b52f",
       name: "Imagine Coffee Shop Team",
       coach: "Elijah",
-      icon: ":beans:",
+      icon: ":ph:coffee-bean-duotone:",
       organizationId: "dfb990bb-81dd-4584-82ce-050eb8f6a12f",
       type: null,
       description: null,
