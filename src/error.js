@@ -1,5 +1,4 @@
 const { ValidationError } = require("joi");
-const { DatabaseError } = require("sequelize");
 
 // eslint-disable-next-line no-unused-vars
 const handle = (err, req, res, next) => {
