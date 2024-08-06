@@ -41,4 +41,19 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+router.delete("/:userId", async (req, res) => {
+  const { projectId } = req.session;
+
+  const instance = await Permission.find({
+    where: { userId: req.params.userId, projectId },
+  });
+
+  if (instance) {
+    await instance.destroy();
+    res.status(204).end();
+  } else {
+    res.status(404).end("Permission not found");
+  }
+});
+
 module.exports = router;
