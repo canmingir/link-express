@@ -1,20 +1,28 @@
-const Joi = require("joi");
 const router = require("express").Router();
 const Permission = require("../models/Permission");
-const schemas = require("../schemas");
 
 router.post("/", async (req, res) => {
-  const permission = Joi.attempt(req.body, schemas.Permission.create);
-  const permissionInstance = await Permission.create(permission);
+  const { userId } = req.body;
+  const { projectId, organizationId, appId, roles } = req.session;
+  const permissionInstance = await Permission.create({
+    userId,
+    projectId,
+    organizationId,
+    appId,
+    role: roles[0],
+  });
   res.status(201).json(permissionInstance);
 });
 
 router.get("/", async (req, res) => {
-  const permission = Joi.attempt(req.query, schemas.Permission.list);
+  const { projectId } = req.session;
 
   const permissions = await Permission.findAll({
-    where: permission,
+    where: {
+      projectId,
+    },
   });
+
   if (permissions.length === 0) {
     res.status(404).end("Permission not found");
   } else {
