@@ -24,35 +24,25 @@ router.get("/", async (req, res) => {
   });
 
   if (permissions.length === 0) {
-    res.status(404).end("Permission not found");
+    res.status(404);
   } else {
     res.status(200).json(permissions);
   }
 });
 
-router.delete("/:id", async (req, res) => {
-  const instance = await Permission.findByPk(req.params.id);
-
-  if (instance) {
-    await instance.destroy();
-    res.status(204).end();
-  } else {
-    res.status(404).end("Permission not found");
-  }
-});
-
 router.delete("/:userId", async (req, res) => {
   const { projectId } = req.session;
+  const userId = req.params.userId;
 
-  const instance = await Permission.find({
-    where: { userId: req.params.userId, projectId },
+  const instance = await Permission.findOne({
+    where: { userId: userId, projectId },
   });
 
   if (instance) {
     await instance.destroy();
     res.status(204).end();
   } else {
-    res.status(404).end("Permission not found");
+    res.status(404);
   }
 });
 
