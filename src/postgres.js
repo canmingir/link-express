@@ -62,7 +62,23 @@ const seed = async () => {
   const Project = require("./models/Project");
   const { seed: projectSeed } = require("./seeds/Project.json");
 
-  console.log(`[NUC] Loading internal seed data for Project`);
+  try {
+    const { seed: extProjectSeed } = require(path.join(
+      seedDir,
+      "Project.json"
+    ));
+
+    extProjectSeed && projectSeed.push(...extProjectSeed);
+
+    console.log(
+      `[NUC] Loading internal` +
+        (extProjectSeed ? ` and external` : "") +
+        ` seed data for Project`
+    );
+  } catch (error) {
+    console.log(`[NUC] Loading internal seed data for Project`);
+  }
+
   Project.bulkCreate(projectSeed);
 
   let fileSequences = [];
@@ -103,10 +119,19 @@ const seed = async () => {
       await model.bulkCreate(seed);
     });
 
-  console.log(`[NUC] Loading internal seed data for Permission`);
-
   const Permission = require("./models/Permission");
   const { seed: permissionsSeed } = require("./seeds/Permission.json");
+
+  try {
+    const { seed: extPermissionsSeed } = require(path.join(
+      seedDir,
+      "Permission.json"
+    ));
+    extPermissionsSeed && permissionsSeed.push(...extPermissionsSeed);
+    console.log(`[NUC] Loading internal and external seed data for Permission`);
+  } catch (error) {
+    console.log(`[NUC] Loading internal seed data for Permission`);
+  }
 
   await Permission.bulkCreate(permissionsSeed);
 };
@@ -146,3 +171,4 @@ if (sync) {
 }
 
 module.exports = { sequelize };
+
