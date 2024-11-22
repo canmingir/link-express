@@ -171,4 +171,3 @@ if (sync) {
 }
 
 module.exports = { sequelize };
-
