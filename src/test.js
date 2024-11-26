@@ -18,7 +18,7 @@ platform
     const internalModels = require("./models/index");
 
     await models.init();
-    await internalModels.init();  
+    await internalModels.init();
   });
 
 const workingDir = process.cwd();
@@ -53,20 +53,23 @@ async function reset() {
   });
 
   async function seed() {
-    const { seed: organizations } = require('./seeds/Organization.json');
-    const { seed: projects } = require('./seeds/Project.json');
-    const { seed: permissions } = require('./seeds/Permission.json');
-    
-    const { seed: extProjectSeed } = require(path.join(seedsDir, 'Project.json'));
-    
+    const { seed: organizations } = require("./seeds/Organization.json");
+    const { seed: projects } = require("./seeds/Project.json");
+    const { seed: permissions } = require("./seeds/Permission.json");
+
+    const { seed: extProjectSeed } = require(path.join(
+      seedsDir,
+      "Project.json"
+    ));
+
     await Organization.bulkCreate(organizations);
-    
-    const allProjects = extProjectSeed 
+
+    const allProjects = extProjectSeed
       ? [...projects, ...extProjectSeed]
       : projects;
 
-      console.log("All Projects",allProjects);
-      
+    console.log("All Projects", allProjects);
+
     await Project.bulkCreate(allProjects);
 
     const seedFileNames = fs.readdirSync(seedsDir);
@@ -76,9 +79,7 @@ async function reset() {
       if (seedFileName === "index.js") return;
 
       const { sequence, seed } = require(path.join(seedsDir, seedFileName));
-
       const modelName = seedFileName.split(".")[0];
-
       orderedSeeds.push({ sequence, seed, modelName });
     });
 
@@ -96,4 +97,3 @@ async function reset() {
 }
 
 module.exports = { reset, project };
-
