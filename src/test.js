@@ -1,7 +1,6 @@
 require("dotenv").config({ path: ".env.test" });
 const path = require("path");
 const fs = require("fs");
-
 const platform = require("./platform");
 
 platform
@@ -16,7 +15,10 @@ platform
     },
   })
   .then(async () => {
+    const internalModels = require("./models/index");
+
     await models.init();
+    await internalModels.init();  
   });
 
 const workingDir = process.cwd();
@@ -51,12 +53,21 @@ async function reset() {
   });
 
   async function seed() {
-    const { seed: projects } = require("./seeds/Project.json");
-    const { seed: organizations } = require("./seeds/Organization.json");
-    const { seed: permissions } = require("./seeds/Permission.json");
-
+    const { seed: organizations } = require('./seeds/Organization.json');
+    const { seed: projects } = require('./seeds/Project.json');
+    const { seed: permissions } = require('./seeds/Permission.json');
+    
+    const { seed: extProjectSeed } = require(path.join(seedsDir, 'Project.json'));
+    
     await Organization.bulkCreate(organizations);
-    await Project.bulkCreate(projects);
+    
+    const allProjects = extProjectSeed 
+      ? [...projects, ...extProjectSeed]
+      : projects;
+
+      console.log("All Projects",allProjects);
+      
+    await Project.bulkCreate(allProjects);
 
     const seedFileNames = fs.readdirSync(seedsDir);
     let orderedSeeds = [];
@@ -85,3 +96,4 @@ async function reset() {
 }
 
 module.exports = { reset, project };
+
