@@ -75,6 +75,10 @@ describe("Project", () => {
         type: "SINGLE",
         organizationId: "dfb990bb-81dd-4584-82ce-050eb8f6a12f",
         coach: null,
+        Organization: {
+          id: "dfb990bb-81dd-4584-82ce-050eb8f6a12f",
+          name: "Imagine Coffee Shop",
+        },
       },
       {
         id: "0c756054-2d28-4f87-9b12-8023a79136a5",
@@ -84,6 +88,10 @@ describe("Project", () => {
         type: "MULTI",
         organizationId: "1c063446-7e78-432a-a273-34f481d0f0c3",
         coach: null,
+        Organization: {
+          id: "1c063446-7e78-432a-a273-34f481d0f0c3",
+          name: "Good Bank Corp.",
+        },
       },
       {
         id: "21d2530b-4657-4ac0-b8cd-1a9f82786e32",
@@ -93,6 +101,10 @@ describe("Project", () => {
         type: "SINGLE",
         organizationId: "5459ab03-204a-4627-bdde-667b7802cb35",
         coach: null,
+        Organization: {
+          id: "5459ab03-204a-4627-bdde-667b7802cb35",
+          name: "Fire Logistics",
+        },
       },
     ]);
   });
