@@ -44,6 +44,7 @@ router.get("/", async (req, res) => {
       },
       {
         model: Organization,
+        as: "organization",
         attributes: ["id", "name"],
       },
     ],
