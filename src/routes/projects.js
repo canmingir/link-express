@@ -44,7 +44,6 @@ router.get("/", async (req, res) => {
       },
       {
         model: Organization,
-        as: "Organization",
         attributes: ["id", "name"],
       },
     ],
@@ -54,14 +53,14 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/:id", async (req, res) => {
-  const { userId } = req.session;
+  const { userId, organizationId } = req.session;
   const { id } = req.params;
 
   const project = await Project.findOne({
     include: [
       {
         model: Permission,
-        where: { userId },
+        where: { userId, organizationId },
         attributes: [],
       },
     ],
@@ -76,14 +75,14 @@ router.get("/:id", async (req, res) => {
 });
 
 router.delete("/:id", async (req, res) => {
-  const { userId } = req.session;
+  const { userId, organizationId } = req.session;
   const { id } = req.params;
 
   const project = await Project.findOne({
     include: [
       {
         model: Permission,
-        where: { userId },
+        where: { userId, organizationId },
         attributes: [],
       },
     ],
@@ -99,14 +98,14 @@ router.delete("/:id", async (req, res) => {
 });
 
 router.patch("/:id", async (req, res) => {
-  const { userId } = req.session;
+  const { userId, organizationId } = req.session;
   const { id } = req.params;
 
   const project = await Project.findOne({
     include: [
       {
         model: Permission,
-        where: { userId },
+        where: { userId, organizationId },
         attributes: [],
       },
     ],
