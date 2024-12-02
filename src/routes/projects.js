@@ -42,6 +42,10 @@ router.get("/", async (req, res) => {
         where: { userId, appId },
         attributes: [],
       },
+      {
+        model: Organization,
+        attributes: ["id", "name"],
+      },
     ],
   });
 
