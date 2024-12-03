@@ -41,12 +41,16 @@ router.get("/", async (req, res) => {
         model: Permission,
         where: { userId, appId },
         attributes: [],
+        as: "permissions",
       },
       {
         model: Organization,
-        attributes: ["id", "name"],
+        as: "organization",
       },
     ],
+    attributes: {
+      exclude: ["organizationId"],
+    },
   });
 
   res.status(200).json(projects);
@@ -62,6 +66,7 @@ router.get("/:id", async (req, res) => {
         model: Permission,
         where: { userId, organizationId },
         attributes: [],
+        as: "permissions",
       },
     ],
     where: { id },
@@ -70,7 +75,7 @@ router.get("/:id", async (req, res) => {
   if (project) {
     res.status(200).json(project);
   } else {
-    res.status(404).end("Project not found");
+    res.status(404).end();
   }
 });
 
@@ -84,6 +89,7 @@ router.delete("/:id", async (req, res) => {
         model: Permission,
         where: { userId, organizationId },
         attributes: [],
+        as: "permissions",
       },
     ],
     where: { id },
@@ -93,7 +99,7 @@ router.delete("/:id", async (req, res) => {
     await project.destroy();
     res.status(204).end();
   } else {
-    res.status(404).end("Project not found");
+    res.status(404).end();
   }
 });
 
@@ -107,6 +113,7 @@ router.patch("/:id", async (req, res) => {
         model: Permission,
         where: { userId, organizationId },
         attributes: [],
+        as: "permissions",
       },
     ],
     where: { id },
@@ -117,7 +124,7 @@ router.patch("/:id", async (req, res) => {
     await project.update(updatedProject);
     res.status(200).json(project);
   } else {
-    res.status(404).end("Project not found");
+    res.status(404).end();
   }
 });
 

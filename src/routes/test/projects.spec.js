@@ -30,9 +30,8 @@ describe("Project", () => {
         icon: ":ph:coffee-bean-duotone:",
         description: "A coffee shop that serves the best coffee in town.",
         type: "SINGLE",
-        organizationId: "dfb990bb-81dd-4584-82ce-050eb8f6a12f",
         coach: null,
-        Organization: {
+        organization: {
           id: "dfb990bb-81dd-4584-82ce-050eb8f6a12f",
           name: "Imagine Coffee Shop",
         },
@@ -43,9 +42,8 @@ describe("Project", () => {
         icon: ":ph:bank-duotone:",
         description: "The best bank on the planet.",
         type: "MULTI",
-        organizationId: "1c063446-7e78-432a-a273-34f481d0f0c3",
         coach: null,
-        Organization: {
+        organization: {
           id: "1c063446-7e78-432a-a273-34f481d0f0c3",
           name: "Good Bank Corp.",
         },
@@ -56,9 +54,8 @@ describe("Project", () => {
         icon: ":ph:fire-simple-duotone:",
         description: "A logistics organization that delivers goods on time.",
         type: "SINGLE",
-        organizationId: "5459ab03-204a-4627-bdde-667b7802cb35",
         coach: null,
-        Organization: {
+        organization: {
           id: "5459ab03-204a-4627-bdde-667b7802cb35",
           name: "Fire Logistics",
         },
@@ -69,9 +66,8 @@ describe("Project", () => {
         icon: ":NEWcoffee:",
         description: "NEW A coffee shop that serves the best coffee in town.",
         type: null,
-        organizationId: project.organizationId,
         coach: null,
-        Organization: {
+        organization: {
           id: project.organizationId,
           name: "NEW Imagine Coffee Shop Org",
         },
@@ -90,9 +86,8 @@ describe("Project", () => {
         icon: ":ph:coffee-bean-duotone:",
         description: "A coffee shop that serves the best coffee in town.",
         type: "SINGLE",
-        organizationId: "dfb990bb-81dd-4584-82ce-050eb8f6a12f",
         coach: null,
-        Organization: {
+        organization: {
           id: "dfb990bb-81dd-4584-82ce-050eb8f6a12f",
           name: "Imagine Coffee Shop",
         },
@@ -103,9 +98,8 @@ describe("Project", () => {
         icon: ":ph:bank-duotone:",
         description: "The best bank on the planet.",
         type: "MULTI",
-        organizationId: "1c063446-7e78-432a-a273-34f481d0f0c3",
         coach: null,
-        Organization: {
+        organization: {
           id: "1c063446-7e78-432a-a273-34f481d0f0c3",
           name: "Good Bank Corp.",
         },
@@ -116,9 +110,8 @@ describe("Project", () => {
         icon: ":ph:fire-simple-duotone:",
         description: "A logistics organization that delivers goods on time.",
         type: "SINGLE",
-        organizationId: "5459ab03-204a-4627-bdde-667b7802cb35",
         coach: null,
-        Organization: {
+        organization: {
           id: "5459ab03-204a-4627-bdde-667b7802cb35",
           name: "Fire Logistics",
         },
