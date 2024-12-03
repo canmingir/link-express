@@ -23,8 +23,9 @@ const models = require("../models");
 async function reset() {
   const { sequelize } = require("../postgres");
 
-  await models.init();
-  await sequelize.sync({ force: true });
+  if (await models.init()) {
+    await sequelize.sync({ force: true });
+  }
 
   const Organization = require("../models/Organization");
 

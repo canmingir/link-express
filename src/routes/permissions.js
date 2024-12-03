@@ -24,7 +24,7 @@ router.get("/", async (req, res) => {
   });
 
   if (permissions.length === 0) {
-    res.status(404);
+    res.status(404).end();
   } else {
     res.status(200).json(permissions);
   }
@@ -42,7 +42,7 @@ router.delete("/:userId", async (req, res) => {
     await instance.destroy();
     res.status(204).end();
   } else {
-    res.status(404);
+    res.status(404).end();
   }
 });
 
