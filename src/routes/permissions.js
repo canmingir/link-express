@@ -15,11 +15,12 @@ router.post("/", async (req, res) => {
 });
 
 router.get("/", async (req, res) => {
-  const { projectId } = req.session;
+  const { projectId, organizationId } = req.session;
 
   const permissions = await Permission.findAll({
     where: {
       projectId,
+      organizationId,
     },
   });
 
@@ -31,11 +32,11 @@ router.get("/", async (req, res) => {
 });
 
 router.delete("/:userId", async (req, res) => {
-  const { projectId } = req.session;
+  const { projectId, organizationId } = req.session;
   const userId = req.params.userId;
 
   const instance = await Permission.findOne({
-    where: { userId: userId, projectId },
+    where: { userId: userId, projectId, organizationId },
   });
 
   if (instance) {
