@@ -136,37 +136,16 @@ const seed = async () => {
   await Permission.bulkCreate(permissionsSeed);
 };
 
-const assoicateModels = async () => {
-  const Project = require("./models/Project");
-  const Organization = require("./models/Organization");
-  const Permission = require("./models/Permission");
-
-  Project.belongsTo(Organization, {
-    foreignKey: "organizationId",
-  });
-
-  Organization.hasMany(Project, {
-    foreignKey: "organizationId",
-  });
-
-  Organization.addHook("beforeDestroy", async (organization) => {
-    await Project.destroy({
-      where: {
-        organizationId: organization.id,
-      },
-    });
-  });
-
-  Project.hasMany(Permission, {
-    foreignKey: "projectId",
-  });
+const associateModels = async () => {
+  const models = require("./models");
+  await models.init();
 };
 
 if (sync) {
   setImmediate(async () => {
+    await associateModels();
     await sequelize.sync({ force: true });
     await seed();
-    await assoicateModels();
   });
 }
 
