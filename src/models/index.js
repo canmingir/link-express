@@ -1,6 +1,7 @@
 const Project = require("./Project");
 const Organization = require("./Organization");
 const Permission = require("./Permission");
+const Setting = require("./Setting");
 
 let _init = false;
 
@@ -37,4 +38,4 @@ async function init() {
   return true;
 }
 
-module.exports = { Project, Organization, Permission, init };
+module.exports = { Project, Organization, Permission, init, Setting };
