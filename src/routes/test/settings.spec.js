@@ -20,7 +20,7 @@ describe("Setting", () => {
       {
         id: "97e74ee6-8967-478d-bf53-d1da8daecb52",
         teamId: "cb16e069-6214-47f1-9922-1f7fe7629525",
-        details: {
+        settings: {
           timeZone: "America/New_York",
         },
       },
@@ -31,7 +31,7 @@ describe("Setting", () => {
     const { body: res } = await request(app)
       .patch("/projects/cb16e069-6214-47f1-9922-1f7fe7629525/settings")
       .send({
-        details: {
+        settings: {
           timeZone: "America/Los_Angeles",
         },
       })
@@ -40,7 +40,7 @@ describe("Setting", () => {
     deepEqual(res, {
       id: "97e74ee6-8967-478d-bf53-d1da8daecb52",
       teamId: "cb16e069-6214-47f1-9922-1f7fe7629525",
-      details: {
+      settings: {
         timeZone: "America/Los_Angeles",
       },
     });
