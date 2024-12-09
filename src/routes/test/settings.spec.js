@@ -5,7 +5,6 @@ const app = platform.express();
 
 const request = require("supertest");
 const { deepEqual } = require("assert");
-const { log } = require("console");
 
 describe("Setting", () => {
   beforeEach(async () => {
@@ -13,7 +12,9 @@ describe("Setting", () => {
   });
 
   it("lists settings", async () => {
-    const { body: res } = await request(app).get("/settings").expect(200);
+    const { body: res } = await request(app)
+      .get("/projects/cb16e069-6214-47f1-9922-1f7fe7629525/settings")
+      .expect(200);
 
     deepEqual(res, [
       {
@@ -28,7 +29,7 @@ describe("Setting", () => {
 
   it("updates settings", async () => {
     const { body: res } = await request(app)
-      .patch("/settings")
+      .patch("/projects/cb16e069-6214-47f1-9922-1f7fe7629525/settings")
       .send({
         details: {
           timeZone: "America/Los_Angeles",

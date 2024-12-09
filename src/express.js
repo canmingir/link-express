@@ -45,7 +45,7 @@ setImmediate(() => {
   app.use("/projects", projects);
   app.use("/organizations", organizations);
   app.use("/permissions", permissions);
-  app.use("/settings", settings);
+  app.use("/projects/:projectId/settings", settings);
   app.use((req, res) => res.status(404).end());
   app.use(error.handle);
 });
