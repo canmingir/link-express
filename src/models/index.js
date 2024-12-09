@@ -1,7 +1,7 @@
 const Project = require("./Project");
 const Organization = require("./Organization");
 const Permission = require("./Permission");
-const Setting = require("./Setting");
+const Setting = require("./Settings");
 
 let _init = false;
 

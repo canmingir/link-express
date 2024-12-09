@@ -1,7 +1,7 @@
 const Joi = require("joi");
 
 const SettingSchemas = Joi.object({
-  details: Joi.object({
+  settings: Joi.object({
     timeZone: Joi.string().required(),
   }).required(),
 });

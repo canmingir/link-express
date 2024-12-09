@@ -31,23 +31,23 @@ async function reset() {
 
   const Project = require("../models/Project");
   const Permission = require("../models/Permission");
-  const Setting = require("../models/Setting");
+  const Settings = require("../models/Settings");
 
   await Organization.destroy({ truncate: true });
   await Project.destroy({ truncate: true });
   await Permission.destroy({ truncate: true });
-  await Setting.destroy({ truncate: true });
+  await Settings.destroy({ truncate: true });
 
   async function seed() {
     const { seed: organizations } = require("../seeds/Organization.json");
     const { seed: permissions } = require("../seeds/Permission.json");
     const { seed: projects } = require("../seeds/Project.json");
-    const { seed: settings } = require("../seeds/Setting.json");
+    const { seed: settings } = require("../seeds/Settings.json");
 
     await Organization.bulkCreate(organizations);
     await Project.bulkCreate(projects);
     await Permission.bulkCreate(permissions);
-    await Setting.bulkCreate(settings);
+    await Settings.bulkCreate(settings);
   }
 
   await seed();

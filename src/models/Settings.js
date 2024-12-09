@@ -1,7 +1,7 @@
 const { sequelize } = require("../postgres");
 const { DataTypes, UUIDV4 } = require("sequelize");
 
-const Setting = sequelize.define("Setting", {
+const Settings = sequelize.define("Settings", {
   id: {
     type: DataTypes.UUID,
     defaultValue: UUIDV4,
@@ -12,10 +12,10 @@ const Setting = sequelize.define("Setting", {
     type: DataTypes.UUID,
     allowNull: false,
   },
-  details: {
+  settings: {
     type: DataTypes.JSONB,
     allowNull: false,
   },
 });
 
-module.exports = Setting;
+module.exports = Settings;
