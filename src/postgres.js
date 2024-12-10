@@ -139,7 +139,8 @@ const seed = async () => {
       console.log(`[NUC] Loading internal seed data for Permission`);
     }
 
-  await Permission.bulkCreate(permissionsSeed);
+    await Permission.bulkCreate(permissionsSeed);
+  }
 };
 
 const associateModels = async () => {
@@ -149,7 +150,7 @@ const associateModels = async () => {
 
 if (sync) {
   setImmediate(async () => {
-    await associateModels();
+    oauth && (await associateModels());
     await sequelize.sync({ force: true });
     await seed();
   });
