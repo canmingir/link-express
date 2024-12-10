@@ -1,45 +1,36 @@
-const Joi = require("joi");
 const Settings = require("../models/Settings");
-const { SettingSchemas } = require("../schemas/Settings");
 
-async function get(session, params) {
-  const projectId = session.projectId;
-  const id = params.projectId;
-
-  if (projectId !== id) {
-    throw new Error("404 Not Found");
-  }
-
-  const settings = await Settings.findAll({
-    where: {
-      teamId: projectId,
-    },
+async function get({ projectId }) {
+  const settingsInstance = await Settings.findOne({
+    where: { projectId },
   });
 
-  return settings;
-}
-
-async function update(session, body, params) {
-  const projectId = session.projectId;
-  const id = params.projectId;
-
-  if (projectId !== id) {
-    throw new Error("404 Not Found");
-  }
-
-  const settings = await Settings.findOne({
-    where: {
-      teamId: projectId,
-    },
-  });
-
-  if (settings) {
-    const updatedSetting = await Joi.attempt(body, SettingSchemas);
-    await settings.update(updatedSetting);
-    return settings;
+  if (settingsInstance) {
+    return settingsInstance.settings;
   } else {
-    return console.log("Setting not found");
+    return {};
   }
 }
 
-module.exports = { get, update };
+async function upsert({ projectId }, settings) {
+  const settingsInstance = await Settings.findOne({
+    where: { projectId },
+  });
+
+  if (settingsInstance) {
+    await settingsInstance.update({
+      projectId,
+      settings: {
+        ...settingsInstance.toJSON().settings,
+        ...settings,
+      },
+    });
+  } else {
+    await Settings.create({
+      projectId,
+      settings: { ...settings },
+    });
+  }
+}
+
+module.exports = { get, upsert };

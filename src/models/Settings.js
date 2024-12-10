@@ -8,7 +8,7 @@ const Settings = sequelize.define("Settings", {
     primaryKey: true,
     allowNull: false,
   },
-  teamId: {
+  projectId: {
     type: DataTypes.UUID,
     allowNull: false,
   },
