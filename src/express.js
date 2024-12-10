@@ -7,9 +7,7 @@ const helmet = require("helmet");
 const app = express();
 
 const metrics = require("./routes/metrics");
-const permissions = require("./routes/permissions");
-const organizations = require("./routes/organizations");
-const projects = require("./routes/projects");
+
 const swaggerUi = require("swagger-ui-express");
 const openapi = require("./openapi");
 const error = require("./error");
@@ -41,9 +39,15 @@ app.use("/metrics", metrics);
 setImmediate(() => {
   process.env.PROFILE === "TEST" && app.use(authorization.verify);
 
-  app.use("/projects", projects);
-  app.use("/organizations", organizations);
-  app.use("/permissions", permissions);
+  if (config.oauth) {
+    const permissions = require("./routes/permissions");
+    const organizations = require("./routes/organizations");
+    const projects = require("./routes/projects");
+
+    app.use("/projects", projects);
+    app.use("/organizations", organizations);
+    app.use("/permissions", permissions);
+  }
   app.use((req, res) => res.status(404).end());
   app.use(error.handle);
 });
