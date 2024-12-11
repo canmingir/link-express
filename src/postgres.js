@@ -5,6 +5,7 @@ const fs = require("fs");
 
 const {
   postgres: { uri, debug = false, sync },
+  project,
 } = config();
 
 const originalDestroy = Model.prototype.destroy;
@@ -44,42 +45,44 @@ const seed = async () => {
 
   const fileNames = fs.readdirSync(baseDir);
 
-  const Organization = require("./models/Organization");
-  const { seed: companiesSeed } = require("./seeds/Organization.json");
+  if (project) {
+    const Organization = require("./models/Organization");
+    const { seed: companiesSeed } = require("./seeds/Organization.json");
 
-  await Organization.bulkCreate(companiesSeed);
+    await Organization.bulkCreate(companiesSeed);
 
-  console.log(`[NUC] Loading internal seed data for Organization`);
+    console.log(`[NUC] Loading internal seed data for Organization`);
 
-  if (fs.existsSync(path.join(seedDir, "Organization.json"))) {
-    const seedData = require(path.join(seedDir, "Organization.json"));
-    const seed = seedData["seed"];
-    const model = require("./models/Organization");
-    model.bulkCreate(seed);
-    console.log(`[NUC] Loading seed data for Organization`);
+    if (fs.existsSync(path.join(seedDir, "Organization.json"))) {
+      const seedData = require(path.join(seedDir, "Organization.json"));
+      const seed = seedData["seed"];
+      const model = require("./models/Organization");
+      model.bulkCreate(seed);
+      console.log(`[NUC] Loading seed data for Organization`);
+    }
+
+    const Project = require("./models/Project");
+    const { seed: projectSeed } = require("./seeds/Project.json");
+
+    try {
+      const { seed: extProjectSeed } = require(path.join(
+        seedDir,
+        "Project.json"
+      ));
+
+      extProjectSeed && projectSeed.push(...extProjectSeed);
+
+      console.log(
+        `[NUC] Loading internal` +
+          (extProjectSeed ? ` and external` : "") +
+          ` seed data for Project`
+      );
+    } catch (error) {
+      console.log(`[NUC] Loading internal seed data for Project`);
+    }
+
+    Project.bulkCreate(projectSeed);
   }
-
-  const Project = require("./models/Project");
-  const { seed: projectSeed } = require("./seeds/Project.json");
-
-  try {
-    const { seed: extProjectSeed } = require(path.join(
-      seedDir,
-      "Project.json"
-    ));
-
-    extProjectSeed && projectSeed.push(...extProjectSeed);
-
-    console.log(
-      `[NUC] Loading internal` +
-        (extProjectSeed ? ` and external` : "") +
-        ` seed data for Project`
-    );
-  } catch (error) {
-    console.log(`[NUC] Loading internal seed data for Project`);
-  }
-
-  Project.bulkCreate(projectSeed);
 
   let fileSequences = [];
 
@@ -119,21 +122,25 @@ const seed = async () => {
       await model.bulkCreate(seed);
     });
 
-  const Permission = require("./models/Permission");
-  const { seed: permissionsSeed } = require("./seeds/Permission.json");
+  if (project) {
+    const Permission = require("./models/Permission");
+    const { seed: permissionsSeed } = require("./seeds/Permission.json");
 
-  try {
-    const { seed: extPermissionsSeed } = require(path.join(
-      seedDir,
-      "Permission.json"
-    ));
-    extPermissionsSeed && permissionsSeed.push(...extPermissionsSeed);
-    console.log(`[NUC] Loading internal and external seed data for Permission`);
-  } catch (error) {
-    console.log(`[NUC] Loading internal seed data for Permission`);
+    try {
+      const { seed: extPermissionsSeed } = require(path.join(
+        seedDir,
+        "Permission.json"
+      ));
+      extPermissionsSeed && permissionsSeed.push(...extPermissionsSeed);
+      console.log(
+        `[NUC] Loading internal and external seed data for Permission`
+      );
+    } catch (error) {
+      console.log(`[NUC] Loading internal seed data for Permission`);
+    }
+
+    await Permission.bulkCreate(permissionsSeed);
   }
-
-  await Permission.bulkCreate(permissionsSeed);
 };
 
 const associateModels = async () => {
@@ -143,7 +150,7 @@ const associateModels = async () => {
 
 if (sync) {
   setImmediate(async () => {
-    await associateModels();
+    project && (await associateModels());
     await sequelize.sync({ force: true });
     await seed();
   });

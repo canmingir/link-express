@@ -16,10 +16,25 @@ swaggerSpec.components = {
   schemas: {},
 };
 
-const schemas = require(`${process.cwd()}/src/schemas`);
-for (const schema in schemas) {
-  const { swagger } = j2s(schemas[schema]);
-  swaggerSpec.components.schemas[schema] = swagger;
+let schemas;
+try {
+  schemas = require(`${process.cwd()}/src/schemas`);
+} catch (error) {
+  console.warn("[NUC]: Could not load schemas");
+  schemas = {};
+}
+
+if (schemas && typeof schemas === "object") {
+  if (schemas.default) {
+    for (const schema in schemas) {
+      try {
+        const { swagger } = j2s(schemas[schema]);
+        swaggerSpec.components.schemas[schema] = swagger;
+      } catch (error) {
+        console.warn(`Warning: Failed to process schema "${schema}":`);
+      }
+    }
+  }
 }
 
 module.exports = swaggerSpec;

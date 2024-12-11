@@ -5,14 +5,14 @@ const axios = require("axios");
 const config = require("../config");
 const { AuthenticationError } = require("../error");
 const Permission = require("../models/Permission");
-const { oauth } = config();
+const { project } = config();
 
 router.post("/", async (req, res) => {
   let { appId, projectId, code, refreshToken, redirectUri } = Joi.attempt(
     req.body,
     Joi.object({
       appId: Joi.string().required(),
-      projectId: Joi.string().optional(),
+      projectId: Joi.string().optonal(),
       code: Joi.string().optional(),
       refreshToken: Joi.string().optional(),
       redirectUri: Joi.string().optional(),
@@ -25,14 +25,18 @@ router.post("/", async (req, res) => {
   }
   if (code && redirectUri) {
     const params = new URLSearchParams();
-    params.append("client_id", oauth.clientId);
+    params.append("client_id", project.oauth.clientId);
     params.append("client_secret", process.env.OAUTH_CLIENT_SECRET);
     params.append("code", code);
     params.append("redirect_uri", redirectUri);
     params.append("grant_type", "authorization_code");
-    const { data } = await axios.post(oauth.tokenUrl, params.toString(), {
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    });
+    const { data } = await axios.post(
+      project.oauth.tokenUrl,
+      params.toString(),
+      {
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      }
+    );
 
     const urlParams = new URLSearchParams(data);
 
@@ -43,13 +47,13 @@ router.post("/", async (req, res) => {
     refreshToken = urlParams.get("access_token");
   }
 
-  const { data } = await axios.get(oauth.userUrl, {
+  const { data } = await axios.get(project.oauth.userUrl, {
     headers: {
       Authorization: `Bearer ${refreshToken}`,
     },
   });
 
-  const userId = data[oauth.jwt.identifier].toString();
+  const userId = data[project.jwt.identifier].toString();
 
   let accessToken;
 
