@@ -12,6 +12,7 @@ const swaggerUi = require("swagger-ui-express");
 const openapi = require("./openapi");
 const error = require("./error");
 const authorization = require("./authorization");
+const settings = require("./routes/settings");
 
 const config = require("./config")();
 
@@ -47,7 +48,9 @@ setImmediate(() => {
     app.use("/projects", projects);
     app.use("/organizations", organizations);
     app.use("/permissions", permissions);
+    app.use("/projects/:projectId/settings", settings);
   }
+
   app.use((req, res) => res.status(404).end());
   app.use(error.handle);
 });
