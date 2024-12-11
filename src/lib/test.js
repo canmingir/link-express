@@ -2,7 +2,7 @@ require("dotenv").config({ path: ".env.test" });
 const { init } = require("../platform");
 
 init({
-  oauth: {
+  project: {
     jwt: {
       identifier: "email",
     },

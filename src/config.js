@@ -5,7 +5,7 @@ function init(config = {}) {
   _config = _.merge(
     {
       link: {},
-      oauth: null,
+      project: null,
       openapi: {},
       postgres: null,
       dynamodb: null,

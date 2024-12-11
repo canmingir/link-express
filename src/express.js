@@ -23,7 +23,7 @@ app.use(express.json(), (err, req, res, next) =>
   err ? res.status(422).end() : next()
 );
 
-if (config.oauth) {
+if (config.project) {
   const oauth = require("./routes/oauth");
   app.use(
     "/oauth",
@@ -39,7 +39,7 @@ app.use("/metrics", metrics);
 setImmediate(() => {
   process.env.PROFILE === "TEST" && app.use(authorization.verify);
 
-  if (config.oauth) {
+  if (config.project) {
     const permissions = require("./routes/permissions");
     const organizations = require("./routes/organizations");
     const projects = require("./routes/projects");

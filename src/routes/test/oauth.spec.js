@@ -7,7 +7,7 @@ const request = require("supertest");
 const jwt = require("jsonwebtoken");
 const { equal } = require("assert");
 const config = require("../../config");
-const { oauth } = config();
+const { project } = config();
 
 const axios = require("axios");
 const MockAdapter = require("axios-mock-adapter");
@@ -20,13 +20,13 @@ describe("OAuth", () => {
 
   it("returns accessToken and refreshToken with code", async () => {
     mock
-      .onPost(oauth.tokenUrl)
+      .onPost(project.tokenUrl)
       .reply(
         200,
         "access_token=c9Q2KuluvCGdM4YZiUnGWxImvuFnbv&scope=user&token_type=bearer"
       );
 
-    mock.onGet(oauth.userUrl).reply(200, { email: "1001" });
+    mock.onGet(project.userUrl).reply(200, { email: "1001" });
 
     const {
       body: { accessToken, refreshToken },
@@ -35,7 +35,7 @@ describe("OAuth", () => {
       .send({
         appId: "977f5f57-8936-4388-8eb0-00a512cf01cc",
         projectId: "cb16e069-6214-47f1-9922-1f7fe7629525",
-        redirectUri: oauth.redirectUri,
+        redirectUri: project.redirectUri,
         code: "vImIDQtMVcYnUCI3Brp6",
       })
       .expect(200);
@@ -52,7 +52,7 @@ describe("OAuth", () => {
   });
 
   it("returns accessToken and refreshToken with refresh token", async () => {
-    mock.onGet(oauth.userUrl).reply(200, { email: "liam@imaginecoffee.shop" });
+    mock.onGet(project.userUrl).reply(200, { email: "liam@imaginecoffee.shop" });
 
     const {
       body: { accessToken, refreshToken },
@@ -76,8 +76,8 @@ describe("OAuth", () => {
   });
 
   it("returns 401 if code is invalid", async () => {
-    mock.onPost(oauth.tokenUrl).reply(200, "error=bad_verification_code");
-    mock.onGet(oauth.userUrl).reply(401);
+    mock.onPost(project.tokenUrl).reply(200, "error=bad_verification_code");
+    mock.onGet(project.userUrl).reply(401);
 
     const res = await request(app).post("/oauth").send({
       appId: "977f5f57-8936-4388-8eb0-00a512cf01cc",
@@ -87,8 +87,8 @@ describe("OAuth", () => {
   });
 
   it("returns 503 if OAuth Provider is not accessible", async () => {
-    mock.onPost(oauth.tokenUrl).networkError();
-    mock.onGet(oauth.userUrl).networkError();
+    mock.onPost(project.tokenUrl).networkError();
+    mock.onGet(project.userUrl).networkError();
 
     await request(app)
       .post("/oauth")

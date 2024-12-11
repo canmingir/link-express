@@ -5,7 +5,7 @@ const fs = require("fs");
 
 const {
   postgres: { uri, debug = false, sync },
-  oauth,
+  project,
 } = config();
 
 const originalDestroy = Model.prototype.destroy;
@@ -45,7 +45,7 @@ const seed = async () => {
 
   const fileNames = fs.readdirSync(baseDir);
 
-  if (oauth) {
+  if (project) {
     const Organization = require("./models/Organization");
     const { seed: companiesSeed } = require("./seeds/Organization.json");
 
@@ -122,7 +122,7 @@ const seed = async () => {
       await model.bulkCreate(seed);
     });
 
-  if (oauth) {
+  if (project) {
     const Permission = require("./models/Permission");
     const { seed: permissionsSeed } = require("./seeds/Permission.json");
 
@@ -150,7 +150,7 @@ const associateModels = async () => {
 
 if (sync) {
   setImmediate(async () => {
-    oauth && (await associateModels());
+    project && (await associateModels());
     await sequelize.sync({ force: true });
     await seed();
   });
