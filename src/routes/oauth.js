@@ -12,7 +12,7 @@ router.post("/", async (req, res) => {
     req.body,
     Joi.object({
       appId: Joi.string().required(),
-      projectId: Joi.string().optonal(),
+      projectId: Joi.string().optional(),
       code: Joi.string().optional(),
       refreshToken: Joi.string().optional(),
       redirectUri: Joi.string().optional(),
