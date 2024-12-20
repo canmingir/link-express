@@ -3,10 +3,10 @@ const { init } = require("../platform");
 
 init({
   project: {
-    jwt: {
-      identifier: "email",
-    },
     oauth: {
+      jwt: {
+        identifier: "email",
+      },
       tokenUrl: "https://github.com/login/oauth/access_token",
       userUrl: "https://api.github.com/user",
       clientId: "0c2844d3d19dc9293fc5",
