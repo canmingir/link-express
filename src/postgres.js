@@ -140,6 +140,22 @@ const seed = async () => {
     }
 
     await Permission.bulkCreate(permissionsSeed);
+
+    const Settings = require("./models/Settings");
+    const { seed: settingsSeed } = require("./seeds/Settings.json");
+
+    try {
+      const { seed: extSettingsSeed } = require(path.join(
+        seedDir,
+        "Settings.json"
+      ));
+      extSettingsSeed && settingsSeed.push(...extSettingsSeed);
+      console.log(`[NUC] Loading internal and external seed data for Settings`);
+    } catch (error) {
+      console.log(`[NUC] Loading internal seed data for Settings`);
+    }
+
+    await Settings.bulkCreate(settingsSeed);
   }
 };
 
