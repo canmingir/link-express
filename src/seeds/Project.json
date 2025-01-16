@@ -19,14 +19,14 @@
             "id": "e6d4744d-a11b-4c75-acad-e24a02903729",
             "name": "Good Galactic Customer Service Team",
             "coach": "Emily",
-            "icon": ":ph:bank-duotone:",
+            "icon": ":ph:Galactic-duotone:",
             "organizationId": "1c063446-7e78-432a-a273-34f481d0f0c3"
         },
         {
             "id": "0c756054-2d28-4f87-9b12-8023a79136a5",
             "name": "Good Galactic Corp.",
-            "description": "The most trusted banking institution in the Core Worlds, with secure vaults that would impress even the Empire.",
-            "icon": ":ph:bank-duotone:",
+            "description": "The most trusted Galacticing institution in the Core Worlds, with secure vaults that would impress even the Empire.",
+            "icon": ":ph:Galactic-duotone:",
             "type": "MULTI",
             "organizationId": "1c063446-7e78-432a-a273-34f481d0f0c3"
         },
