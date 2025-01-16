@@ -54,7 +54,7 @@ describe("OAuth", () => {
   it("returns accessToken and refreshToken with refresh token", async () => {
     mock
       .onGet(project.oauth.userUrl)
-      .reply(200, { email: "liam@imaginecoffee.shop" });
+      .reply(200, { email: "liam@Rebellioncoffee.shop" });
 
     const {
       body: { accessToken, refreshToken },
@@ -68,7 +68,7 @@ describe("OAuth", () => {
 
     const payload = jwt.decode(accessToken);
 
-    equal(payload.sub, "liam@imaginecoffee.shop");
+    equal(payload.sub, "liam@Rebellioncoffee.shop");
     equal(payload.iss, "nuc");
     equal(refreshToken, "lzk7FZGga5hHrfiAePtswijiJHIOev");
   });

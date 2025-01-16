@@ -16,11 +16,11 @@ describe("Organization", () => {
     deepEqual(res, [
       {
         id: "dfb990bb-81dd-4584-82ce-050eb8f6a12f",
-        name: "Imagine Coffee Shop",
+        name: "Rebellion Coffee Shop",
       },
       {
         id: "1c063446-7e78-432a-a273-34f481d0f0c3",
-        name: "Good Bank Corp.",
+        name: "Good Galactic Corp.",
       },
       {
         id: "5459ab03-204a-4627-bdde-667b7802cb35",
@@ -35,7 +35,7 @@ describe("Organization", () => {
       .expect(200);
     deepEqual(res, {
       id: "dfb990bb-81dd-4584-82ce-050eb8f6a12f",
-      name: "Imagine Coffee Shop",
+      name: "Rebellion Coffee Shop",
     });
   });
 });

@@ -15,8 +15,9 @@ describe("Project", () => {
     const { body: project } = await request(app)
       .post("/projects")
       .send({
-        name: "NEW Imagine Coffee Shop",
-        description: "NEW A coffee shop that serves the best coffee in town.",
+        name: "NEW Rebellion Coffee Shop",
+        description:
+          "NEW The finest cantina-style coffee shop this side of Mos Eisley, serving premium caf brewed from beans grown in the forests of Kashyyyk.",
         icon: ":NEWcoffee:",
       })
       .expect(201);
@@ -26,33 +27,36 @@ describe("Project", () => {
     deepEqual(projects, [
       {
         id: "cb16e069-6214-47f1-9922-1f7fe7629525",
-        name: "Imagine Coffee Shop",
+        name: "Rebellion Coffee Shop",
         icon: ":ph:coffee-bean-duotone:",
-        description: "A coffee shop that serves the best coffee in town.",
+        description:
+          "The finest cantina-style coffee shop this side of Mos Eisley, serving premium caf brewed from beans grown in the forests of Kashyyyk.",
         type: "SINGLE",
         coach: null,
         organization: {
           id: "dfb990bb-81dd-4584-82ce-050eb8f6a12f",
-          name: "Imagine Coffee Shop",
+          name: "Rebellion Coffee Shop",
         },
       },
       {
         id: "0c756054-2d28-4f87-9b12-8023a79136a5",
-        name: "Good Bank Corp.",
-        icon: ":ph:bank-duotone:",
-        description: "The best bank on the planet.",
+        name: "Good Galactic Corp.",
+        icon: ":ph:Galactic-duotone:",
+        description:
+          "The most trusted Galacticing institution in the Core Worlds, with secure vaults that would impress even the Empire.",
         type: "MULTI",
         coach: null,
         organization: {
           id: "1c063446-7e78-432a-a273-34f481d0f0c3",
-          name: "Good Bank Corp.",
+          name: "Good Galactic Corp.",
         },
       },
       {
         id: "21d2530b-4657-4ac0-b8cd-1a9f82786e32",
         name: "Fire Logistics",
         icon: ":ph:fire-simple-duotone:",
-        description: "A logistics organization that delivers goods on time.",
+        description:
+          "The fastest cargo haulers in the Outer Rim, making the Kessel Run in under twelve parsecs.",
         type: "SINGLE",
         coach: null,
         organization: {
@@ -62,14 +66,15 @@ describe("Project", () => {
       },
       {
         id: project.id,
-        name: "NEW Imagine Coffee Shop",
+        name: "NEW Rebellion Coffee Shop",
         icon: ":NEWcoffee:",
-        description: "NEW A coffee shop that serves the best coffee in town.",
+        description:
+          "NEW The finest cantina-style coffee shop this side of Mos Eisley, serving premium caf brewed from beans grown in the forests of Kashyyyk.",
         type: null,
         coach: null,
         organization: {
           id: project.organizationId,
-          name: "NEW Imagine Coffee Shop Org",
+          name: "NEW Rebellion Coffee Shop Org",
         },
       },
     ]);
@@ -82,33 +87,36 @@ describe("Project", () => {
     deepEqual(res, [
       {
         id: "cb16e069-6214-47f1-9922-1f7fe7629525",
-        name: "Imagine Coffee Shop",
+        name: "Rebellion Coffee Shop",
         icon: ":ph:coffee-bean-duotone:",
-        description: "A coffee shop that serves the best coffee in town.",
+        description:
+          "The finest cantina-style coffee shop this side of Mos Eisley, serving premium caf brewed from beans grown in the forests of Kashyyyk.",
         type: "SINGLE",
         coach: null,
         organization: {
           id: "dfb990bb-81dd-4584-82ce-050eb8f6a12f",
-          name: "Imagine Coffee Shop",
+          name: "Rebellion Coffee Shop",
         },
       },
       {
         id: "0c756054-2d28-4f87-9b12-8023a79136a5",
-        name: "Good Bank Corp.",
-        icon: ":ph:bank-duotone:",
-        description: "The best bank on the planet.",
+        name: "Good Galactic Corp.",
+        icon: ":ph:Galactic-duotone:",
+        description:
+          "The most trusted Galacticing institution in the Core Worlds, with secure vaults that would impress even the Empire.",
         type: "MULTI",
         coach: null,
         organization: {
           id: "1c063446-7e78-432a-a273-34f481d0f0c3",
-          name: "Good Bank Corp.",
+          name: "Good Galactic Corp.",
         },
       },
       {
         id: "21d2530b-4657-4ac0-b8cd-1a9f82786e32",
         name: "Fire Logistics",
         icon: ":ph:fire-simple-duotone:",
-        description: "A logistics organization that delivers goods on time.",
+        description:
+          "The fastest cargo haulers in the Outer Rim, making the Kessel Run in under twelve parsecs.",
         type: "SINGLE",
         coach: null,
         organization: {
@@ -125,7 +133,7 @@ describe("Project", () => {
       .expect(200);
     deepEqual(res, {
       id: "add6dfa4-45ba-4da2-bc5c-5a529610b52f",
-      name: "Imagine Coffee Shop Team",
+      name: "Rebellion Coffee Shop Team",
       coach: "Elijah",
       icon: ":ph:coffee-bean-duotone:",
       organizationId: "dfb990bb-81dd-4584-82ce-050eb8f6a12f",
@@ -144,7 +152,7 @@ describe("Project", () => {
     await request(app)
       .patch("/projects/add6dfa4-45ba-4da2-bc5c-5a529610b52f")
       .send({
-        name: "Updated Imagine Coffee Shop Team",
+        name: "Updated Rebellion Coffee Shop Team",
         coach: "updated Elijah",
         icon: ":NEWbeans:",
       })
@@ -156,7 +164,7 @@ describe("Project", () => {
 
     deepEqual(updatedProject, {
       id: "add6dfa4-45ba-4da2-bc5c-5a529610b52f",
-      name: "Updated Imagine Coffee Shop Team",
+      name: "Updated Rebellion Coffee Shop Team",
       coach: "updated Elijah",
       icon: ":NEWbeans:",
       organizationId: "dfb990bb-81dd-4584-82ce-050eb8f6a12f",
