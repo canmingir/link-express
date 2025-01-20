@@ -41,7 +41,7 @@ describe("Project", () => {
       {
         id: "0c756054-2d28-4f87-9b12-8023a79136a5",
         name: "Good Galactic Corp.",
-        icon: ":ph:Galactic-duotone:",
+        icon: ":fa6-brands:galactic-republic:",
         description:
           "The most trusted Galacticing institution in the Core Worlds, with secure vaults that would impress even the Empire.",
         type: "MULTI",
@@ -101,7 +101,7 @@ describe("Project", () => {
       {
         id: "0c756054-2d28-4f87-9b12-8023a79136a5",
         name: "Good Galactic Corp.",
-        icon: ":ph:Galactic-duotone:",
+        icon: ":fa6-brands:galactic-republic:",
         description:
           "The most trusted Galacticing institution in the Core Worlds, with secure vaults that would impress even the Empire.",
         type: "MULTI",
