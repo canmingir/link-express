@@ -91,6 +91,7 @@ async function reset() {
     orderedSeeds
       .sort((a, b) => a.sequence - b.sequence)
       .forEach(async ({ seed, modelName }) => {
+        if (modelName === "Project") return;
         const model = require(path.join(modelsDir, modelName));
         await model.bulkCreate(seed);
       });
