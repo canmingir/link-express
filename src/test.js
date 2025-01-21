@@ -49,8 +49,12 @@ async function reset() {
       return;
     }
 
-    const model = require(path.join(modelsDir, fileName));
-    await model.destroy({ truncate: true });
+    try {
+      const model = require(path.join(modelsDir, fileName));
+      await model.destroy({ truncate: true });
+    } catch (err) {
+      // Empty
+    }
   });
 
   async function seed() {
