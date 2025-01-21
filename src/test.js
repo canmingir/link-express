@@ -45,10 +45,11 @@ async function reset() {
   const modelFileNames = fs.readdirSync(modelsDir);
 
   modelFileNames.forEach(async (fileName) => {
-    if (fileName === "index.js") return;
-    if (fileName === "models.js") return;
-    const model = require(path.join(modelsDir, fileName));
+    if (["index.js", "index.ts", "models.js", "models.ts"].includes(fileName)) {
+      return;
+    }
 
+    const model = require(path.join(modelsDir, fileName));
     await model.destroy({ truncate: true });
   });
 
