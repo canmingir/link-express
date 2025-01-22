@@ -1,5 +1,6 @@
 const fs = require("fs");
 const authorization = require("./authorization");
+const error = require("./error");
 
 let _express;
 let _postgres;
@@ -41,4 +42,5 @@ module.exports = {
   }),
   require: (pkg) => require(pkg),
   authorization,
+  error,
 };
