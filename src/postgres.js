@@ -3,6 +3,8 @@ const config = require("./config");
 const path = require("path");
 const fs = require("fs");
 
+require("dotenv").config();
+
 const {
   postgres: { uri, debug = false, sync },
   project,
