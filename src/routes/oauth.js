@@ -64,7 +64,7 @@ router.post("/", async (req, res) => {
 
     if (!permissions.length) {
       accessToken = jwt.sign(
-        { sub: userId, iss: "nuc" },
+        { sub: userId, iss: "nuc", aid: appId },
         process.env.JWT_SECRET,
         {
           expiresIn: "12h",
