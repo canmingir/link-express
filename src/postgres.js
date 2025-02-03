@@ -29,7 +29,6 @@ const sequelize = new Sequelize(process.env.PG || uri, {
 
 const seed = async () => {
   const currentWorkingDirectory = process.cwd();
-
   const baseDir = path.join(currentWorkingDirectory, "src", "models");
   const seedDir = path.join(currentWorkingDirectory, "src", "seeds");
 
@@ -39,123 +38,143 @@ const seed = async () => {
   }
 
   if (!fs.existsSync(baseDir)) {
-    console.error(`[NUC] Model directory not found at path: ${seedDir}`);
+    console.error(`[NUC] Model directory not found at path: ${baseDir}`);
     return;
   }
 
-  const fileNames = fs.readdirSync(baseDir);
+  let transaction = await sequelize.transaction();
 
-  if (project) {
-    const Organization = require("./models/Organization");
-    const { seed: companiesSeed } = require("./seeds/Organization.json");
+  try {
+    if (project) {
+      const Organization = require("./models/Organization");
+      const { seed: companiesSeed } = require("./seeds/Organization.json");
 
-    await Organization.bulkCreate(companiesSeed);
+      await Organization.bulkCreate(companiesSeed, { transaction });
+      console.log(`[NUC] Loading internal seed data for Organization`);
 
-    console.log(`[NUC] Loading internal seed data for Organization`);
+      if (fs.existsSync(path.join(seedDir, "Organization.json"))) {
+        const seedData = require(path.join(seedDir, "Organization.json"));
+        const seed = seedData["seed"];
+        await Organization.bulkCreate(seed, { transaction });
+        console.log(`[NUC] Loading seed data for Organization`);
+      }
 
-    if (fs.existsSync(path.join(seedDir, "Organization.json"))) {
-      const seedData = require(path.join(seedDir, "Organization.json"));
-      const seed = seedData["seed"];
-      const model = require("./models/Organization");
-      model.bulkCreate(seed);
-      console.log(`[NUC] Loading seed data for Organization`);
+      const Project = require("./models/Project");
+      const { seed: projectSeed } = require("./seeds/Project.json");
+
+      try {
+        const { seed: extProjectSeed } = require(path.join(
+          seedDir,
+          "Project.json"
+        ));
+        if (extProjectSeed) {
+          projectSeed.push(...extProjectSeed);
+        }
+        console.log(
+          `[NUC] Loading internal${
+            extProjectSeed ? " and external" : ""
+          } seed data for Project`
+        );
+      } catch (error) {
+        console.log(`[NUC] Loading internal seed data for Project`);
+      }
+
+      await Project.bulkCreate(projectSeed, { transaction });
     }
 
-    const Project = require("./models/Project");
-    const { seed: projectSeed } = require("./seeds/Project.json");
-
-    try {
-      const { seed: extProjectSeed } = require(path.join(
-        seedDir,
-        "Project.json"
-      ));
-
-      extProjectSeed && projectSeed.push(...extProjectSeed);
-
-      console.log(
-        `[NUC] Loading internal` +
-          (extProjectSeed ? ` and external` : "") +
-          ` seed data for Project`
+    const fileNames = fs
+      .readdirSync(baseDir)
+      .filter(
+        (fileName) =>
+          path.extname(fileName) === ".js" &&
+          !["index.js", "models.js"].includes(fileName)
       );
-    } catch (error) {
-      console.log(`[NUC] Loading internal seed data for Project`);
-    }
 
-    Project.bulkCreate(projectSeed);
-  }
+    const fileSequences = fileNames
+      .map((fileName) => {
+        const seedName = fileName.split(".")[0];
+        const seederPath = path.join(seedDir, `${seedName}.json`);
 
-  let fileSequences = [];
+        if (fs.existsSync(seederPath)) {
+          const seedData = require(seederPath);
+          return { sequence: seedData.sequence, fileName };
+        }
+        return null;
+      })
+      .filter(Boolean)
+      .sort((a, b) => a.sequence - b.sequence);
 
-  fileNames.forEach((fileName) => {
-    if (path.extname(fileName) !== ".js") return;
-    if (fileName === "index.js" || fileName === "models.js") return;
-
-    let seedName = `${fileName.split(".")[0]}`;
-    const seederPath = path.join(seedDir, `${seedName}.json`);
-
-    if (fs.existsSync(seederPath)) {
-      let seedData = require(seederPath);
-      fileSequences.push({ sequence: seedData.sequence, fileName });
-    }
-  });
-
-  fileSequences
-    .sort((a, b) => a.sequence - b.sequence)
-    .forEach(async ({ fileName }) => {
-      let seedName = `${fileName.split(".")[0]}`;
+    for (const { fileName } of fileSequences) {
+      const seedName = fileName.split(".")[0];
       const seederPath = path.join(seedDir, `${seedName}.json`);
       const filePath = path.join(baseDir, fileName);
 
-      const model = require(filePath);
-      let seedData;
+      try {
+        const model = require(filePath);
+        const seedData = require(seederPath);
+        const seed = seedData["seed"];
 
-      if (fs.existsSync(seederPath)) {
-        seedData = require(seederPath);
         console.log(`[NUC] Loading seed data for ${fileName}`);
-      } else {
-        console.error(`[NUC] Failed to load seed data from ${seederPath}`);
-        return;
+        await model.bulkCreate(seed, { transaction });
+      } catch (error) {
+        console.error(`[NUC] Error loading seed data for ${fileName}:`, error);
+        throw error;
+      }
+    }
+
+    if (project) {
+      const Permission = require("./models/Permission");
+      const { seed: permissionsSeed } = require("./seeds/Permission.json");
+
+      try {
+        const { seed: extPermissionsSeed } = require(path.join(
+          seedDir,
+          "Permission.json"
+        ));
+        if (extPermissionsSeed) {
+          permissionsSeed.push(...extPermissionsSeed);
+        }
+        console.log(
+          `[NUC] Loading internal${
+            extPermissionsSeed ? " and external" : ""
+          } seed data for Permission`
+        );
+      } catch (error) {
+        console.log(`[NUC] Loading internal seed data for Permission`);
       }
 
-      const seed = seedData["seed"];
+      await Permission.bulkCreate(permissionsSeed, { transaction });
 
-      await model.bulkCreate(seed);
-    });
+      const Settings = require("./models/Settings");
+      const { seed: settingsSeed } = require("./seeds/Settings.json");
 
-  if (project) {
-    const Permission = require("./models/Permission");
-    const { seed: permissionsSeed } = require("./seeds/Permission.json");
+      try {
+        const { seed: extSettingsSeed } = require(path.join(
+          seedDir,
+          "Settings.json"
+        ));
+        if (extSettingsSeed) {
+          settingsSeed.push(...extSettingsSeed);
+        }
+        console.log(
+          `[NUC] Loading internal${
+            extSettingsSeed ? " and external" : ""
+          } seed data for Settings`
+        );
+      } catch (error) {
+        console.log(`[NUC] Loading internal seed data for Settings`);
+      }
 
-    try {
-      const { seed: extPermissionsSeed } = require(path.join(
-        seedDir,
-        "Permission.json"
-      ));
-      extPermissionsSeed && permissionsSeed.push(...extPermissionsSeed);
-      console.log(
-        `[NUC] Loading internal and external seed data for Permission`
-      );
-    } catch (error) {
-      console.log(`[NUC] Loading internal seed data for Permission`);
+      await Settings.bulkCreate(settingsSeed, { transaction });
     }
 
-    await Permission.bulkCreate(permissionsSeed);
-
-    const Settings = require("./models/Settings");
-    const { seed: settingsSeed } = require("./seeds/Settings.json");
-
-    try {
-      const { seed: extSettingsSeed } = require(path.join(
-        seedDir,
-        "Settings.json"
-      ));
-      extSettingsSeed && settingsSeed.push(...extSettingsSeed);
-      console.log(`[NUC] Loading internal and external seed data for Settings`);
-    } catch (error) {
-      console.log(`[NUC] Loading internal seed data for Settings`);
+    await transaction.commit();
+  } catch (error) {
+    if (transaction && !transaction.finished) {
+      await transaction.rollback();
     }
-
-    await Settings.bulkCreate(settingsSeed);
+    console.error("[NUC] Error during seed operation:", error);
+    throw error;
   }
 };
 
