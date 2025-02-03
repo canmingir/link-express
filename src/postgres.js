@@ -42,17 +42,20 @@ const seed = async () => {
     return;
   }
 
+  let transaction = await sequelize.transaction();
+
   try {
     if (project) {
       const Organization = require("./models/Organization");
       const { seed: companiesSeed } = require("./seeds/Organization.json");
-      await Organization.bulkCreate(companiesSeed);
+
+      await Organization.bulkCreate(companiesSeed, { transaction });
       console.log(`[NUC] Loading internal seed data for Organization`);
 
       if (fs.existsSync(path.join(seedDir, "Organization.json"))) {
         const seedData = require(path.join(seedDir, "Organization.json"));
         const seed = seedData["seed"];
-        await Organization.bulkCreate(seed);
+        await Organization.bulkCreate(seed, { transaction });
         console.log(`[NUC] Loading seed data for Organization`);
       }
 
@@ -76,8 +79,7 @@ const seed = async () => {
         console.log(`[NUC] Loading internal seed data for Project`);
       }
 
-      await Project.bulkCreate(projectSeed);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await Project.bulkCreate(projectSeed, { transaction });
     }
 
     const fileNames = fs
@@ -113,10 +115,10 @@ const seed = async () => {
         const seed = seedData["seed"];
 
         console.log(`[NUC] Loading seed data for ${fileName}`);
-        await model.bulkCreate(seed);
-        await new Promise((resolve) => setTimeout(resolve, 500));
+        await model.bulkCreate(seed, { transaction });
       } catch (error) {
         console.error(`[NUC] Error loading seed data for ${fileName}:`, error);
+        throw error;
       }
     }
 
@@ -141,7 +143,7 @@ const seed = async () => {
         console.log(`[NUC] Loading internal seed data for Permission`);
       }
 
-      await Permission.bulkCreate(permissionsSeed);
+      await Permission.bulkCreate(permissionsSeed, { transaction });
 
       const Settings = require("./models/Settings");
       const { seed: settingsSeed } = require("./seeds/Settings.json");
@@ -163,9 +165,14 @@ const seed = async () => {
         console.log(`[NUC] Loading internal seed data for Settings`);
       }
 
-      await Settings.bulkCreate(settingsSeed);
+      await Settings.bulkCreate(settingsSeed, { transaction });
     }
+
+    await transaction.commit();
   } catch (error) {
+    if (transaction && !transaction.finished) {
+      await transaction.rollback();
+    }
     console.error("[NUC] Error during seed operation:", error);
     throw error;
   }
