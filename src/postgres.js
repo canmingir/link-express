@@ -29,6 +29,7 @@ const sequelize = new Sequelize(process.env.PG || uri, {
 
 const seed = async () => {
   const currentWorkingDirectory = process.cwd();
+
   const baseDir = path.join(currentWorkingDirectory, "src", "models");
   const seedDir = path.join(currentWorkingDirectory, "src", "seeds");
 
@@ -38,136 +39,123 @@ const seed = async () => {
   }
 
   if (!fs.existsSync(baseDir)) {
-    console.error(`[NUC] Model directory not found at path: ${baseDir}`);
+    console.error(`[NUC] Model directory not found at path: ${seedDir}`);
     return;
   }
 
-  try {
-    if (project) {
-      const Organization = require("./models/Organization");
-      const { seed: companiesSeed } = require("./seeds/Organization.json");
-      await Organization.bulkCreate(companiesSeed);
-      console.log(`[NUC] Loading internal seed data for Organization`);
+  const fileNames = fs.readdirSync(baseDir);
 
-      if (fs.existsSync(path.join(seedDir, "Organization.json"))) {
-        const seedData = require(path.join(seedDir, "Organization.json"));
-        const seed = seedData["seed"];
-        await Organization.bulkCreate(seed);
-        console.log(`[NUC] Loading seed data for Organization`);
-      }
+  if (project) {
+    const Organization = require("./models/Organization");
+    const { seed: companiesSeed } = require("./seeds/Organization.json");
 
-      const Project = require("./models/Project");
-      const { seed: projectSeed } = require("./seeds/Project.json");
+    await Organization.bulkCreate(companiesSeed);
 
-      try {
-        const { seed: extProjectSeed } = require(path.join(
-          seedDir,
-          "Project.json"
-        ));
-        if (extProjectSeed) {
-          projectSeed.push(...extProjectSeed);
-        }
-        console.log(
-          `[NUC] Loading internal${
-            extProjectSeed ? " and external" : ""
-          } seed data for Project`
-        );
-      } catch (error) {
-        console.log(`[NUC] Loading internal seed data for Project`);
-      }
+    console.log(`[NUC] Loading internal seed data for Organization`);
 
-      await Project.bulkCreate(projectSeed);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+    if (fs.existsSync(path.join(seedDir, "Organization.json"))) {
+      const seedData = require(path.join(seedDir, "Organization.json"));
+      const seed = seedData["seed"];
+      const model = require("./models/Organization");
+      model.bulkCreate(seed);
+      console.log(`[NUC] Loading seed data for Organization`);
     }
 
-    const fileNames = fs
-      .readdirSync(baseDir)
-      .filter(
-        (fileName) =>
-          path.extname(fileName) === ".js" &&
-          !["index.js", "models.js"].includes(fileName)
+    const Project = require("./models/Project");
+    const { seed: projectSeed } = require("./seeds/Project.json");
+
+    try {
+      const { seed: extProjectSeed } = require(path.join(
+        seedDir,
+        "Project.json"
+      ));
+
+      extProjectSeed && projectSeed.push(...extProjectSeed);
+
+      console.log(
+        `[NUC] Loading internal` +
+          (extProjectSeed ? ` and external` : "") +
+          ` seed data for Project`
       );
+    } catch (error) {
+      console.log(`[NUC] Loading internal seed data for Project`);
+    }
 
-    const fileSequences = fileNames
-      .map((fileName) => {
-        const seedName = fileName.split(".")[0];
-        const seederPath = path.join(seedDir, `${seedName}.json`);
+    Project.bulkCreate(projectSeed);
+  }
 
-        if (fs.existsSync(seederPath)) {
-          const seedData = require(seederPath);
-          return { sequence: seedData.sequence, fileName };
-        }
-        return null;
-      })
-      .filter(Boolean)
-      .sort((a, b) => a.sequence - b.sequence);
+  let fileSequences = [];
 
-    for (const { fileName } of fileSequences) {
-      const seedName = fileName.split(".")[0];
+  fileNames.forEach((fileName) => {
+    if (path.extname(fileName) !== ".js") return;
+    if (fileName === "index.js" || fileName === "models.js") return;
+
+    let seedName = `${fileName.split(".")[0]}`;
+    const seederPath = path.join(seedDir, `${seedName}.json`);
+
+    if (fs.existsSync(seederPath)) {
+      let seedData = require(seederPath);
+      fileSequences.push({ sequence: seedData.sequence, fileName });
+    }
+  });
+
+  fileSequences
+    .sort((a, b) => a.sequence - b.sequence)
+    .forEach(async ({ fileName }) => {
+      let seedName = `${fileName.split(".")[0]}`;
       const seederPath = path.join(seedDir, `${seedName}.json`);
       const filePath = path.join(baseDir, fileName);
 
-      try {
-        const model = require(filePath);
-        const seedData = require(seederPath);
-        const seed = seedData["seed"];
+      const model = require(filePath);
+      let seedData;
 
+      if (fs.existsSync(seederPath)) {
+        seedData = require(seederPath);
         console.log(`[NUC] Loading seed data for ${fileName}`);
-        await model.bulkCreate(seed);
-        await new Promise((resolve) => setTimeout(resolve, 500));
-      } catch (error) {
-        console.error(`[NUC] Error loading seed data for ${fileName}:`, error);
+      } else {
+        console.error(`[NUC] Failed to load seed data from ${seederPath}`);
+        return;
       }
+
+      const seed = seedData["seed"];
+
+      await model.bulkCreate(seed);
+    });
+
+  if (project) {
+    const Permission = require("./models/Permission");
+    const { seed: permissionsSeed } = require("./seeds/Permission.json");
+
+    try {
+      const { seed: extPermissionsSeed } = require(path.join(
+        seedDir,
+        "Permission.json"
+      ));
+      extPermissionsSeed && permissionsSeed.push(...extPermissionsSeed);
+      console.log(
+        `[NUC] Loading internal and external seed data for Permission`
+      );
+    } catch (error) {
+      console.log(`[NUC] Loading internal seed data for Permission`);
     }
 
-    if (project) {
-      const Permission = require("./models/Permission");
-      const { seed: permissionsSeed } = require("./seeds/Permission.json");
+    await Permission.bulkCreate(permissionsSeed);
 
-      try {
-        const { seed: extPermissionsSeed } = require(path.join(
-          seedDir,
-          "Permission.json"
-        ));
-        if (extPermissionsSeed) {
-          permissionsSeed.push(...extPermissionsSeed);
-        }
-        console.log(
-          `[NUC] Loading internal${
-            extPermissionsSeed ? " and external" : ""
-          } seed data for Permission`
-        );
-      } catch (error) {
-        console.log(`[NUC] Loading internal seed data for Permission`);
-      }
+    const Settings = require("./models/Settings");
+    const { seed: settingsSeed } = require("./seeds/Settings.json");
 
-      await Permission.bulkCreate(permissionsSeed);
-
-      const Settings = require("./models/Settings");
-      const { seed: settingsSeed } = require("./seeds/Settings.json");
-
-      try {
-        const { seed: extSettingsSeed } = require(path.join(
-          seedDir,
-          "Settings.json"
-        ));
-        if (extSettingsSeed) {
-          settingsSeed.push(...extSettingsSeed);
-        }
-        console.log(
-          `[NUC] Loading internal${
-            extSettingsSeed ? " and external" : ""
-          } seed data for Settings`
-        );
-      } catch (error) {
-        console.log(`[NUC] Loading internal seed data for Settings`);
-      }
-
-      await Settings.bulkCreate(settingsSeed);
+    try {
+      const { seed: extSettingsSeed } = require(path.join(
+        seedDir,
+        "Settings.json"
+      ));
+      extSettingsSeed && settingsSeed.push(...extSettingsSeed);
+      console.log(`[NUC] Loading internal and external seed data for Settings`);
+    } catch (error) {
+      console.log(`[NUC] Loading internal seed data for Settings`);
     }
-  } catch (error) {
-    console.error("[NUC] Error during seed operation:", error);
-    throw error;
+
+    await Settings.bulkCreate(settingsSeed);
   }
 };
 
