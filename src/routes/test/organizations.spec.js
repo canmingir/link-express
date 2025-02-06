@@ -11,6 +11,17 @@ describe("Organization", () => {
     await test.reset();
   });
 
+  it("creates organization", async () => {
+    const { body: res } = await request(app)
+      .post("/organizations")
+      .send({ name: "New Organization" })
+      .expect(201);
+    deepEqual(res, {
+      id: "f5c3d8d9-4b0e-4d2f-8b3b-9e3f4e5b4e8b",
+      name: "New Organization",
+    });
+  });
+
   it("lists organizations", async () => {
     const { body: res } = await request(app).get("/organizations").expect(200);
     deepEqual(res, [
