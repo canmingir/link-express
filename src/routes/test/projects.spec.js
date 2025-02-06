@@ -19,6 +19,7 @@ describe("Project", () => {
         description:
           "NEW The finest cantina-style coffee shop this side of Mos Eisley, serving premium caf brewed from beans grown in the forests of Kashyyyk.",
         icon: ":NEWcoffee:",
+        organizationId: "dfb990bb-81dd-4584-82ce-050eb8f6a12f",
       })
       .expect(201);
 
@@ -73,8 +74,8 @@ describe("Project", () => {
         type: null,
         coach: null,
         organization: {
-          id: project.organizationId,
-          name: "NEW Rebellion Coffee Shop Org",
+          id: "dfb990bb-81dd-4584-82ce-050eb8f6a12f",
+          name: "Rebellion Coffee Shop",
         },
       },
     ]);
