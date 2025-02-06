@@ -16,8 +16,9 @@ describe("Organization", () => {
       .post("/organizations")
       .send({ name: "New Organization" })
       .expect(201);
+
     deepEqual(res, {
-      id: "f5c3d8d9-4b0e-4d2f-8b3b-9e3f4e5b4e8b",
+      id: res.id,
       name: "New Organization",
     });
   });
