@@ -1,6 +1,14 @@
 const router = require("express").Router();
 const Organization = require("../models/Organization");
 
+router.post("/", async (req, res) => {
+  const organization = req.body;
+
+  Organization.create(organization).then((organization) => {
+    res.status(201).json(organization);
+  });
+});
+
 router.get("/", async (req, res) => {
   Organization.findAll().then((organizations) => {
     res.status(200).json(organizations);

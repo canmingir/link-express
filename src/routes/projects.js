@@ -9,21 +9,15 @@ const config = require("../config");
 router.post("/", async (req, res) => {
   const project = Joi.attempt(req.body, schemas.Project);
 
-  const organization = await Organization.create({
-    name: `${project.name} Org`,
-  });
-
   if (config.link && config.link.project) {
     Joi.attempt(project.type, config.link.project.type);
   }
-
-  project.organizationId = organization.id;
 
   const projectInstance = await Project.create(project);
 
   await Permission.create({
     userId: req.session.userId,
-    organizationId: organization.id,
+    organizationId: project.organizationId,
     role: "OWNER",
     projectId: projectInstance.id,
     appId: req.session.appId,
