@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const Organization = require("../models/Organization");
+const Permission = require("../models/Permission");
 
 router.post("/", async (req, res) => {
   const organization = req.body;
@@ -10,9 +11,20 @@ router.post("/", async (req, res) => {
 });
 
 router.get("/", async (req, res) => {
-  Organization.findAll().then((organizations) => {
-    res.status(200).json(organizations);
+  const { userId } = req.session;
+
+  const organizations = await Organization.findAll({
+    include: [
+      {
+        model: Permission,
+        as: "permissions",
+        where: { userId },
+        attributes: [],
+      },
+    ],
   });
+
+  res.status(200).json(organizations);
 });
 
 router.get("/:id", async (req, res) => {
