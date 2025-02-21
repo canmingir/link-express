@@ -12,6 +12,16 @@ async function init() {
     return false;
   }
 
+  Organization.hasMany(Permission, {
+    foreignKey: "organizationId",
+    as: "permissions",
+  });
+
+  Permission.belongsTo(Organization, {
+    foreignKey: "organizationId",
+    as: "organization",
+  });
+
   Project.belongsTo(Organization, {
     foreignKey: "organizationId",
     as: "organization",
