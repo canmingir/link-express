@@ -124,7 +124,7 @@ const seed = async () => {
 
     if (project) {
       const Permission = require("./models/Permission");
-      let permissionsSeed = [];
+      const { seed: permissionsSeed } = require("./seeds/Permission.json");
       try {
         const { seed: extPermissionsSeed } = require(path.join(
           seedDir,
@@ -133,9 +133,13 @@ const seed = async () => {
         if (extPermissionsSeed) {
           permissionsSeed.push(...extPermissionsSeed);
         }
-        console.log(`[NUC] Loading external seed data for Permission`);
+        console.log(
+          `[NUC] Loading internal${
+            extPermissionsSeed ? " and external" : ""
+          } seed data for Permission`
+        );
       } catch (error) {
-        console.log(`[NUC] Error Loading seed data for Permission`);
+        console.log(`[NUC] Loading internal seed data for Permission`);
       }
 
       await Permission.bulkCreate(permissionsSeed, { transaction });

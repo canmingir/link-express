@@ -62,14 +62,7 @@ describe("Permissions", () => {
         userId: "90180086",
         role: "OWNER",
       },
-      {
-        id: "46deed97-36f4-4ad5-82de-d1cd81d60dea",
-        appId: "977f5f57-8936-4388-8eb0-00a512cf01cc",
-        organizationId: "dfb990bb-81dd-4584-82ce-050eb8f6a12f",
-        projectId: "cb16e069-6214-47f1-9922-1f7fe7629525",
-        userId: "170624855",
-        role: "OWNER",
-      },
+
       {
         id,
         appId: "977f5f57-8936-4388-8eb0-00a512cf01cc",
@@ -119,14 +112,6 @@ describe("Permissions", () => {
         userId: "90180086",
         role: "OWNER",
       },
-      {
-        id: "46deed97-36f4-4ad5-82de-d1cd81d60dea",
-        appId: "977f5f57-8936-4388-8eb0-00a512cf01cc",
-        organizationId: "dfb990bb-81dd-4584-82ce-050eb8f6a12f",
-        projectId: "cb16e069-6214-47f1-9922-1f7fe7629525",
-        userId: "170624855",
-        role: "OWNER",
-      },
     ]);
   });
 
@@ -162,14 +147,6 @@ describe("Permissions", () => {
         organizationId: "dfb990bb-81dd-4584-82ce-050eb8f6a12f",
         projectId: "cb16e069-6214-47f1-9922-1f7fe7629525",
         userId: "90180086",
-        role: "OWNER",
-      },
-      {
-        id: "46deed97-36f4-4ad5-82de-d1cd81d60dea",
-        appId: "977f5f57-8936-4388-8eb0-00a512cf01cc",
-        organizationId: "dfb990bb-81dd-4584-82ce-050eb8f6a12f",
-        projectId: "cb16e069-6214-47f1-9922-1f7fe7629525",
-        userId: "170624855",
         role: "OWNER",
       },
     ]);
