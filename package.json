@@ -8,7 +8,8 @@
     ".": "./index.js",
     "./models": "./src/models/index.js",
     "./test": "./src/test.js",
-    "./authorization": "./src/authorization.js"
+    "./authorization": "./src/authorization.js",
+    "./error": "./src/error.js"
   },
   "scripts": {
     "prepare": "node prepare.js",
