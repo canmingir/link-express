@@ -15,7 +15,7 @@ const handle = (err, req, res, next) => {
   }
 
   if (err instanceof AuthenticationError) {
-    return res.status(401).end();
+    return res.status(403).end();
   }
 
   if (err instanceof NotFoundError) {
