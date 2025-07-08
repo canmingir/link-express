@@ -49,13 +49,19 @@ const seed = async () => {
       const Organization = require("./models/Organization");
       const { seed: companiesSeed } = require("./seeds/Organization.json");
 
-      await Organization.bulkCreate(companiesSeed, { transaction });
+      await Organization.bulkCreate(companiesSeed, {
+        transaction,
+        validate: true,
+      });
       console.log(`[NUC] Loading internal seed data for Organization`);
 
       if (fs.existsSync(path.join(seedDir, "Organization.json"))) {
         const seedData = require(path.join(seedDir, "Organization.json"));
         const seed = seedData["seed"];
-        await Organization.bulkCreate(seed, { transaction });
+        await Organization.bulkCreate(seed, {
+          transaction,
+          validate: true,
+        });
         console.log(`[NUC] Loading seed data for Organization`);
       }
 
@@ -79,7 +85,10 @@ const seed = async () => {
         console.log(`[NUC] Loading internal seed data for Project`);
       }
 
-      await Project.bulkCreate(projectSeed, { transaction });
+      await Project.bulkCreate(projectSeed, {
+        transaction,
+        validate: true,
+      });
     }
 
     const fileNames = fs
@@ -115,7 +124,10 @@ const seed = async () => {
         const seed = seedData["seed"];
 
         console.log(`[NUC] Loading seed data for ${fileName}`);
-        await model.bulkCreate(seed, { transaction });
+        await model.bulkCreate(seed, {
+          transaction,
+          validate: true,
+        });
       } catch (error) {
         console.error(`[NUC] Error loading seed data for ${fileName}:`, error);
         throw error;
@@ -142,7 +154,10 @@ const seed = async () => {
         console.log(`[NUC] Loading internal seed data for Permission`);
       }
 
-      await Permission.bulkCreate(permissionsSeed, { transaction });
+      await Permission.bulkCreate(permissionsSeed, {
+        transaction,
+        validate: true,
+      });
 
       const Settings = require("./models/Settings");
       const { seed: settingsSeed } = require("./seeds/Settings.json");
@@ -164,7 +179,10 @@ const seed = async () => {
         console.log(`[NUC] Loading internal seed data for Settings`);
       }
 
-      await Settings.bulkCreate(settingsSeed, { transaction });
+      await Settings.bulkCreate(settingsSeed, {
+        transaction,
+        validate: true,
+      });
     }
 
     await transaction.commit();
