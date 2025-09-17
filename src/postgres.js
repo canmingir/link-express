@@ -31,20 +31,20 @@ const sequelize = new Sequelize(process.env.PG || uri, {
     beforeFind: (options) => {
       const timer = dbMetrics.readLatency.startTimer();
       options.metricsTimer = timer;
-      options.metricsType = 'read';
+      options.metricsType = "read";
     },
     afterFind: (result, options) => {
       if (options?.metricsTimer) {
-        options.metricsTimer(); 
+        options.metricsTimer();
         dbMetrics.readOps.inc();
       }
     },
-    
+
     beforeCreate: (instance, options) => {
       console.log("BEFORE CREATE HOOK");
       const timer = dbMetrics.writeLatency.startTimer();
       options.metricsTimer = timer;
-      options.metricsType = 'write';
+      options.metricsType = "write";
     },
     afterCreate: (instance, options) => {
       console.log("AFTER CREATE HOOK");
@@ -53,12 +53,12 @@ const sequelize = new Sequelize(process.env.PG || uri, {
         dbMetrics.writeOps.inc();
       }
     },
-    
+
     beforeUpdate: (instance, options) => {
       console.log("BEFORE UPDATE HOOK");
       const timer = dbMetrics.writeLatency.startTimer();
       options.metricsTimer = timer;
-      options.metricsType = 'write';
+      options.metricsType = "write";
     },
     afterUpdate: (instance, options) => {
       if (options?.metricsTimer) {
@@ -66,12 +66,12 @@ const sequelize = new Sequelize(process.env.PG || uri, {
         dbMetrics.writeOps.inc();
       }
     },
-    
+
     beforeDestroy: (instance, options) => {
       console.log("BEFORE DESTROY HOOK");
       const timer = dbMetrics.writeLatency.startTimer();
       options.metricsTimer = timer;
-      options.metricsType = 'write';
+      options.metricsType = "write";
     },
     afterDestroy: (instance, options) => {
       if (options?.metricsTimer) {
@@ -79,12 +79,12 @@ const sequelize = new Sequelize(process.env.PG || uri, {
         dbMetrics.writeOps.inc();
       }
     },
-    
+
     beforeBulkCreate: (options) => {
       console.log("BEFORE BULK CREATE HOOK");
       const timer = dbMetrics.writeLatency.startTimer();
       options.metricsTimer = timer;
-      options.metricsType = 'write';
+      options.metricsType = "write";
     },
     afterBulkCreate: (instances, options) => {
       console.log("AFTER BULK CREATE HOOK");
@@ -93,11 +93,11 @@ const sequelize = new Sequelize(process.env.PG || uri, {
         dbMetrics.writeOps.inc(instances.length || 1);
       }
     },
-    
+
     beforeBulkUpdate: (options) => {
       const timer = dbMetrics.writeLatency.startTimer();
       options.metricsTimer = timer;
-      options.metricsType = 'write';
+      options.metricsType = "write";
     },
     afterBulkUpdate: (options) => {
       if (options?.metricsTimer) {
@@ -105,19 +105,19 @@ const sequelize = new Sequelize(process.env.PG || uri, {
         dbMetrics.writeOps.inc();
       }
     },
-    
+
     beforeBulkDestroy: (options) => {
       const timer = dbMetrics.writeLatency.startTimer();
       options.metricsTimer = timer;
-      options.metricsType = 'write';
+      options.metricsType = "write";
     },
     afterBulkDestroy: (options) => {
       if (options?.metricsTimer) {
         options.metricsTimer();
         dbMetrics.writeOps.inc();
       }
-    }
-  }
+    },
+  },
 });
 
 const seed = async () => {
