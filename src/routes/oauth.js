@@ -16,25 +16,19 @@ router.post("/", async (req, res) => {
       code: Joi.string().optional(),
       refreshToken: Joi.string().optional(),
       redirectUri: Joi.string().optional(),
-      provider: Joi.string().valid('github', 'linkedin', 'google').required(),
+      provider: Joi.string().required(),
     })
       .required()
       .options({ stripUnknown: true })
   );
 
   if (!code && !refreshToken) {
-    return res.status(400).json({
-      error: "Missing OAuth Code and Refresh Token",
-      message: "Either authorization code or refresh token is required"
-    });
+    return res.status(400).send("Missing OAuth Code and Refresh Token");
   }
 
   const providerConfig = project.oauth.providers[provider];
   if (!providerConfig) {
-    return res.status(400).json({
-      error: `Unsupported OAuth provider: ${provider}`,
-      message: `Provider ${provider} is not configured`
-    });
+    return res.status(400).send("Unsupported OAuth provider");
   }
 
   let accessTokenForAPI;
@@ -76,9 +70,8 @@ router.post("/", async (req, res) => {
     accessTokenForAPI = refreshToken;
   }
 
-  let userResponse;
 
-  userResponse = await axios.get(providerConfig.userUrl, {
+  let userResponse = await axios.get(providerConfig.userUrl, {
     headers: {
       Authorization: `Bearer ${accessTokenForAPI}`,
       "Accept": "application/json"
@@ -105,36 +98,6 @@ router.post("/", async (req, res) => {
   }
 
   const prefixedUserId = `${provider}_${userId}`;
-
-  let userDetails;
-  if (provider === "github") {
-    userDetails = {
-      id: prefixedUserId,
-      name: userResponse.data.login,
-      displayName: userResponse.data.name,
-      avatarUrl: userResponse.data.avatar_url,
-      email: userResponse.data.email,
-      provider: provider
-    };
-  } else if (provider === "google") {
-    userDetails = {
-      id: prefixedUserId,
-      name: userResponse.data.name,
-      displayName: userResponse.data.name,
-      avatarUrl: userResponse.data.picture,
-      email: userResponse.data.email,
-      provider: provider
-    };
-  } else if (provider === "linkedin") {
-    userDetails = {
-      id: prefixedUserId,
-      name: userResponse.data.name,
-      displayName: userResponse.data.name,
-      avatarUrl: userResponse.data.picture,
-      email: userResponse.data.email,
-      provider: provider
-    };
-  }
 
   let accessToken;
 
@@ -187,8 +150,60 @@ router.post("/", async (req, res) => {
 
   res.status(200).json({
     accessToken,
-    refreshToken: newRefreshToken,
-    user: userDetails 
+    refreshToken: newRefreshToken
+  });
+});
+
+router.get("/user", async (req, res) => {
+  const authHeader = req.headers.authorization;
+  const refreshTokenHeader = req.headers['x-refresh-token']; 
+  
+
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).end();
+  }
+
+  if (!refreshTokenHeader) {
+    return res.status(400).send("Missing refresh token");
+  }
+
+  const token = authHeader.split(' ')[1];
+  
+  const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  const userId = decoded.sub;
+  const provider = decoded.provider;
+  
+  if (!userId || !provider) {
+    return res.status(401).end();
+  }
+
+  const providerConfig = project.oauth.providers[provider];
+  if (!providerConfig) {
+    return res.status(400).send("Unsupported OAuth provider");
+  }
+
+
+  const userResponse = await axios.get(providerConfig.userUrl, {
+    headers: {
+      Authorization: `Bearer ${refreshTokenHeader}`,
+      "Accept": "application/json"
+    },
+    timeout: 10000
+  });
+
+
+  const userFieldMapping = providerConfig.userFields;
+  const userDetails = {
+    id: userId,
+    provider: provider,
+    name: userResponse.data[userFieldMapping.name] || null,
+    displayName: userResponse.data[userFieldMapping.displayName] || null,
+    avatarUrl: userResponse.data[userFieldMapping.avatarUrl] || null,
+    email: userResponse.data[userFieldMapping.email] || null
+  };
+
+  res.status(200).json({
+    user: userDetails
   });
 });
 
