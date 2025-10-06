@@ -3,7 +3,7 @@ const router = require("express").Router();
 const jwt = require("jsonwebtoken");
 const axios = require("axios");
 const config = require("../config");
-const { AuthenticationError } = require("../error");
+const { AuthenticationError, AuthorizationError } = require("../error");
 const Permission = require("../models/Permission");
 const { project } = config();
 
@@ -59,7 +59,7 @@ router.post("/", async (req, res) => {
     );
 
     if (tokenResponse.data.error) {
-      throw new AuthenticationError(
+      throw new AuthorizationError(
         tokenResponse.data.error_description || tokenResponse.data.error
       );
     }
