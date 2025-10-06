@@ -39,6 +39,14 @@ describe("Permissions", () => {
         role: "OWNER",
       },
       {
+        id: "f81887da-d05f-4959-9def-6cd137857099",
+        appId: "977f5f57-8936-4388-8eb0-00a512cf01cc",
+        organizationId: "dfb990bb-81dd-4584-82ce-050eb8f6a12f",
+        projectId: "cb16e069-6214-47f1-9922-1f7fe7629525",
+        userId: "github_1001",
+        role: "OWNER",
+      },
+      {
         id: "a1b60c53-66e2-4034-8654-38b83577f279",
         appId: "977f5f57-8936-4388-8eb0-00a512cf01cc",
         organizationId: "dfb990bb-81dd-4584-82ce-050eb8f6a12f",
@@ -89,6 +97,14 @@ describe("Permissions", () => {
         role: "OWNER",
       },
       {
+        id: "f81887da-d05f-4959-9def-6cd137857099",
+        appId: "977f5f57-8936-4388-8eb0-00a512cf01cc",
+        organizationId: "dfb990bb-81dd-4584-82ce-050eb8f6a12f",
+        projectId: "cb16e069-6214-47f1-9922-1f7fe7629525",
+        userId: "github_1001",
+        role: "OWNER",
+      },
+      {
         id: "a1b60c53-66e2-4034-8654-38b83577f279",
         appId: "977f5f57-8936-4388-8eb0-00a512cf01cc",
         organizationId: "dfb990bb-81dd-4584-82ce-050eb8f6a12f",
@@ -125,6 +141,14 @@ describe("Permissions", () => {
       .expect(200);
 
     deepEqual(permissions, [
+      {
+        id: "f81887da-d05f-4959-9def-6cd137857099",
+        appId: "977f5f57-8936-4388-8eb0-00a512cf01cc",
+        organizationId: "dfb990bb-81dd-4584-82ce-050eb8f6a12f",
+        projectId: "cb16e069-6214-47f1-9922-1f7fe7629525",
+        userId: "github_1001",
+        role: "OWNER",
+      },
       {
         id: "a1b60c53-66e2-4034-8654-38b83577f279",
         appId: "977f5f57-8936-4388-8eb0-00a512cf01cc",
