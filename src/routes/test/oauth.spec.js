@@ -5,7 +5,7 @@ const app = platform.express();
 
 const request = require("supertest");
 const jwt = require("jsonwebtoken");
-const { equal } = require("assert");
+const { equal, deepEqual } = require("assert");
 const config = require("../../config");
 const { project } = config();
 
@@ -48,7 +48,7 @@ describe("OAuth", () => {
     equal(payload.iss, "nuc");
     equal(payload.aud, "cb16e069-6214-47f1-9922-1f7fe7629525");
     equal(payload.sub, `${provider}_1001`);
-    equal(JSON.stringify(payload.rls), JSON.stringify(["OWNER"]));
+    deepEqual(payload.rls, ["OWNER"]);
     equal(payload.aid, "977f5f57-8936-4388-8eb0-00a512cf01cc");
     equal(payload.oid, "dfb990bb-81dd-4584-82ce-050eb8f6a12f");
     equal(payload.provider, provider);
