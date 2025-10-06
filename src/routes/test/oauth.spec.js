@@ -47,7 +47,7 @@ describe("OAuth", () => {
 
     equal(payload.iss, "nuc");
     equal(payload.aud, "cb16e069-6214-47f1-9922-1f7fe7629525");
-    equal(payload.sub, `${provider}_1001`);
+    equal(payload.sub, `1001`);
     deepEqual(payload.rls, ["OWNER"]);
     equal(payload.aid, "977f5f57-8936-4388-8eb0-00a512cf01cc");
     equal(payload.oid, "dfb990bb-81dd-4584-82ce-050eb8f6a12f");
@@ -76,7 +76,7 @@ describe("OAuth", () => {
 
     const payload = jwt.decode(accessToken);
 
-    equal(payload.sub, `${provider}_liam@rebellioncoffee.shop`);
+    equal(payload.sub, `liam@rebellioncoffee.shop`);
     equal(payload.iss, "nuc");
     equal(payload.provider, provider);
     equal(refreshToken, "lzk7FZGga5hHrfiAePtswijiJHIOev");

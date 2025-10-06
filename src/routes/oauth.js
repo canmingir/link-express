@@ -105,19 +105,17 @@ router.post("/", async (req, res) => {
     );
   }
 
-  const prefixedUserId = `${provider}_${userId}`;
-
   let accessToken;
 
   if (projectId) {
     const permissions = await Permission.findAll({
-      where: { userId: prefixedUserId, projectId, appId },
+      where: { userId, projectId, appId },
     });
 
     if (!permissions.length) {
       accessToken = jwt.sign(
         {
-          sub: prefixedUserId,
+          sub: userId,
           iss: "nuc",
           aid: appId,
           provider: provider,
@@ -129,7 +127,7 @@ router.post("/", async (req, res) => {
     } else {
       accessToken = jwt.sign(
         {
-          sub: prefixedUserId,
+          sub: userId,
           iss: "nuc",
           aud: projectId,
           oid: permissions[0].organizationId,
@@ -145,7 +143,7 @@ router.post("/", async (req, res) => {
   } else {
     accessToken = jwt.sign(
       {
-        sub: prefixedUserId,
+        sub: userId,
         iss: "nuc",
         aid: appId,
         provider: provider,
