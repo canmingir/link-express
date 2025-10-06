@@ -8,19 +8,20 @@ const Permission = require("../models/Permission");
 const { project } = config();
 
 router.post("/", async (req, res) => {
-  let { appId, projectId, code, refreshToken, redirectUri, provider } = Joi.attempt(
-    req.body,
-    Joi.object({
-      appId: Joi.string().required(),
-      projectId: Joi.string().optional(),
-      code: Joi.string().optional(),
-      refreshToken: Joi.string().optional(),
-      redirectUri: Joi.string().optional(),
-      provider: Joi.string().required(),
-    })
-      .required()
-      .options({ stripUnknown: true })
-  );
+  let { appId, projectId, code, refreshToken, redirectUri, provider } =
+    Joi.attempt(
+      req.body,
+      Joi.object({
+        appId: Joi.string().required(),
+        projectId: Joi.string().optional(),
+        code: Joi.string().optional(),
+        refreshToken: Joi.string().optional(),
+        redirectUri: Joi.string().optional(),
+        provider: Joi.string().required(),
+      })
+        .required()
+        .options({ stripUnknown: true })
+    );
 
   if (!code && !refreshToken) {
     return res.status(400).send("Missing OAuth Code and Refresh Token");
@@ -38,7 +39,10 @@ router.post("/", async (req, res) => {
     const params = new URLSearchParams();
     params.append("grant_type", "authorization_code");
     params.append("client_id", providerConfig.clientId);
-    params.append("client_secret", process.env[`${provider.toUpperCase()}_CLIENT_SECRET`]);
+    params.append(
+      "client_secret",
+      process.env[`${provider.toUpperCase()}_CLIENT_SECRET`]
+    );
     params.append("code", code);
     params.append("redirect_uri", redirectUri);
 
@@ -48,9 +52,9 @@ router.post("/", async (req, res) => {
       {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
-          "Accept": "application/json"
+          Accept: "application/json",
         },
-        timeout: 10000
+        timeout: 10000,
       }
     );
 
@@ -61,22 +65,24 @@ router.post("/", async (req, res) => {
     }
 
     if (!tokenResponse.data.access_token) {
-      throw new AuthenticationError("No access token received from OAuth provider");
+      throw new AuthenticationError(
+        "No access token received from OAuth provider"
+      );
     }
 
     accessTokenForAPI = tokenResponse.data.access_token;
-    newRefreshToken = tokenResponse.data.refresh_token || tokenResponse.data.access_token;
+    newRefreshToken =
+      tokenResponse.data.refresh_token || tokenResponse.data.access_token;
   } else {
     accessTokenForAPI = refreshToken;
   }
 
-
   let userResponse = await axios.get(providerConfig.userUrl, {
     headers: {
       Authorization: `Bearer ${accessTokenForAPI}`,
-      "Accept": "application/json"
+      Accept: "application/json",
     },
-    timeout: 10000
+    timeout: 10000,
   });
 
   console.log("User info response:", userResponse.data);
@@ -92,9 +98,11 @@ router.post("/", async (req, res) => {
     console.error("User identifier extraction failed:", {
       availableFields: Object.keys(userResponse.data),
       expectedField: identifierField,
-      fallbackField: project.oauth.jwt.identifier
+      fallbackField: project.oauth.jwt.identifier,
     });
-    throw new Error(`Cannot find user identifier in ${provider} OAuth response`);
+    throw new Error(
+      `Cannot find user identifier in ${provider} OAuth response`
+    );
   }
 
   const prefixedUserId = `${provider}_${userId}`;
@@ -113,7 +121,7 @@ router.post("/", async (req, res) => {
           iss: "nuc",
           aid: appId,
           provider: provider,
-          iat: Math.floor(Date.now() / 1000)
+          iat: Math.floor(Date.now() / 1000),
         },
         process.env.JWT_SECRET,
         { expiresIn: "12h" }
@@ -128,7 +136,7 @@ router.post("/", async (req, res) => {
           aid: appId,
           rls: permissions.map((permission) => permission.role),
           provider: provider,
-          iat: Math.floor(Date.now() / 1000)
+          iat: Math.floor(Date.now() / 1000),
         },
         process.env.JWT_SECRET,
         { expiresIn: "12h" }
@@ -141,7 +149,7 @@ router.post("/", async (req, res) => {
         iss: "nuc",
         aid: appId,
         provider: provider,
-        iat: Math.floor(Date.now() / 1000)
+        iat: Math.floor(Date.now() / 1000),
       },
       process.env.JWT_SECRET,
       { expiresIn: "12h" }
@@ -150,16 +158,15 @@ router.post("/", async (req, res) => {
 
   res.status(200).json({
     accessToken,
-    refreshToken: newRefreshToken
+    refreshToken: newRefreshToken,
   });
 });
 
 router.get("/user", async (req, res) => {
   const authHeader = req.headers.authorization;
-  const refreshTokenHeader = req.headers['x-refresh-token']; 
-  
+  const refreshTokenHeader = req.headers["x-refresh-token"];
 
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res.status(401).end();
   }
 
@@ -167,12 +174,12 @@ router.get("/user", async (req, res) => {
     return res.status(400).send("Missing refresh token");
   }
 
-  const token = authHeader.split(' ')[1];
-  
+  const token = authHeader.split(" ")[1];
+
   const decoded = jwt.verify(token, process.env.JWT_SECRET);
   const userId = decoded.sub;
   const provider = decoded.provider;
-  
+
   if (!userId || !provider) {
     return res.status(401).end();
   }
@@ -182,15 +189,13 @@ router.get("/user", async (req, res) => {
     return res.status(400).send("Unsupported OAuth provider");
   }
 
-
   const userResponse = await axios.get(providerConfig.userUrl, {
     headers: {
       Authorization: `Bearer ${refreshTokenHeader}`,
-      "Accept": "application/json"
+      Accept: "application/json",
     },
-    timeout: 10000
+    timeout: 10000,
   });
-
 
   const userFieldMapping = providerConfig.userFields;
   const userDetails = {
@@ -199,11 +204,11 @@ router.get("/user", async (req, res) => {
     name: userResponse.data[userFieldMapping.name] || null,
     displayName: userResponse.data[userFieldMapping.displayName] || null,
     avatarUrl: userResponse.data[userFieldMapping.avatarUrl] || null,
-    email: userResponse.data[userFieldMapping.email] || null
+    email: userResponse.data[userFieldMapping.email] || null,
   };
 
   res.status(200).json({
-    user: userDetails
+    user: userDetails,
   });
 });
 
