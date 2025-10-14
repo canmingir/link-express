@@ -3,12 +3,17 @@ const { Sequelize, Model } = require("sequelize");
 const config = require("./config");
 const path = require("path");
 const fs = require("fs");
-const { dbMetrics } = require("./prometheus-metrics");
+const { DBMetrics } = require("./metrics/dbMetrics");
 
 const {
   postgres: { uri, debug = false, sync },
   project,
+  pushGateway,
 } = config();
+
+const metrics = new DBMetrics();
+
+metrics.startPushgateway(pushGateway);
 
 const originalDestroy = Model.prototype.destroy;
 
@@ -29,92 +34,87 @@ const sequelize = new Sequelize(process.env.PG || uri, {
   },
   hooks: {
     beforeFind: (options) => {
-      const timer = dbMetrics.readLatency.startTimer();
+      const timer = metrics.dbReadLatency.startTimer();
       options.metricsTimer = timer;
       options.metricsType = "read";
     },
     afterFind: (result, options) => {
       if (options?.metricsTimer) {
         options.metricsTimer();
-        dbMetrics.readOps.inc();
+        metrics.dbReadOps.inc();
       }
     },
 
     beforeCreate: (instance, options) => {
-      console.log("BEFORE CREATE HOOK");
-      const timer = dbMetrics.writeLatency.startTimer();
+      const timer = metrics.dbWriteLatency.startTimer();
       options.metricsTimer = timer;
       options.metricsType = "write";
     },
     afterCreate: (instance, options) => {
-      console.log("AFTER CREATE HOOK");
       if (options?.metricsTimer) {
         options.metricsTimer();
-        dbMetrics.writeOps.inc();
+        metrics.dbWriteOps.inc();
       }
     },
 
     beforeUpdate: (instance, options) => {
-      console.log("BEFORE UPDATE HOOK");
-      const timer = dbMetrics.writeLatency.startTimer();
+      const timer = metrics.dbWriteLatency.startTimer();
       options.metricsTimer = timer;
       options.metricsType = "write";
     },
     afterUpdate: (instance, options) => {
       if (options?.metricsTimer) {
         options.metricsTimer();
-        dbMetrics.writeOps.inc();
+        metrics.dbWriteOps.inc();
       }
     },
 
     beforeDestroy: (instance, options) => {
-      console.log("BEFORE DESTROY HOOK");
-      const timer = dbMetrics.writeLatency.startTimer();
+      const timer = metrics.dbWriteLatency.startTimer();
       options.metricsTimer = timer;
       options.metricsType = "write";
+      
     },
     afterDestroy: (instance, options) => {
       if (options?.metricsTimer) {
         options.metricsTimer();
-        dbMetrics.writeOps.inc();
+        metrics.dbWriteOps.inc();
       }
     },
 
-    beforeBulkCreate: (options) => {
-      console.log("BEFORE BULK CREATE HOOK");
-      const timer = dbMetrics.writeLatency.startTimer();
+    beforeBulkCreate: (instances,options) => {
+      const timer = metrics.dbWriteLatency.startTimer();
       options.metricsTimer = timer;
       options.metricsType = "write";
     },
     afterBulkCreate: (instances, options) => {
-      console.log("AFTER BULK CREATE HOOK");
       if (options?.metricsTimer) {
         options.metricsTimer();
-        dbMetrics.writeOps.inc(instances.length || 1);
+        metrics.dbWriteOps.inc(instances.length || 1);
       }
     },
 
-    beforeBulkUpdate: (options) => {
-      const timer = dbMetrics.writeLatency.startTimer();
+    beforeBulkUpdate: (instances, options) => {
+      const timer = metrics.dbWriteLatency.startTimer();
       options.metricsTimer = timer;
       options.metricsType = "write";
     },
-    afterBulkUpdate: (options) => {
+    afterBulkUpdate: (instances, options)  => {
       if (options?.metricsTimer) {
         options.metricsTimer();
-        dbMetrics.writeOps.inc();
+        metrics.dbWriteOps.inc(instances.length || 1);
       }
     },
 
-    beforeBulkDestroy: (options) => {
-      const timer = dbMetrics.writeLatency.startTimer();
+    beforeBulkDestroy: (instances, options) => {
+      const timer = metrics.dbWriteLatency.startTimer();
       options.metricsTimer = timer;
       options.metricsType = "write";
     },
-    afterBulkDestroy: (options) => {
+    afterBulkDestroy: (instances, options) => {
       if (options?.metricsTimer) {
         options.metricsTimer();
-        dbMetrics.writeOps.inc();
+        metrics.dbWriteOps.inc(instances.length || 1);
       }
     },
   },
@@ -301,4 +301,4 @@ if (sync) {
   });
 }
 
-module.exports = { sequelize };
+module.exports = { sequelize, metrics };

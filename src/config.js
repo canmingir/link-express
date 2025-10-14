@@ -9,6 +9,7 @@ function init(config = {}) {
       openapi: {},
       postgres: null,
       dynamodb: null,
+      pushGateway: {},
     },
     config
   );
