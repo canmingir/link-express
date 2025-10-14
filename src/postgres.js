@@ -73,7 +73,6 @@ const sequelize = new Sequelize(process.env.PG || uri, {
       const timer = metrics.dbWriteLatency.startTimer();
       options.metricsTimer = timer;
       options.metricsType = "write";
-      
     },
     afterDestroy: (instance, options) => {
       if (options?.metricsTimer) {
@@ -82,7 +81,7 @@ const sequelize = new Sequelize(process.env.PG || uri, {
       }
     },
 
-    beforeBulkCreate: (instances,options) => {
+    beforeBulkCreate: (instances, options) => {
       const timer = metrics.dbWriteLatency.startTimer();
       options.metricsTimer = timer;
       options.metricsType = "write";
@@ -99,7 +98,7 @@ const sequelize = new Sequelize(process.env.PG || uri, {
       options.metricsTimer = timer;
       options.metricsType = "write";
     },
-    afterBulkUpdate: (instances, options)  => {
+    afterBulkUpdate: (instances, options) => {
       if (options?.metricsTimer) {
         options.metricsTimer();
         metrics.dbWriteOps.inc(instances.length || 1);
