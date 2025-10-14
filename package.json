@@ -9,9 +9,8 @@
     "./models": "./src/models/index.js",
     "./test": "./src/test.js",
     "./authorization": "./src/authorization.js",
-    "./error": "./src/error.js",
-    "./prometheus-metrics": "./src/prometheus-metrics.js"
-  },
+    "./error": "./src/error.js"
+    },
   "scripts": {
     "prepare": "node prepare.js",
     "dev": "node server --dev",
