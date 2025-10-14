@@ -1,12 +1,19 @@
 const { Sequelize, Model } = require("sequelize");
+
 const config = require("./config");
 const path = require("path");
 const fs = require("fs");
+const { DBMetrics } = require("./metrics/dbMetrics");
 
 const {
   postgres: { uri, debug = false, sync },
   project,
+  pushGateway,
 } = config();
+
+const metrics = new DBMetrics();
+
+metrics.startPushgateway(pushGateway);
 
 const originalDestroy = Model.prototype.destroy;
 
@@ -24,6 +31,91 @@ const sequelize = new Sequelize(process.env.PG || uri, {
     underscored: true,
     timestamps: false,
     paranoid: false,
+  },
+  hooks: {
+    beforeFind: (options) => {
+      const timer = metrics.dbReadLatency.startTimer();
+      options.metricsTimer = timer;
+      options.metricsType = "read";
+    },
+    afterFind: (result, options) => {
+      if (options?.metricsTimer) {
+        options.metricsTimer();
+        metrics.dbReadOps.inc();
+      }
+    },
+
+    beforeCreate: (instance, options) => {
+      const timer = metrics.dbWriteLatency.startTimer();
+      options.metricsTimer = timer;
+      options.metricsType = "write";
+    },
+    afterCreate: (instance, options) => {
+      if (options?.metricsTimer) {
+        options.metricsTimer();
+        metrics.dbWriteOps.inc();
+      }
+    },
+
+    beforeUpdate: (instance, options) => {
+      const timer = metrics.dbWriteLatency.startTimer();
+      options.metricsTimer = timer;
+      options.metricsType = "write";
+    },
+    afterUpdate: (instance, options) => {
+      if (options?.metricsTimer) {
+        options.metricsTimer();
+        metrics.dbWriteOps.inc();
+      }
+    },
+
+    beforeDestroy: (instance, options) => {
+      const timer = metrics.dbWriteLatency.startTimer();
+      options.metricsTimer = timer;
+      options.metricsType = "write";
+    },
+    afterDestroy: (instance, options) => {
+      if (options?.metricsTimer) {
+        options.metricsTimer();
+        metrics.dbWriteOps.inc();
+      }
+    },
+
+    beforeBulkCreate: (instances, options) => {
+      const timer = metrics.dbWriteLatency.startTimer();
+      options.metricsTimer = timer;
+      options.metricsType = "write";
+    },
+    afterBulkCreate: (instances, options) => {
+      if (options?.metricsTimer) {
+        options.metricsTimer();
+        metrics.dbWriteOps.inc(instances.length || 1);
+      }
+    },
+
+    beforeBulkUpdate: (instances, options) => {
+      const timer = metrics.dbWriteLatency.startTimer();
+      options.metricsTimer = timer;
+      options.metricsType = "write";
+    },
+    afterBulkUpdate: (instances, options) => {
+      if (options?.metricsTimer) {
+        options.metricsTimer();
+        metrics.dbWriteOps.inc(instances.length || 1);
+      }
+    },
+
+    beforeBulkDestroy: (options) => {
+      const timer = metrics.dbWriteLatency.startTimer();
+      options.metricsTimer = timer;
+      options.metricsType = "write";
+    },
+    afterBulkDestroy: (options) => {
+      if (options?.metricsTimer) {
+        options.metricsTimer();
+        metrics.dbWriteOps.inc(1);
+      }
+    },
   },
 });
 
@@ -208,4 +300,4 @@ if (sync) {
   });
 }
 
-module.exports = { sequelize };
+module.exports = { sequelize, metrics };
