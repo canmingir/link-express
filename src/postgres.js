@@ -105,15 +105,15 @@ const sequelize = new Sequelize(process.env.PG || uri, {
       }
     },
 
-    beforeBulkDestroy: (instances, options) => {
+    beforeBulkDestroy: (options) => {
       const timer = metrics.dbWriteLatency.startTimer();
       options.metricsTimer = timer;
       options.metricsType = "write";
     },
-    afterBulkDestroy: (instances, options) => {
+    afterBulkDestroy: (options) => {
       if (options?.metricsTimer) {
         options.metricsTimer();
-        metrics.dbWriteOps.inc(instances.length || 1);
+        metrics.dbWriteOps.inc(1);
       }
     },
   },
