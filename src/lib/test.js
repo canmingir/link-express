@@ -7,10 +7,21 @@ init({
       jwt: {
         identifier: "email",
       },
-      tokenUrl: "https://github.com/login/oauth/access_token",
-      userUrl: "https://api.github.com/user",
-      clientId: "0c2844d3d19dc9293fc5",
-      redirectUri: "http://localhost:5173/callback",
+      providers: {
+        github: {
+          tokenUrl: "https://github.com/login/oauth/access_token",
+          userUrl: "https://api.github.com/user",
+          clientId: "0c2844d3d19dc9293fc5",
+          redirectUri: "http://localhost:5173/callback",
+          userIdentifier: "id",
+          userFields: {
+            name: "name",
+            displayName: "login",
+            avatarUrl: "avatar_url",
+            email: "email",
+          },
+        },
+      },
     },
   },
   postgres: {
