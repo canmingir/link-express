@@ -117,7 +117,6 @@ const sequelize = new Sequelize(process.env.PG || uri, {
       }
     },
   },
- 
 });
 
 const seed = async () => {
