@@ -33,90 +33,91 @@ const sequelize = new Sequelize(process.env.PG || uri, {
     paranoid: false,
   },
   hooks: {
-    beforeFind: (options) => {
+    beforeFind: (options = {}) => {
       const timer = metrics.dbReadLatency.startTimer();
       options.metricsTimer = timer;
       options.metricsType = "read";
     },
-    afterFind: (result, options) => {
+    afterFind: (result, options = {}) => {
       if (options?.metricsTimer) {
         options.metricsTimer();
         metrics.dbReadOps.inc();
       }
     },
 
-    beforeCreate: (instance, options) => {
+    beforeCreate: (instance, options = {}) => {
       const timer = metrics.dbWriteLatency.startTimer();
       options.metricsTimer = timer;
       options.metricsType = "write";
     },
-    afterCreate: (instance, options) => {
+    afterCreate: (instance, options = {}) => {
       if (options?.metricsTimer) {
         options.metricsTimer();
         metrics.dbWriteOps.inc();
       }
     },
 
-    beforeUpdate: (instance, options) => {
+    beforeUpdate: (instance, options = {}) => {
       const timer = metrics.dbWriteLatency.startTimer();
       options.metricsTimer = timer;
       options.metricsType = "write";
     },
-    afterUpdate: (instance, options) => {
+    afterUpdate: (instance, options = {}) => {
       if (options?.metricsTimer) {
         options.metricsTimer();
         metrics.dbWriteOps.inc();
       }
     },
 
-    beforeDestroy: (instance, options) => {
+    beforeDestroy: (instance, options = {}) => {
       const timer = metrics.dbWriteLatency.startTimer();
       options.metricsTimer = timer;
       options.metricsType = "write";
     },
-    afterDestroy: (instance, options) => {
+    afterDestroy: (instance, options = {}) => {
       if (options?.metricsTimer) {
         options.metricsTimer();
         metrics.dbWriteOps.inc();
       }
     },
 
-    beforeBulkCreate: (instances, options) => {
+    beforeBulkCreate: (instances, options = {}) => {
       const timer = metrics.dbWriteLatency.startTimer();
       options.metricsTimer = timer;
       options.metricsType = "write";
     },
-    afterBulkCreate: (instances, options) => {
+    afterBulkCreate: (instances, options = {}) => {
       if (options?.metricsTimer) {
         options.metricsTimer();
         metrics.dbWriteOps.inc(instances.length || 1);
       }
     },
 
-    beforeBulkUpdate: (instances, options) => {
+    beforeBulkUpdate: (instances, options = {}) => {
       const timer = metrics.dbWriteLatency.startTimer();
       options.metricsTimer = timer;
       options.metricsType = "write";
     },
-    afterBulkUpdate: (instances, options) => {
+    afterBulkUpdate: (instances, options = {}) => {
       if (options?.metricsTimer) {
         options.metricsTimer();
         metrics.dbWriteOps.inc(instances.length || 1);
       }
     },
 
-    beforeBulkDestroy: (options) => {
+    beforeBulkDestroy: (options = {}) => {
       const timer = metrics.dbWriteLatency.startTimer();
       options.metricsTimer = timer;
       options.metricsType = "write";
     },
-    afterBulkDestroy: (options) => {
+    afterBulkDestroy: (options = {}) => {
       if (options?.metricsTimer) {
         options.metricsTimer();
         metrics.dbWriteOps.inc(1);
       }
     },
   },
+ 
 });
 
 const seed = async () => {
