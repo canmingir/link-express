@@ -48,7 +48,7 @@ class DBMetrics {
       url: metrics.url || "http://localhost:9091",
       jobName: metrics.pushGateway.jobName || "api",
       instance: metrics.pushGateway.instance || "database",
-      interval: config.interval || 15000,
+      interval: metrics.interval || 15000,
     };
 
     this.stopPushgateway();
