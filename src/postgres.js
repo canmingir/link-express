@@ -15,7 +15,7 @@ let dbMetrics = null;
 
 if (metrics.enabled) {
   dbMetrics = new DBMetrics();
-  dbMetrics.startPushgateway(metrics.pushGateway);
+  dbMetrics.startPushgateway(metrics);
 }
 
 const originalDestroy = Model.prototype.destroy;

@@ -43,11 +43,11 @@ class DBMetrics {
     return this.dbWriteLatency.startTimer();
   }
 
-  startPushgateway(config = {}) {
+  startPushgateway(metrics = {}) {
     this.pushgatewayConfig = {
-      url: config.url || "http://localhost:9091",
-      jobName: config.jobName || "api",
-      instance: config.instance || "database",
+      url: metrics.url || "http://localhost:9091",
+      jobName: metrics.pushGateway.jobName || "api",
+      instance: metrics.pushGateway.instance || "database",
       interval: config.interval || 15000,
     };
 
