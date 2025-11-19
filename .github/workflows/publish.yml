@@ -25,6 +25,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PAT_TOKEN }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -41,12 +43,22 @@ jobs:
         run: npm ci
 
       - name: Bump version
-        if: github.event_name == 'workflow_dispatch'
+        id: version_bump
         run: |
-          npm version ${{ github.event.inputs.version_type }} -m "chore: bump version to %s [skip ci]"
+          npm version ${{ github.event.inputs.version_type }} -m "Bump version to %s [skip ci]"
+          echo "new_version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
           git push --follow-tags
-
+      
       - name: Publish to NPM
-        run: npm publish --provenance --access public
+        id: npm_publish
+        run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      
+      - name: Revert version bump on failure
+        if: failure() && steps.version_bump.outcome == 'success'
+        run: |
+          git reset --hard HEAD~1
+          git tag -d v${{ steps.version_bump.outputs.new_version }}
+          git push --force
+          git push --delete origin v${{ steps.version_bump.outputs.new_version }}
