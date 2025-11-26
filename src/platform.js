@@ -5,6 +5,7 @@ const error = require("./error");
 let _express;
 let _postgres;
 let _dynamodb;
+let _logger;
 
 function init(config = {}) {
   return new Promise((resolve, reject) => {
@@ -13,9 +14,13 @@ function init(config = {}) {
         module.exports = fs.readFileSync(filename, "utf8").trim();
       };
 
-      const { postgres, dynamodb } = require("./config").init(config);
+      const { postgres, dynamodb, logger } = require("./config").init(config);
 
       _express = require("./express");
+
+      if (logger) {
+        _logger = require("./logger");
+      }
 
       if (postgres) {
         _postgres = require("./postgres");
@@ -43,4 +48,7 @@ module.exports = {
   require: (pkg) => require(pkg),
   authorization,
   error,
+  get logger() {
+    return _logger;
+  },
 };
