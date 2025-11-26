@@ -20,6 +20,8 @@ function init(config = {}) {
 
       if (logger) {
         _logger = require("./logger");
+      } else {
+        _logger = console;
       }
 
       if (postgres) {

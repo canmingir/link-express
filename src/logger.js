@@ -8,17 +8,15 @@ const { logger: loggerConfig, project } = config();
 
 const streams = [{ stream: process.stdout }];
 
-if (loggerConfig && loggerConfig?.stream) {
-  const streamToElastic = pinoElastic({
-    index: loggerConfig.elasticsearch.index,
-    consistency: loggerConfig.elasticsearch.consistency || "one",
-    node: loggerConfig.elasticsearch.node,
-    esVersion: loggerConfig.elasticsearch.esVersion || 8,
-    flushBytes: loggerConfig.elasticsearch.flushBytes || 1000,
-  });
+const streamToElastic = pinoElastic({
+  index: loggerConfig.elasticsearch.index,
+  consistency: loggerConfig.elasticsearch.consistency || "one",
+  node: loggerConfig.elasticsearch.node,
+  esVersion: loggerConfig.elasticsearch.esVersion || 8,
+  flushBytes: loggerConfig.elasticsearch.flushBytes || 1000,
+});
 
-  streams.push({ stream: streamToElastic });
-}
+streams.push({ stream: streamToElastic });
 
 const logger = pino(
   {
