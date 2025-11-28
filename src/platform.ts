@@ -1,9 +1,8 @@
 import fs from "fs";
 import * as authorization from "./authorization";
 import * as error from "./error";
-import { Express } from "express";
+import { Application } from "express";
 import { Sequelize } from "sequelize-typescript";
-import pino from "pino";
 
 interface ModuleConfig {
   postgres?: Record<string, unknown>;
@@ -13,10 +12,18 @@ interface ModuleConfig {
   [key: string]: unknown;
 }
 
-let _express: Express;
+interface Logger {
+  info: (...args: unknown[]) => void;
+  error: (...args: unknown[]) => void;
+  warn: (...args: unknown[]) => void;
+  debug: (...args: unknown[]) => void;
+  [key: string]: unknown;
+}
+
+let _express: Application;
 let _postgres: { sequelize: Sequelize; metrics: Record<string, unknown> };
 let _dynamodb: { docClient: Record<string, unknown> };
-let _logger: typeof pino | typeof console;
+let _logger: Logger;
 
 function init(config: ModuleConfig = {}): Promise<void> {
   return new Promise((resolve, reject) => {
@@ -35,7 +42,7 @@ function init(config: ModuleConfig = {}): Promise<void> {
       if (logger) {
         _logger = require("./logger");
       } else {
-        _logger = console;
+        _logger = console as unknown as Logger;
       }
 
       if (postgres) {
@@ -53,18 +60,20 @@ function init(config: ModuleConfig = {}): Promise<void> {
   });
 }
 
-export = {
+const module = () => ({
+  Postgres: _postgres,
+  DynamoDB: _dynamodb,
+  Kafka: {},
+});
+
+const importModule = (pkg: string) => import(pkg);
+
+export {
   init,
-  express: () => _express,
-  module: () => ({
-    Postgres: _postgres,
-    DynamoDB: _dynamodb,
-    Kafka: {},
-  }),
-  require: (pkg: string) => require(pkg),
+  _express as express,
+  module,
+  importModule,
   authorization,
   error,
-  get logger() {
-    return _logger;
-  },
+  _logger as logger,
 };

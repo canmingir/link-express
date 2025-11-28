@@ -1,1 +1,2 @@
-export = require("./src/platform");
+import * as platform from "./src/platform";
+export default platform;
