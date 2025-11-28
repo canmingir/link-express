@@ -2,21 +2,23 @@
   "name": "@canmingir/link-express",
   "version": "1.6.11",
   "description": "",
-  "main": "index.js",
+  "main": "index.ts",
+  "types": "index.ts",
   "author": "NucTeam",
   "exports": {
-    ".": "./index.js",
-    "./models": "./src/models/index.js",
-    "./test": "./src/test.js",
-    "./authorization": "./src/authorization.js",
-    "./error": "./src/error.js"
+    ".": "./index.ts",
+    "./models": "./src/models/index.ts",
+    "./test": "./src/test.ts",
+    "./authorization": "./src/authorization.ts",
+    "./error": "./src/error.ts"
   },
   "scripts": {
-    "prepare": "node prepare.js",
+    "prepare": "tsx prepare.ts",
+    "build": "tsc",
     "dev": "node server --dev",
     "start": "node server",
     "test": "echo 'No tests'",
-    "lint": "eslint . --ext .js"
+    "lint": "eslint . --ext .ts"
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.614.0",
@@ -38,11 +40,23 @@
     "pino-elasticsearch": "^8.1.0",
     "prom-client": "^15.1.3",
     "sequelize": "^6.37.3",
+    "sequelize-typescript": "^2.1.6",
     "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-express": "^5.0.1",
     "uuid": "^10.0.0"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.5",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/lodash": "^4.17.21",
+    "@types/morgan": "^1.9.10",
+    "@types/node": "^24.10.1",
+    "@types/pg": "^8.15.6",
+    "@types/swagger-jsdoc": "^6.0.4",
+    "@types/swagger-ui-express": "^4.1.8",
+    "@types/uuid": "^10.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.48.0",
+    "@typescript-eslint/parser": "^8.48.0",
     "axios-mock-adapter": "^1.21.1",
     "eslint": "^8.57.1",
     "eslint-config-prettier": "^8.5.0",
@@ -50,6 +64,8 @@
     "mocha": "10.8.2",
     "prettier": "^2.6.2",
     "sqlite3": "^5.1.6",
-    "supertest": "^7.0.0"
+    "supertest": "^7.0.0",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
   }
 }
