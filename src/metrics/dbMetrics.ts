@@ -96,9 +96,8 @@ class DBMetrics {
 
   async pushMetricsToGateway(): Promise<void> {
     if (!this.pushgatewayConfig) {
-      throw new Error(
-        "Pushgateway not configured. Call startPushgateway() first."
-      );
+      console.error("[DBMetrics] Pushgateway not configured");
+      return;
     }
 
     try {
@@ -119,9 +118,9 @@ class DBMetrics {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
-      console.log("Metrics pushed to Pushgateway successfully");
+      console.log("[DBMetrics] Metrics pushed to Pushgateway successfully");
     } catch (err) {
-      console.error("Failed to push metrics to Pushgateway:", err);
+      console.error("[DBMetrics] Failed to push metrics to Pushgateway:", err);
     }
   }
 

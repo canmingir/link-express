@@ -26,21 +26,6 @@ class Organization extends Model {
   @AllowNull(false)
   @Column(DataType.STRING)
   declare name: string;
-
-  @HasMany(() => Permission)
-  declare permissions?: Permission[];
-
-  @HasMany(() => Project)
-  declare projects?: Project[];
-
-  @BeforeDestroy
-  static async cascadeDelete(instance: Organization): Promise<void> {
-    await Project.destroy({
-      where: {
-        organizationId: instance.id,
-      },
-    });
-  }
 }
 
 export default Organization;

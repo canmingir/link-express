@@ -6,12 +6,9 @@ import {
   Default,
   PrimaryKey,
   AllowNull,
-  BelongsTo,
-  HasMany,
   ForeignKey,
 } from "sequelize-typescript";
 import Organization from "./Organization.model";
-import Permission from "./Permission.model";
 
 @Table({
   tableName: "Project",
@@ -48,12 +45,6 @@ class Project extends Model {
   @AllowNull(true)
   @Column(DataType.STRING)
   declare coach: string | null;
-
-  @BelongsTo(() => Organization)
-  declare organization?: Organization;
-
-  @HasMany(() => Permission)
-  declare permissions?: Permission[];
 }
 
 export default Project;

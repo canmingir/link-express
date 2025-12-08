@@ -44,12 +44,6 @@ class Permission extends Model {
   @AllowNull(false)
   @Column(DataType.STRING)
   declare role: string;
-
-  @BelongsTo(() => Organization)
-  declare organization?: Organization;
-
-  @BelongsTo(() => Project)
-  declare project?: Project;
 }
 
 export default Permission;
