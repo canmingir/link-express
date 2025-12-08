@@ -6,11 +6,7 @@ import {
   Default,
   PrimaryKey,
   AllowNull,
-  HasMany,
-  BeforeDestroy,
 } from "sequelize-typescript";
-import Permission from "./Permission.model";
-import Project from "./Project.model";
 
 @Table({
   tableName: "Organization",

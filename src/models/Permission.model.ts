@@ -6,7 +6,6 @@ import {
   Default,
   PrimaryKey,
   AllowNull,
-  BelongsTo,
   ForeignKey,
 } from "sequelize-typescript";
 import Organization from "./Organization.model";
