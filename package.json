@@ -1,17 +1,29 @@
 {
   "name": "@canmingir/link-express",
-  "version": "1.6.11",
+  "version": "1.7.0",
   "description": "",
   "main": "index.ts",
   "types": "index.ts",
   "typesVersions": {
     "*": {
-      "models": ["src/models/index.ts"],
-      "test": ["src/test.ts"],
-      "authorization": ["src/authorization.ts"],
-      "error": ["src/error.ts"],
-      "types": ["src/types/index.ts"],
-      "sequelize": ["src/sequelize.ts"]
+      "models": [
+        "src/models/index.ts"
+      ],
+      "test": [
+        "src/test.ts"
+      ],
+      "authorization": [
+        "src/authorization.ts"
+      ],
+      "error": [
+        "src/error.ts"
+      ],
+      "types": [
+        "src/types/index.ts"
+      ],
+      "sequelize": [
+        "src/sequelize.ts"
+      ]
     }
   },
   "author": "NucTeam",
