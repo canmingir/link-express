@@ -193,7 +193,7 @@ const seed = async (): Promise<void> => {
       });
     }
     const fileNames = fs.readdirSync(baseDir).filter((fileName) => {
-      return !["index.js", "index.ts", "models.js"].includes(fileName);
+      return !["index.ts"].includes(fileName);
     });
 
     const fileSequences = fileNames
