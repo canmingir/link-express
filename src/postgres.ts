@@ -28,7 +28,10 @@ interface SequelizeOptions {
 
 const sequelize = new Sequelize(process.env.PG || postgres.uri, {
   logging: postgres.debug && console.log,
-  models: [path.join(__dirname, "models/*.model.ts")],
+  models: [
+    path.join(__dirname, "models/*.model.ts"),
+    path.join(process.cwd(), "src/models/[A-Z]*.ts"),
+  ],
   define: {
     freezeTableName: true,
     underscored: true,
@@ -189,14 +192,9 @@ const seed = async (): Promise<void> => {
         validate: true,
       });
     }
-
-    const fileNames = fs
-      .readdirSync(baseDir)
-      .filter(
-        (fileName) =>
-          path.extname(fileName) === ".js" &&
-          !["index.js", "index.ts", "models.js"].includes(fileName)
-      );
+    const fileNames = fs.readdirSync(baseDir).filter((fileName) => {
+      return !["index.js", "index.ts", "models.js"].includes(fileName);
+    });
 
     const fileSequences = fileNames
       .map((fileName) => {
@@ -216,15 +214,14 @@ const seed = async (): Promise<void> => {
     for (const { fileName } of fileSequences) {
       const seedName = fileName.split(".")[0];
       const seederPath = path.join(seedDir, `${seedName}.json`);
-      const filePath = path.join(baseDir, fileName);
 
       try {
-        const model = require(filePath);
         const seedData = require(seederPath);
         const seed = seedData["seed"];
 
         console.log(`[NUC] Loading seed data for ${fileName}`);
-        await model.bulkCreate(seed, {
+
+        await sequelize.model(seedName).bulkCreate(seed, {
           validate: true,
         });
       } catch (error) {
@@ -286,7 +283,7 @@ const seed = async (): Promise<void> => {
 };
 
 const associateModels = async (): Promise<void> => {
-  const models = require("./models");
+  const models = await import("./models");
   await models.init();
 };
 
