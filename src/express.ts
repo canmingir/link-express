@@ -7,11 +7,11 @@ import * as error from "./error";
 import * as authorization from "./authorization";
 import settings from "./routes/settings";
 import metrics from "./routes/metrics";
-import config from "./config";
+import { getConfig } from "./config";
 
 const app = express();
 
-const appConfig = config();
+const appConfig = getConfig();
 
 app.use(helmet());
 app.use(cors());
@@ -24,25 +24,34 @@ app.use(
 );
 
 if (appConfig.project) {
-  const oauth = require("./routes/oauth");
-  app.use(
-    "/oauth",
-    express.urlencoded(),
-    (err: Error, _req: Request, res: Response, next: NextFunction) =>
-      err ? res.status(422).end() : next(),
-    oauth
-  );
+  import("./routes/oauth.ts").then((oauthModule) => {
+    const oauth = oauthModule.default || oauthModule;
+    app.use(
+      "/oauth",
+      express.urlencoded(),
+      (err: Error, _req: Request, res: Response, next: NextFunction) =>
+        err ? res.status(422).end() : next(),
+      oauth
+    );
+  });
 }
 
 app.use("/metrics", metrics);
 
-setImmediate(() => {
+setImmediate(async () => {
   process.env.PROFILE === "TEST" && app.use(authorization.verify);
 
   if (appConfig.project) {
-    const permissions = require("./routes/permissions");
-    const organizations = require("./routes/organizations");
-    const projects = require("./routes/projects");
+    const [permissionsModule, organizationsModule, projectsModule] =
+      await Promise.all([
+        import("./routes/permissions.ts"),
+        import("./routes/organizations.ts"),
+        import("./routes/projects.ts"),
+      ]);
+
+    const permissions = permissionsModule.default || permissionsModule;
+    const organizations = organizationsModule.default || organizationsModule;
+    const projects = projectsModule.default || projectsModule;
 
     app.use("/projects", projects);
     app.use("/organizations", organizations);
@@ -54,4 +63,4 @@ setImmediate(() => {
   app.use(error.handle);
 });
 
-export = app;
+export default app;

@@ -1,9 +1,9 @@
 import { ecsFormat } from "@elastic/ecs-pino-format";
 import pino from "pino";
 import pinoElastic from "pino-elasticsearch";
-import config from "./config";
+import { getConfig } from "./config";
 
-const { logger: loggerConfig, project } = config();
+const { logger: loggerConfig, project } = getConfig();
 
 if (!loggerConfig || !project) {
   throw new Error("Logger and project configuration are required");
@@ -33,4 +33,4 @@ const logger = pino(
   pino.multistream(streams)
 );
 
-export = logger;
+export default logger;

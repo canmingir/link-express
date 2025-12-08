@@ -108,4 +108,5 @@ function init(config: Partial<Config> = {}): Config {
 
 const getConfig = (): Config => _config;
 
-export = Object.assign(getConfig, { init });
+export { getConfig, init, Config };
+export default getConfig;

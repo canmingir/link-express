@@ -1,11 +1,11 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
-import config from "./config";
+import { getConfig } from "./config";
 import dotenv from "dotenv";
 
 dotenv.config();
 
-const { dynamodb } = config();
+const { dynamodb } = getConfig();
 
 if (!dynamodb) {
   throw new Error("DynamoDB configuration is required");
