@@ -28,4 +28,4 @@ router.patch("/", async (req: SettingsRequest, res: Response) => {
   res.end();
 });
 
-export = router;
+export default router;

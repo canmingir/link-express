@@ -49,4 +49,4 @@ router.delete("/:userId", async (req: Request, res: Response) => {
   }
 });
 
-export = router;
+export default router;

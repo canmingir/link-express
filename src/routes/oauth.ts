@@ -263,4 +263,4 @@ router.get("/user", async (req: Request, res: Response): Promise<Response> => {
   });
 });
 
-export = router;
+export default router;

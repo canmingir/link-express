@@ -41,4 +41,4 @@ router.get("/:id", async (req: Request, res: Response) => {
   return res.status(200).json(organization);
 });
 
-export = router;
+export default router;

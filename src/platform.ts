@@ -1,66 +1,40 @@
-import fs from "fs";
 import * as authorization from "./authorization";
 import * as error from "./error";
 import { Application } from "express";
 import { Sequelize } from "sequelize-typescript";
-
-interface ModuleConfig {
-  postgres?: Record<string, unknown>;
-  dynamodb?: Record<string, unknown>;
-  logger?: Record<string, unknown>;
-  project?: Record<string, unknown>;
-  [key: string]: unknown;
-}
-
-interface Logger {
-  info: (...args: unknown[]) => void;
-  error: (...args: unknown[]) => void;
-  warn: (...args: unknown[]) => void;
-  debug: (...args: unknown[]) => void;
-  [key: string]: unknown;
-}
+import { Config } from "./config";
 
 let _express: Application;
-let _postgres: { sequelize: Sequelize; metrics: Record<string, unknown> };
-let _dynamodb: { docClient: Record<string, unknown> };
-let _logger: Logger;
+let _postgres: { sequelize: Sequelize };
+let _dynamodb: any;
+let _logger: any;
 
-function init(config: ModuleConfig = {}): Promise<void> {
-  return new Promise((resolve, reject) => {
-    try {
-      require.extensions[".md"] = function (
-        module: NodeJS.Module,
-        filename: string
-      ) {
-        module.exports = fs.readFileSync(filename, "utf8").trim();
-      };
+async function init(config: Partial<Config> = {}): Promise<void> {
+  const configModule = await import("./config.ts");
+  const { postgres, dynamodb, logger } = configModule.init(config as Config);
 
-      const { postgres, dynamodb, logger } = require("./config").init(config);
+  const expressModule = await import("./express.ts");
+  _express = (expressModule as any).default as Application;
 
-      _express = require("./express");
+  if (logger) {
+    const loggerModule = await import("./logger.ts");
+    _logger = (loggerModule as any).default;
+  } else {
+    _logger = console;
+  }
 
-      if (logger) {
-        _logger = require("./logger");
-      } else {
-        _logger = console as unknown as Logger;
-      }
+  if (postgres) {
+    const postgresModule = await import("./postgres.ts");
+    _postgres = { sequelize: postgresModule.sequelize };
+  }
 
-      if (postgres) {
-        _postgres = require("./postgres");
-      }
-
-      if (dynamodb) {
-        _dynamodb = require("./dynamodb");
-      }
-
-      resolve();
-    } catch (err) {
-      reject(err);
-    }
-  });
+  if (dynamodb) {
+    const dynamodbModule = await import("./dynamodb.ts");
+    _dynamodb = { docClient: dynamodbModule.docClient };
+  }
 }
 
-const module = () => ({
+const getModules = () => ({
   Postgres: _postgres,
   DynamoDB: _dynamodb,
   Kafka: {},
@@ -71,7 +45,7 @@ const importModule = (pkg: string) => import(pkg);
 export {
   init,
   _express as express,
-  module,
+  getModules,
   importModule,
   authorization,
   error,
