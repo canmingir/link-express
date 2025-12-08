@@ -124,6 +124,7 @@ router.post(
     if (userResponse.data[identifierField]) {
       userId = String(userResponse.data[identifierField]);
     } else if (
+      project.oauth &&
       project.oauth?.jwt.identifier &&
       userResponse.data[project.oauth.jwt.identifier]
     ) {
