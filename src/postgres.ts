@@ -1,8 +1,9 @@
-import { Sequelize } from "sequelize-typescript";
+import { Model, Sequelize } from "sequelize-typescript";
 import config from "./config";
 import path from "path";
 import fs from "fs";
 import { DBMetrics } from "./metrics/dbMetrics";
+import { DestroyOptions, InstanceDestroyOptions } from "sequelize";
 
 const appConfig = config();
 
@@ -25,6 +26,16 @@ interface SequelizeOptions {
   metricsTimer?: () => number;
   metricsType?: string;
 }
+
+const originalDestroy = Model.prototype.destroy;
+Model.prototype.destroy = async function (
+  options?: InstanceDestroyOptions
+): Promise<void> {
+  return originalDestroy.call(this, {
+    ...options,
+    individualHooks: true,
+  }) as Promise<void>;
+};
 
 const sequelize = new Sequelize(process.env.PG || postgres.uri, {
   logging: postgres.debug && console.log,
