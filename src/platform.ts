@@ -3,11 +3,13 @@ import * as error from "./error";
 import { Application } from "express";
 import { Sequelize } from "sequelize-typescript";
 import { Config } from "./config";
+import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
+import type { Logger } from "pino";
 
 let _express: Application;
 let _postgres: { sequelize: Sequelize };
-let _dynamodb: any;
-let _logger: any;
+let _dynamodb: { docClient: DynamoDBDocumentClient };
+let _logger: Logger | Console;
 
 async function init(config: Partial<Config> = {}): Promise<void> {
   const configModule = await import("./config.ts");
