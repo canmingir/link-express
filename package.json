@@ -31,7 +31,7 @@
   },
   "author": "NucTeam",
   "bin": {
-    "event-listener": "./bin/event-listener.ts"
+    "event-listener": "./bin/cli.js"
   },
   "exports": {
     ".": "./index.ts",
@@ -43,7 +43,7 @@
     "./sequelize": "./src/sequelize.ts",
     "./event": "./src/event/serc/Event.ts",
     "./event/client": "./src/event/client/index.ts",
-    "./event/server": "./src/event/server/server.ts"
+    "./event/server": "./src/event/server/server.js"
   },
   "scripts": {
     "prepare": "tsx prepare.ts",
