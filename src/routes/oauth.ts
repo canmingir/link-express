@@ -1,10 +1,11 @@
-import Joi from "joi";
+import { AuthenticationError, AuthorizationError } from "../error";
 import express, { Request, Response } from "express";
-import jwt from "jsonwebtoken";
+
+import Joi from "joi";
+import Permission from "../models/Permission.model";
 import axios from "axios";
 import config from "../config";
-import { AuthenticationError, AuthorizationError } from "../error";
-import Permission from "../models/Permission.model";
+import jwt from "jsonwebtoken";
 
 const router = express.Router();
 
@@ -17,33 +18,39 @@ if (!project) {
 router.post(
   "/",
   async (req: Request, res: Response): Promise<Response | void> => {
-    const { appId, projectId, code, refreshToken, redirectUri, provider } =
-      Joi.attempt(
-        req.body,
-        Joi.object({
-          appId: Joi.string().required(),
-          projectId: Joi.string().optional(),
-          code: Joi.string().optional(),
-          refreshToken: Joi.string().optional(),
-          redirectUri: Joi.string().optional(),
-          provider: Joi.string().required(),
-        })
-          .required()
-          .options({ stripUnknown: true })
-      ) as {
-        appId: string;
-        projectId?: string;
-        code?: string;
-        refreshToken?: string;
-        redirectUri?: string;
-        provider: string;
-      };
+    const {
+      appId,
+      projectId,
+      code,
+      refreshToken,
+      redirectUri,
+      identityProvider,
+    } = Joi.attempt(
+      req.body,
+      Joi.object({
+        appId: Joi.string().required(),
+        projectId: Joi.string().optional(),
+        code: Joi.string().optional(),
+        refreshToken: Joi.string().optional(),
+        redirectUri: Joi.string().optional(),
+        identityProvider: Joi.string().required(),
+      })
+        .required()
+        .options({ stripUnknown: true })
+    ) as {
+      appId: string;
+      projectId?: string;
+      code?: string;
+      refreshToken?: string;
+      redirectUri?: string;
+      identityProvider: string;
+    };
 
     if (!code && !refreshToken) {
       return res.status(400).send("Missing OAuth Code and Refresh Token");
     }
 
-    const providerConfig = project.oauth?.providers[provider] as {
+    const providerConfig = project.oauth?.providers[identityProvider] as {
       clientId: string;
       tokenUrl: string;
       userUrl: string;
@@ -68,7 +75,7 @@ router.post(
       params.append("client_id", providerConfig.clientId);
       params.append(
         "client_secret",
-        process.env[`${provider.toUpperCase()}_CLIENT_SECRET`] as string
+        process.env[`${identityProvider.toUpperCase()}_CLIENT_SECRET`] as string
       );
       params.append("code", code);
       params.append("redirect_uri", redirectUri);
@@ -136,7 +143,7 @@ router.post(
         fallbackField: project.oauth?.jwt.identifier,
       });
       throw new Error(
-        `Cannot find user identifier in ${provider} OAuth response`
+        `Cannot find user identifier in ${identityProvider} OAuth response`
       );
     }
 
@@ -153,7 +160,7 @@ router.post(
             sub: userId,
             iss: "nuc",
             aid: appId,
-            provider: provider,
+            identityProvider: identityProvider,
             iat: Math.floor(Date.now() / 1000),
           },
           process.env.JWT_SECRET as string,
@@ -168,7 +175,7 @@ router.post(
             oid: permissions[0].organizationId,
             aid: appId,
             rls: permissions.map((permission) => permission.role),
-            provider: provider,
+            identityProvider: identityProvider,
             iat: Math.floor(Date.now() / 1000),
           },
           process.env.JWT_SECRET as string,
@@ -181,7 +188,7 @@ router.post(
           sub: userId,
           iss: "nuc",
           aid: appId,
-          provider: provider,
+          identityProvider: identityProvider,
           iat: Math.floor(Date.now() / 1000),
         },
         process.env.JWT_SECRET as string,
@@ -214,16 +221,16 @@ router.get("/user", async (req: Request, res: Response): Promise<Response> => {
 
   const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as {
     sub: string;
-    provider: string;
+    identityProvider: string;
   };
   const userId = decoded.sub;
-  const provider = decoded.provider;
+  const identityProvider = decoded.identityProvider;
 
-  if (!userId || !provider) {
+  if (!userId || !identityProvider) {
     return res.status(401).end();
   }
 
-  const providerConfig = project.oauth?.providers[provider] as {
+  const providerConfig = project.oauth?.providers[identityProvider] as {
     userUrl: string;
     userFields: {
       name: string;
@@ -250,7 +257,7 @@ router.get("/user", async (req: Request, res: Response): Promise<Response> => {
   const userFieldMapping = providerConfig.userFields;
   const userDetails = {
     id: userId,
-    provider: provider,
+    identityProvider: identityProvider,
     name: (userResponse.data[userFieldMapping.name] as string) || null,
     displayName:
       (userResponse.data[userFieldMapping.displayName] as string) || null,
