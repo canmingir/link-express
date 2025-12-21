@@ -1,5 +1,6 @@
 import client from "prom-client";
 import { v4 as uuid } from "uuid";
+import { logEvent } from "../eventLogger";
 
 const subscriptions = {};
 const messages = new Map();
@@ -102,7 +103,7 @@ const subscribe = (...args) => {
   const type = args.join(".");
   const id = uuid();
 
-  console.debug("node-event", "subscribe", type, id);
+  logEvent("subscribe", type);
 
   if (type === "__proto__" || type === "constructor" || type === "prototype") {
     throw new Error("Invalid subscription type");
@@ -116,7 +117,6 @@ const subscribe = (...args) => {
     type,
     callback,
     unsubscribe: () => {
-      console.debug("node-event", "unsubscribe", type, id);
       delete subscriptions[type][id];
 
       // Track unsubscription
@@ -152,7 +152,7 @@ const publish = (...args) => {
   const payload = args.pop();
   const type = args.join(".");
 
-  console.log("node-event", "publish", type, payload);
+  logEvent("publish", type, payload);
   messages.set(type, payload);
 
   if (type === "__proto__" || type === "constructor" || type === "prototype") {
@@ -178,7 +178,6 @@ const publish = (...args) => {
         registry.callback(payload, registry);
         eventThroughput.labels(type).inc();
       } catch (err) {
-        console.error("node-event", "error", type, err);
         const errorName = err instanceof Error ? err.name : "UnknownError";
         eventPublishErrors.labels(type, errorName).inc();
       } finally {

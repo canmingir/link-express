@@ -4,6 +4,7 @@ import { EventMetrics, PushgatewayConfig } from "./metrics";
 import { KafkaAdapter } from "./adapters/KafkaAdapter";
 import { SocketAdapter } from "./adapters/SocketAdapter";
 import { TxEventQAdapter } from "./adapters/TxEventQAdapter";
+import { logEvent } from "../eventLogger";
 
 const TOPICS = [
   "KNOWLEDGE_CREATED",
@@ -90,6 +91,9 @@ export class EventManager {
     const type = args.slice(0, -1) as string[];
     const mergedType = type.join("_");
     this.validateEventType(mergedType);
+
+    logEvent("publish", mergedType, payload);
+
     const payloadSize = JSON.stringify(payload).length;
     const endTimer = this.metrics.recordPublish(mergedType, payloadSize);
     try {
@@ -107,6 +111,8 @@ export class EventManager {
     type: string,
     callback: Callback<T>
   ): Promise<() => void> {
+    logEvent("subscribe", type);
+
     if (!this.callbacks.has(type)) {
       this.callbacks.set(type, new Set());
     }
