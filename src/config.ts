@@ -17,6 +17,10 @@ interface ProjectConfig {
     jwt: {
       identifier: string;
     };
+    mock?: {
+      enabled: boolean;
+      userId?: string;
+    };
     providers: Record<
       string,
       {
