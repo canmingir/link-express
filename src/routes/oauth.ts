@@ -230,6 +230,22 @@ router.get("/user", async (req: Request, res: Response): Promise<Response> => {
     return res.status(401).end();
   }
 
+  if (identityProvider.toUpperCase() === "DEMO") {
+    const avatarSeed = userId || "1001";
+    const avatarUrl = `https://api.dicebear.com/7.x/bottts/svg?seed=${avatarSeed}`;
+
+    return res.status(200).json({
+      user: {
+        id: userId || "1001",
+        identityProvider: "DEMO",
+        name: "admin",
+        displayName: "Demo Admin",
+        avatarUrl,
+        email: "admin@demo.local",
+      },
+    });
+  }
+
   const providerConfig = project.oauth?.providers[identityProvider] as {
     userUrl: string;
     userFields: {
@@ -268,6 +284,99 @@ router.get("/user", async (req: Request, res: Response): Promise<Response> => {
 
   return res.status(200).json({
     user: userDetails,
+  });
+});
+
+router.post("/demo", async (req: Request, res: Response): Promise<Response> => {
+  const { appId, projectId, username, password } = Joi.attempt(
+    req.body,
+    Joi.object({
+      appId: Joi.string().required(),
+      projectId: Joi.string().optional(),
+      username: Joi.string().required(),
+      password: Joi.string().required(),
+    })
+      .required()
+      .options({ stripUnknown: true })
+  ) as {
+    appId: string;
+    projectId?: string;
+    username: string;
+    password: string;
+  };
+
+  if (username !== "admin" || password !== "admin") {
+    throw new AuthenticationError("Invalid demo credentials");
+  }
+
+  const userId = "1001";
+
+  let accessToken: string;
+
+  if (projectId) {
+    const permissions = await Permission.findAll({
+      where: { userId, projectId, appId },
+    });
+
+    if (!permissions.length) {
+      accessToken = jwt.sign(
+        {
+          sub: userId,
+          iss: "nuc",
+          aid: appId,
+          aud: projectId,
+          oid: "dfb990bb-81dd-4584-82ce-050eb8f6a12f",
+          rls: "OWNER",
+          identityProvider: "DEMO",
+          iat: Math.floor(Date.now() / 1000),
+        },
+        process.env.JWT_SECRET as string,
+        { expiresIn: "12h" }
+      );
+    } else {
+      accessToken = jwt.sign(
+        {
+          sub: userId,
+          iss: "nuc",
+          aud: projectId,
+          oid: permissions[0].organizationId,
+          aid: appId,
+          rls: permissions.map((p) => p.role),
+          identityProvider: "DEMO",
+          iat: Math.floor(Date.now() / 1000),
+        },
+        process.env.JWT_SECRET as string,
+        { expiresIn: "12h" }
+      );
+    }
+  } else {
+    accessToken = jwt.sign(
+      {
+        sub: userId,
+        iss: "nuc",
+        aid: appId,
+        identityProvider: "DEMO",
+        iat: Math.floor(Date.now() / 1000),
+      },
+      process.env.JWT_SECRET as string,
+      { expiresIn: "12h" }
+    );
+  }
+
+  const refreshToken = jwt.sign(
+    {
+      sub: userId,
+      type: "refresh",
+      identityProvider: "DEMO",
+      iat: Math.floor(Date.now() / 1000),
+    },
+    process.env.JWT_SECRET as string,
+    { expiresIn: "30d" }
+  );
+
+  return res.status(200).json({
+    accessToken,
+    refreshToken,
   });
 });
 
