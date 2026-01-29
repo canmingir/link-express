@@ -118,7 +118,6 @@ class DBMetrics {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
-      console.log("[DBMetrics] Metrics pushed to Pushgateway successfully");
     } catch (err) {
       console.error("[DBMetrics] Failed to push metrics to Pushgateway:", err);
     }

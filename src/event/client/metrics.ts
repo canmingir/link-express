@@ -158,8 +158,6 @@ export class EventMetrics {
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
-
-      console.log("Metrics pushed to Pushgateway successfully");
     } catch (err) {
       console.error("Failed to push metrics to Pushgateway:", err);
     }
