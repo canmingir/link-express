@@ -6,6 +6,7 @@ import Permission from "../models/Permission.model";
 import axios from "axios";
 import config from "../config";
 import jwt from "jsonwebtoken";
+import { verifyCognitoAccessToken } from "../lib/cognitoVerifier";
 
 const router = express.Router();
 
@@ -25,6 +26,8 @@ router.post(
       refreshToken,
       redirectUri,
       identityProvider,
+      username,
+      password,
     } = Joi.attempt(
       req.body,
       Joi.object({
@@ -34,9 +37,11 @@ router.post(
         refreshToken: Joi.string().optional(),
         redirectUri: Joi.string().optional(),
         identityProvider: Joi.string().required(),
+        username: Joi.string().optional().allow("admin"),
+        password: Joi.string().optional().allow("admin"),
       })
         .required()
-        .options({ stripUnknown: true })
+        .options({ stripUnknown: true }),
     ) as {
       appId: string;
       projectId?: string;
@@ -44,7 +49,240 @@ router.post(
       refreshToken?: string;
       redirectUri?: string;
       identityProvider: string;
+      username?: string;
+      password?: string;
     };
+
+    if (username && password && identityProvider.toUpperCase() === "DEMO") {
+      if (username !== "admin" || password !== "admin") {
+        throw new AuthenticationError("Invalid demo credentials");
+      }
+
+      const userId = "1001";
+
+      let accessToken: string;
+
+      if (projectId) {
+        const permissions = await Permission.findAll({
+          where: { userId, projectId, appId },
+        });
+
+        if (!permissions.length) {
+          accessToken = jwt.sign(
+            {
+              sub: userId,
+              iss: "nuc",
+              aid: appId,
+              aud: projectId,
+              oid: "dfb990bb-81dd-4584-82ce-050eb8f6a12f",
+              rls: ["OWNER"],
+              identityProvider: "DEMO",
+              iat: Math.floor(Date.now() / 1000),
+            },
+            process.env.JWT_SECRET as string,
+            { expiresIn: "12h" },
+          );
+        } else {
+          accessToken = jwt.sign(
+            {
+              sub: userId,
+              iss: "nuc",
+              aud: projectId,
+              oid: permissions[0].organizationId,
+              aid: appId,
+              rls: permissions.map((p) => p.role),
+              identityProvider: "DEMO",
+              iat: Math.floor(Date.now() / 1000),
+            },
+            process.env.JWT_SECRET as string,
+            { expiresIn: "12h" },
+          );
+        }
+      } else {
+        accessToken = jwt.sign(
+          {
+            sub: userId,
+            iss: "nuc",
+            aid: appId,
+            identityProvider: "DEMO",
+            iat: Math.floor(Date.now() / 1000),
+          },
+          process.env.JWT_SECRET as string,
+          { expiresIn: "12h" },
+        );
+      }
+
+      const refreshToken = jwt.sign(
+        {
+          sub: userId,
+          type: "refresh",
+          identityProvider: "DEMO",
+          iat: Math.floor(Date.now() / 1000),
+        },
+        process.env.JWT_SECRET as string,
+        { expiresIn: "30d" },
+      );
+
+      return res.status(200).json({
+        accessToken,
+        refreshToken,
+      });
+    }
+
+    if (identityProvider.toUpperCase() === "COGNITO") {
+      if (!refreshToken) {
+        throw new AuthenticationError("Missing token");
+      }
+
+      const maybeInternal = jwt.decode(refreshToken) as any;
+
+      const isInternalRefresh =
+        maybeInternal?.type === "refresh" &&
+        (maybeInternal?.identityProvider || "").toUpperCase() === "COGNITO";
+
+      if (isInternalRefresh) {
+        const verified = jwt.verify(
+          refreshToken,
+          process.env.JWT_SECRET as string,
+        ) as { sub: string; type: string; identityProvider: string };
+
+        const userId = verified.sub;
+
+        let accessToken: string;
+
+        if (projectId) {
+          const permissions = await Permission.findAll({
+            where: { userId, projectId, appId },
+          });
+
+          if (!permissions.length) {
+            accessToken = jwt.sign(
+              {
+                sub: userId,
+                iss: "nuc",
+                aid: appId,
+                aud: projectId,
+                oid: "dfb990bb-81dd-4584-82ce-050eb8f6a12f",
+                rls: ["OWNER"],
+                identityProvider: "COGNITO",
+                iat: Math.floor(Date.now() / 1000),
+              },
+              process.env.JWT_SECRET as string,
+              { expiresIn: "12h" },
+            );
+          } else {
+            accessToken = jwt.sign(
+              {
+                sub: userId,
+                iss: "nuc",
+                aud: projectId,
+                oid: permissions[0].organizationId,
+                aid: appId,
+                rls: permissions.map((p) => p.role),
+                identityProvider: "COGNITO",
+                iat: Math.floor(Date.now() / 1000),
+              },
+              process.env.JWT_SECRET as string,
+              { expiresIn: "12h" },
+            );
+          }
+        } else {
+          accessToken = jwt.sign(
+            {
+              sub: userId,
+              iss: "nuc",
+              aid: appId,
+              identityProvider: "COGNITO",
+              iat: Math.floor(Date.now() / 1000),
+            },
+            process.env.JWT_SECRET as string,
+            { expiresIn: "12h" },
+          );
+        }
+
+        return res.status(200).json({
+          accessToken,
+          refreshToken,
+        });
+      }
+
+      if (refreshToken.split(".").length !== 3) {
+        throw new AuthenticationError(
+          "Expected Cognito access token (JWT) but received a non-JWT token",
+        );
+      }
+
+      const decodedCognito = await verifyCognitoAccessToken(refreshToken);
+      const userId = decodedCognito.sub;
+
+      let accessToken: string;
+
+      if (projectId) {
+        const permissions = await Permission.findAll({
+          where: { userId, projectId, appId },
+        });
+
+        if (!permissions.length) {
+          accessToken = jwt.sign(
+            {
+              sub: userId,
+              iss: "nuc",
+              aid: appId,
+              aud: projectId,
+              oid: "dfb990bb-81dd-4584-82ce-050eb8f6a12f",
+              rls: ["OWNER"],
+              identityProvider: "COGNITO",
+              iat: Math.floor(Date.now() / 1000),
+            },
+            process.env.JWT_SECRET as string,
+            { expiresIn: "12h" },
+          );
+        } else {
+          accessToken = jwt.sign(
+            {
+              sub: userId,
+              iss: "nuc",
+              aud: projectId,
+              oid: permissions[0].organizationId,
+              aid: appId,
+              rls: permissions.map((p) => p.role),
+              identityProvider: "COGNITO",
+              iat: Math.floor(Date.now() / 1000),
+            },
+            process.env.JWT_SECRET as string,
+            { expiresIn: "12h" },
+          );
+        }
+      } else {
+        accessToken = jwt.sign(
+          {
+            sub: userId,
+            iss: "nuc",
+            aid: appId,
+            identityProvider: "COGNITO",
+            iat: Math.floor(Date.now() / 1000),
+          },
+          process.env.JWT_SECRET as string,
+          { expiresIn: "12h" },
+        );
+      }
+
+      const internalRefreshToken = jwt.sign(
+        {
+          sub: userId,
+          type: "refresh",
+          identityProvider: "COGNITO",
+          iat: Math.floor(Date.now() / 1000),
+        },
+        process.env.JWT_SECRET as string,
+        { expiresIn: "30d" },
+      );
+
+      return res.status(200).json({
+        accessToken,
+        refreshToken: internalRefreshToken,
+      });
+    }
 
     if (!code && !refreshToken) {
       return res.status(400).send("Missing OAuth Code and Refresh Token");
@@ -75,7 +313,9 @@ router.post(
       params.append("client_id", providerConfig.clientId);
       params.append(
         "client_secret",
-        process.env[`${identityProvider.toUpperCase()}_CLIENT_SECRET`] as string
+        process.env[
+          `${identityProvider.toUpperCase()}_CLIENT_SECRET`
+        ] as string,
       );
       params.append("code", code);
       params.append("redirect_uri", redirectUri);
@@ -95,13 +335,13 @@ router.post(
 
       if (tokenResponse.data.error) {
         throw new AuthorizationError(
-          tokenResponse.data.error_description || tokenResponse.data.error
+          tokenResponse.data.error_description || tokenResponse.data.error,
         );
       }
 
       if (!tokenResponse.data.access_token) {
         throw new AuthenticationError(
-          "No access token received from OAuth provider"
+          "No access token received from OAuth provider",
         );
       }
 
@@ -120,7 +360,7 @@ router.post(
           Accept: "application/json",
         },
         timeout: 10000,
-      }
+      },
     );
 
     console.log("User info response:", userResponse.data);
@@ -143,7 +383,7 @@ router.post(
         fallbackField: project.oauth?.jwt.identifier,
       });
       throw new Error(
-        `Cannot find user identifier in ${identityProvider} OAuth response`
+        `Cannot find user identifier in ${identityProvider} OAuth response`,
       );
     }
 
@@ -164,7 +404,7 @@ router.post(
             iat: Math.floor(Date.now() / 1000),
           },
           process.env.JWT_SECRET as string,
-          { expiresIn: "12h" }
+          { expiresIn: "12h" },
         );
       } else {
         accessToken = jwt.sign(
@@ -179,7 +419,7 @@ router.post(
             iat: Math.floor(Date.now() / 1000),
           },
           process.env.JWT_SECRET as string,
-          { expiresIn: "12h" }
+          { expiresIn: "12h" },
         );
       }
     } else {
@@ -192,7 +432,7 @@ router.post(
           iat: Math.floor(Date.now() / 1000),
         },
         process.env.JWT_SECRET as string,
-        { expiresIn: "12h" }
+        { expiresIn: "12h" },
       );
     }
 
@@ -200,7 +440,7 @@ router.post(
       accessToken,
       refreshToken: newRefreshToken,
     });
-  }
+  },
 );
 
 router.get("/user", async (req: Request, res: Response): Promise<Response> => {
@@ -246,6 +486,21 @@ router.get("/user", async (req: Request, res: Response): Promise<Response> => {
     });
   }
 
+  if (identityProvider.toUpperCase() === "COGNITO") {
+    const avatarSeed = userId;
+    const avatarUrl = `https://api.dicebear.com/7.x/bottts/svg?seed=${avatarSeed}`;
+
+    return res.status(200).json({
+      user: {
+        id: userId,
+        identityProvider: "COGNITO",
+        name: "Cognito",
+        displayName: "Cognito Admin",
+        avatarUrl,
+      },
+    });
+  }
+
   const providerConfig = project.oauth?.providers[identityProvider] as {
     userUrl: string;
     userFields: {
@@ -267,7 +522,7 @@ router.get("/user", async (req: Request, res: Response): Promise<Response> => {
         Accept: "application/json",
       },
       timeout: 10000,
-    }
+    },
   );
 
   const userFieldMapping = providerConfig.userFields;
@@ -284,99 +539,6 @@ router.get("/user", async (req: Request, res: Response): Promise<Response> => {
 
   return res.status(200).json({
     user: userDetails,
-  });
-});
-
-router.post("/demo", async (req: Request, res: Response): Promise<Response> => {
-  const { appId, projectId, username, password } = Joi.attempt(
-    req.body,
-    Joi.object({
-      appId: Joi.string().required(),
-      projectId: Joi.string().optional(),
-      username: Joi.string().required(),
-      password: Joi.string().required(),
-    })
-      .required()
-      .options({ stripUnknown: true })
-  ) as {
-    appId: string;
-    projectId?: string;
-    username: string;
-    password: string;
-  };
-
-  if (username !== "admin" || password !== "admin") {
-    throw new AuthenticationError("Invalid demo credentials");
-  }
-
-  const userId = "1001";
-
-  let accessToken: string;
-
-  if (projectId) {
-    const permissions = await Permission.findAll({
-      where: { userId, projectId, appId },
-    });
-
-    if (!permissions.length) {
-      accessToken = jwt.sign(
-        {
-          sub: userId,
-          iss: "nuc",
-          aid: appId,
-          aud: projectId,
-          oid: "dfb990bb-81dd-4584-82ce-050eb8f6a12f",
-          rls: "OWNER",
-          identityProvider: "DEMO",
-          iat: Math.floor(Date.now() / 1000),
-        },
-        process.env.JWT_SECRET as string,
-        { expiresIn: "12h" }
-      );
-    } else {
-      accessToken = jwt.sign(
-        {
-          sub: userId,
-          iss: "nuc",
-          aud: projectId,
-          oid: permissions[0].organizationId,
-          aid: appId,
-          rls: permissions.map((p) => p.role),
-          identityProvider: "DEMO",
-          iat: Math.floor(Date.now() / 1000),
-        },
-        process.env.JWT_SECRET as string,
-        { expiresIn: "12h" }
-      );
-    }
-  } else {
-    accessToken = jwt.sign(
-      {
-        sub: userId,
-        iss: "nuc",
-        aid: appId,
-        identityProvider: "DEMO",
-        iat: Math.floor(Date.now() / 1000),
-      },
-      process.env.JWT_SECRET as string,
-      { expiresIn: "12h" }
-    );
-  }
-
-  const refreshToken = jwt.sign(
-    {
-      sub: userId,
-      type: "refresh",
-      identityProvider: "DEMO",
-      iat: Math.floor(Date.now() / 1000),
-    },
-    process.env.JWT_SECRET as string,
-    { expiresIn: "30d" }
-  );
-
-  return res.status(200).json({
-    accessToken,
-    refreshToken,
   });
 });
 
