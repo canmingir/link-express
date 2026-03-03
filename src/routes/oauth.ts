@@ -16,6 +16,26 @@ if (!project) {
   throw new Error("Project configuration is required");
 }
 
+const providers = project?.oauth?.providers || {};
+
+const identityProviders: Record<string, typeof providers[string]> = {};
+
+for (const [key, value] of Object.entries(providers)) {
+  const identityProviderKey = key.toLowerCase();
+
+  if (identityProviders[identityProviderKey]) {
+    throw new Error(
+      `Duplicate OAuth provider configuration detected for key "${key}". Provider keys must be unique in a case-insensitive manner.`,
+    );
+  }
+
+  identityProviders[identityProviderKey] = value;
+}
+
+function getProviderConfig(identityProvider: string) {
+  return identityProviders[identityProvider.toLowerCase()];
+}
+
 router.post(
   "/",
   async (req: Request, res: Response): Promise<Response | void> => {
@@ -288,7 +308,7 @@ router.post(
       return res.status(400).send("Missing OAuth Code and Refresh Token");
     }
 
-    const providerConfig = project.oauth?.providers[identityProvider] as {
+    const providerConfig = getProviderConfig(identityProvider) as {
       clientId: string;
       tokenUrl: string;
       userUrl: string;
@@ -501,7 +521,7 @@ router.get("/user", async (req: Request, res: Response): Promise<Response> => {
     });
   }
 
-  const providerConfig = project.oauth?.providers[identityProvider] as {
+  const providerConfig = getProviderConfig(identityProvider) as {
     userUrl: string;
     userFields: {
       name: string;
