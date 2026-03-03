@@ -16,6 +16,12 @@ if (!project) {
   throw new Error("Project configuration is required");
 }
 
+function getProviderConfig(identityProvider: string) {
+  return Object.entries(project?.oauth?.providers || {}).find(
+    ([key]) => key.toLowerCase() === identityProvider.toLowerCase(),
+  )?.[1];
+}
+
 router.post(
   "/",
   async (req: Request, res: Response): Promise<Response | void> => {
@@ -288,7 +294,7 @@ router.post(
       return res.status(400).send("Missing OAuth Code and Refresh Token");
     }
 
-    const providerConfig = project.oauth?.providers[identityProvider] as {
+    const providerConfig = getProviderConfig(identityProvider) as {
       clientId: string;
       tokenUrl: string;
       userUrl: string;
@@ -501,7 +507,7 @@ router.get("/user", async (req: Request, res: Response): Promise<Response> => {
     });
   }
 
-  const providerConfig = project.oauth?.providers[identityProvider] as {
+  const providerConfig = getProviderConfig(identityProvider) as {
     userUrl: string;
     userFields: {
       name: string;
