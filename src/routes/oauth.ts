@@ -16,10 +16,24 @@ if (!project) {
   throw new Error("Project configuration is required");
 }
 
+const providers = project?.oauth?.providers || {};
+
+const identityProviders: Record<string, typeof providers[string]> = {};
+
+for (const [key, value] of Object.entries(providers)) {
+  const identityProviderKey = key.toLowerCase();
+
+  if (identityProviders[identityProviderKey]) {
+    throw new Error(
+      `Duplicate OAuth provider configuration detected for key "${key}". Provider keys must be unique in a case-insensitive manner.`,
+    );
+  }
+
+  identityProviders[identityProviderKey] = value;
+}
+
 function getProviderConfig(identityProvider: string) {
-  return Object.entries(project?.oauth?.providers || {}).find(
-    ([key]) => key.toLowerCase() === identityProvider.toLowerCase(),
-  )?.[1];
+  return identityProviders[identityProvider.toLowerCase()];
 }
 
 router.post(
