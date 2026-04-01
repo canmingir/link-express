@@ -13,12 +13,10 @@ const TOPICS = [
   "TASK_CREATED",
   "STEP_ADDED",
   "STEP_COMPLETED",
-  "MESSAGE_USER_MESSAGED",
   "MESSAGE_ASSISTANT_MESSAGED",
   "RESPONSIBILITY_CREATED",
   "RESPONSIBILITY_DESCRIPTION_GENERATED",
   "SESSION_INITIATED",
-  "SESSION_USER_MESSAGED",
   "SESSION_AI_MESSAGED",
   "SUPERVISING_RAISED",
   "SUPERVISING_ANSWERED",
@@ -49,7 +47,6 @@ export class EventManager {
           clientId: options.clientId,
           brokers: options.brokers,
           groupId: options.groupId,
-          topics: TOPICS,
         });
         this.startBacklogMonitoring();
         break;
@@ -110,7 +107,7 @@ export class EventManager {
 
   async subscribe<T extends object = object>(
     type: string,
-    callback: Callback<T>
+    callback: Callback<T>,
   ): Promise<() => void> {
     logEvent("subscribe", type);
 
@@ -165,8 +162,8 @@ export class EventManager {
         const endTimer = this.metrics.recordCallback(type);
         try {
           callback(payload);
-        } catch (error) {
-          console.error(`Error in callback for ${type}:`, error);
+        } catch {
+          // individual callback errors are isolated
         }
         endTimer();
       }, 0);
@@ -186,10 +183,7 @@ export class EventManager {
   private startBacklogMonitoring(intervalMs: number = 60000): void {
     if (!this.adapter) return;
 
-    // Only monitor for adapters that implement meaningful backlog
-    const supportsBacklog =
-      this.adapter instanceof KafkaAdapter ||
-      this.adapter instanceof TxEventQAdapter;
+    const supportsBacklog = typeof this.adapter?.getBacklog === "function";
 
     if (!supportsBacklog) return;
 
@@ -210,22 +204,17 @@ export class EventManager {
   private async updateBacklogMetrics(): Promise<void> {
     if (!this.adapter) return;
 
-    const supportsBacklog =
-      this.adapter instanceof KafkaAdapter ||
-      this.adapter instanceof TxEventQAdapter;
+    const supportsBacklog = typeof this.adapter.getBacklog === "function";
 
     if (!supportsBacklog) return;
 
     try {
-      const backlog = await (
-        this.adapter as KafkaAdapter | TxEventQAdapter
-      ).getBacklog(TOPICS);
+      const backlog = await this.adapter.getBacklog!(TOPICS);
       backlog.forEach((size, topic) => {
         this.metrics.updateEventBacklog(topic, size);
-        console.log(`Backlog for topic ${topic}: ${size} messages`);
       });
-    } catch (error) {
-      console.error("Error updating backlog metrics:", error);
+    } catch {
+      // backlog monitoring failures are non-fatal
     }
   }
 

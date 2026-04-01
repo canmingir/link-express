@@ -13,8 +13,7 @@ export class KafkaAdapter implements EventAdapter {
       clientId: string;
       brokers: string[];
       groupId: string;
-      topics: string[]; 
-    }
+    },
   ) {
     this.kafka = new Kafka({
       clientId: options.clientId,
@@ -46,13 +45,12 @@ export class KafkaAdapter implements EventAdapter {
           } catch (error) {
             console.error(
               `Error processing message for topic ${topic}:`,
-              error
+              error,
             );
           }
         }
       },
     });
-    console.log(`Kafka consumer connected`);
   }
 
   async disconnect(): Promise<void> {
@@ -71,22 +69,17 @@ export class KafkaAdapter implements EventAdapter {
     if (!this.producer) {
       throw new Error("Producer not connected");
     }
-    this.producer.send({
+    await this.producer.send({
       topic: type,
       messages: [{ value: JSON.stringify(payload) }],
-    }).then(() => {
-      console.log(`Message published to topic ${type}`);
-    }).catch((error) => {
-      console.error(`Error publishing message to topic ${type}:`, error);
-      return Promise.reject(error);
     });
   }
 
-  async subscribe(type: string): Promise<void> {
+  async subscribe(_type: string): Promise<void> {
     // No-op: EventManager handles callback registration in memory
   }
 
-  async unsubscribe(type: string): Promise<void> {
+  async unsubscribe(_type: string): Promise<void> {
     // No-op: EventManager handles callback removal in memory
   }
 
@@ -118,7 +111,7 @@ export class KafkaAdapter implements EventAdapter {
         if (topicResponse) {
           topicResponse.partitions.forEach((partitionOffset) => {
             const latestOffset = topicOffsets.find(
-              (to) => to.partition === partitionOffset.partition
+              (to) => to.partition === partitionOffset.partition,
             );
 
             if (latestOffset) {

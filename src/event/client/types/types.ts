@@ -7,6 +7,7 @@ export interface EventAdapter {
   subscribe(type: string): Promise<void>;
   unsubscribe(type: string): Promise<void>;
   onMessage(handler: (type: string, payload: object) => void): void;
+  getBacklog?(topics: string[]): Promise<Map<string, number>>;
 }
 
 export interface BaseInitOptions {
@@ -34,10 +35,10 @@ export interface TxEventQOptions extends BaseInitOptions {
   password: string;
   instantClientPath?: string;
   walletPath?: string;
+  walletPassword?: string;
   consumerName?: string;
   batchSize?: number;
   waitTime?: number;
-  topics?: string[];
 }
 
 export type InitOptions = InMemoryOptions | KafkaOptions | TxEventQOptions;

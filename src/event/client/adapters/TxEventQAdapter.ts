@@ -4,7 +4,6 @@ import { EventAdapter } from "../types/types";
 
 export class TxEventQAdapter implements EventAdapter {
   private connection: oracledb.Connection | null = null;
-  private queue: oracledb.AdvancedQueue<any> | null = null;
   private queueCache: Map<string, oracledb.AdvancedQueue<any>> = new Map();
   private messageHandler?: (type: string, payload: object) => void;
   private isRunning: boolean = false;
@@ -35,12 +34,10 @@ export class TxEventQAdapter implements EventAdapter {
             configDir: this.options.walletPath,
             walletPath: this.options.walletPath,
           });
-          console.log("Oracle Thick client initialized");
         } catch (initError: any) {
           if (initError.code !== "NJS-509") {
             throw initError;
           }
-          console.log("Oracle Thick client already initialized");
         }
       }
 
@@ -54,10 +51,8 @@ export class TxEventQAdapter implements EventAdapter {
       });
 
       this.isRunning = true;
-
-      console.log("TxEventQ adapter connected successfully");
     } catch (error: any) {
-      console.error("Failed to connect to TxEventQ:", error.message);
+      console.error("[TxEventQAdapter] Error connecting:", error);
       throw error;
     }
   }
@@ -65,15 +60,11 @@ export class TxEventQAdapter implements EventAdapter {
   async disconnect(): Promise<void> {
     this.isRunning = false;
 
-    for (const [type, conn] of this.subscriptionConnections) {
+    for (const [, conn] of this.subscriptionConnections) {
       try {
         await conn.close();
-        console.log(`TxEventQ subscription connection closed for ${type}`);
-      } catch (error) {
-        console.error(
-          `Error closing subscription connection for ${type}:`,
-          error,
-        );
+      } catch {
+        // ignore close errors during disconnect
       }
     }
     this.subscriptionConnections.clear();
@@ -82,12 +73,10 @@ export class TxEventQAdapter implements EventAdapter {
       try {
         this.queueCache.clear();
         await this.connection.close();
-        console.log("TxEventQ connection closed");
-      } catch (error) {
-        console.error("Error closing TxEventQ connection:", error);
+      } catch {
+        // ignore close errors during disconnect
       }
       this.connection = null;
-      this.queue = null;
     }
   }
 
@@ -105,9 +94,6 @@ export class TxEventQAdapter implements EventAdapter {
 
     const queue = await this.connection.getQueue(queueName, options);
     this.queueCache.set(queueName, queue);
-
-    console.log(`Queue ${queueName} cached`);
-
     return queue;
   }
 
@@ -116,29 +102,20 @@ export class TxEventQAdapter implements EventAdapter {
       throw new Error("TxEventQAdapter not connected");
     }
 
-    const queueName = type;
-
-    this.queue = await this.getOrCreateQueue(queueName, {
+    const queue = await this.getOrCreateQueue(type, {
       payloadType: oracledb.DB_TYPE_JSON,
     } as any);
 
-    const message = {
-      topic: type,
-      payload: payload,
-    };
+    await queue.enqOne({
+      payload: { topic: type, payload },
+      correlation: type,
+      priority: 0,
+      delay: 0,
+      expiration: -1,
+      exceptionQueue: "",
+    } as any);
 
-    this.queue
-      .enqOne({
-        payload: message,
-        correlation: type,
-        priority: 0,
-        delay: 0,
-        expiration: -1,
-        exceptionQueue: "",
-      } as any)
-      .then(() => {
-        this.connection.commit();
-      });
+    await this.connection.commit();
   }
 
   async subscribe(type: string): Promise<void> {
@@ -168,10 +145,8 @@ export class TxEventQAdapter implements EventAdapter {
     queue.deqOptions.wait = 5;
     queue.deqOptions.consumerName = consumerName;
 
-    console.log(`[TxEventQ] Subscribing to ${queueName} as ${consumerName}`);
-
-    this.consumeLoop(type, queue, subConnection).catch((error) => {
-      console.error(`[TxEventQ] Fatal error consuming ${type}:`, error);
+    this.consumeLoop(type, queue, subConnection).catch(() => {
+      // consumeLoop exits when isRunning becomes false
     });
   }
 
@@ -180,6 +155,7 @@ export class TxEventQAdapter implements EventAdapter {
     queue: oracledb.AdvancedQueue<any>,
     connection: oracledb.Connection,
   ): Promise<void> {
+    let backoffMs = 1000;
     while (this.isRunning) {
       try {
         const message = await queue.deqOne();
@@ -188,24 +164,19 @@ export class TxEventQAdapter implements EventAdapter {
             try {
               const payload = (message.payload as any)?.payload || {};
               this.messageHandler(type, payload);
-            } catch (error) {
-              console.error(
-                `Error processing message for topic ${type}:`,
-                error,
-              );
+            } catch {
+              // callback errors don't affect message acknowledgment
             }
           }
           if (this.options.autoCommit) {
             await connection.commit();
           }
         }
-      } catch (error: any) {
+        backoffMs = 1000;
+      } catch {
         if (!this.isRunning) break;
-        console.error(
-          `[TxEventQ] Error in consume loop for ${type}:`,
-          error.message,
-        );
-        await new Promise((res) => setTimeout(res, 1000));
+        await new Promise((res) => setTimeout(res, backoffMs));
+        backoffMs = Math.min(backoffMs * 2, 30000);
       }
     }
   }
@@ -215,12 +186,11 @@ export class TxEventQAdapter implements EventAdapter {
     if (conn) {
       try {
         await conn.close();
-      } catch (e) {
+      } catch {
         // ignore
       }
       this.subscriptionConnections.delete(type);
     }
-    this.queue = null;
   }
 
   onMessage(handler: (type: string, payload: object) => void): void {
@@ -250,8 +220,7 @@ export class TxEventQAdapter implements EventAdapter {
         const rows = (result.rows || []) as Array<{ BACKLOG: number }>;
         const val = Number(rows?.[0]?.BACKLOG ?? 0);
         backlogMap.set(topic, isNaN(val) ? 0 : val);
-      } catch (err) {
-        console.error(`Backlog query failed for topic ${topic}:`, err);
+      } catch {
         backlogMap.set(topic, 0);
       }
     }
