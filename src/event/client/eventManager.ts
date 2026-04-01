@@ -61,9 +61,11 @@ export class EventManager {
           password: options.password,
           instantClientPath: options.instantClientPath,
           walletPath: options.walletPath,
+          walletPassword: options.walletPassword,
           consumerName: options.consumerName,
           batchSize: options.batchSize,
           waitTime: options.waitTime,
+          autoCommit: true,
         });
         this.startBacklogMonitoring();
         break;
@@ -98,7 +100,6 @@ export class EventManager {
     const endTimer = this.metrics.recordPublish(mergedType, payloadSize);
     try {
       await this.adapter.publish(mergedType, payload);
-      this.executeCallbacks(mergedType, payload);
       endTimer();
     } catch (error) {
       this.metrics.recordPublishError(mergedType, "publish_error");

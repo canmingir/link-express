@@ -9,6 +9,8 @@ export class TxEventQAdapter implements EventAdapter {
   private messageHandler?: (type: string, payload: object) => void;
   private isRunning: boolean = false;
 
+  private subscriptionConnections: Map<string, oracledb.Connection> = new Map();
+
   constructor(
     private readonly options: {
       connectString: string;
@@ -16,11 +18,12 @@ export class TxEventQAdapter implements EventAdapter {
       password: string;
       instantClientPath?: string;
       walletPath?: string;
+      walletPassword?: string;
       consumerName?: string;
       batchSize?: number;
       waitTime?: number;
       autoCommit?: boolean;
-    }
+    },
   ) {}
 
   async connect(): Promise<void> {
@@ -46,7 +49,8 @@ export class TxEventQAdapter implements EventAdapter {
         user: this.options.user,
         password: this.options.password,
         configDir: this.options.walletPath,
-        walletPath: this.options.walletPath,
+        walletLocation: this.options.walletPath,
+        walletPassword: this.options.walletPassword,
       });
 
       this.isRunning = true;
@@ -61,10 +65,22 @@ export class TxEventQAdapter implements EventAdapter {
   async disconnect(): Promise<void> {
     this.isRunning = false;
 
+    for (const [type, conn] of this.subscriptionConnections) {
+      try {
+        await conn.close();
+        console.log(`TxEventQ subscription connection closed for ${type}`);
+      } catch (error) {
+        console.error(
+          `Error closing subscription connection for ${type}:`,
+          error,
+        );
+      }
+    }
+    this.subscriptionConnections.clear();
+
     if (this.connection) {
       try {
         this.queueCache.clear();
-
         await this.connection.close();
         console.log("TxEventQ connection closed");
       } catch (error) {
@@ -77,7 +93,7 @@ export class TxEventQAdapter implements EventAdapter {
 
   private async getOrCreateQueue(
     queueName: string,
-    options: any
+    options: any,
   ): Promise<oracledb.AdvancedQueue<any>> {
     if (!this.connection) {
       throw new Error("TxEventQAdapter not connected");
@@ -129,56 +145,81 @@ export class TxEventQAdapter implements EventAdapter {
     if (!this.connection) {
       throw new Error("Subscriber not initialized");
     }
-    this.isRunning = true;
 
     const queueName = `TXEVENTQ_USER.${type}`;
+    const consumerName =
+      this.options.consumerName || `${type.toLowerCase()}_subscriber`;
 
-    this.queue = await this.getOrCreateQueue(queueName, {
+    const subConnection = await oracledb.getConnection({
+      connectString: this.options.connectString,
+      user: this.options.user,
+      password: this.options.password,
+      configDir: this.options.walletPath,
+      walletLocation: this.options.walletPath,
+      walletPassword: this.options.walletPassword,
+    });
+
+    this.subscriptionConnections.set(type, subConnection);
+
+    const queue = await subConnection.getQueue(queueName, {
       payloadType: oracledb.DB_TYPE_JSON,
     });
 
-    this.queue.deqOptions.wait = 5000;
-    this.queue.deqOptions.consumerName =
-      this.options.consumerName || `${type.toLowerCase()}_subscriber`;
-    try {
-      while (this.isRunning) {
-        let messages: oracledb.AdvancedQueueMessage[] = [];
+    queue.deqOptions.wait = 5;
+    queue.deqOptions.consumerName = consumerName;
 
-        const message = await this.queue.deqOne();
+    console.log(`[TxEventQ] Subscribing to ${queueName} as ${consumerName}`);
+
+    this.consumeLoop(type, queue, subConnection).catch((error) => {
+      console.error(`[TxEventQ] Fatal error consuming ${type}:`, error);
+    });
+  }
+
+  private async consumeLoop(
+    type: string,
+    queue: oracledb.AdvancedQueue<any>,
+    connection: oracledb.Connection,
+  ): Promise<void> {
+    while (this.isRunning) {
+      try {
+        const message = await queue.deqOne();
         if (message) {
-          messages = [message];
-        }
-        if (messages && messages.length > 0) {
           if (this.messageHandler) {
             try {
-              const payload = message.payload.payload || {};
+              const payload = (message.payload as any)?.payload || {};
               this.messageHandler(type, payload);
             } catch (error) {
               console.error(
                 `Error processing message for topic ${type}:`,
-                error
+                error,
               );
             }
           }
           if (this.options.autoCommit) {
-            await this.connection.commit();
-            console.log(
-              `Transaction committed for ${messages.length} message(s)`
-            );
+            await connection.commit();
           }
         }
+      } catch (error: any) {
+        if (!this.isRunning) break;
+        console.error(
+          `[TxEventQ] Error in consume loop for ${type}:`,
+          error.message,
+        );
+        await new Promise((res) => setTimeout(res, 1000));
       }
-    } catch (error) {
-      console.error("Fatal error during consumption:", error);
-      throw error;
     }
   }
 
   async unsubscribe(type: string): Promise<void> {
-    if (!this.connection) {
-      throw new Error("Subscriber not initialized");
+    const conn = this.subscriptionConnections.get(type);
+    if (conn) {
+      try {
+        await conn.close();
+      } catch (e) {
+        // ignore
+      }
+      this.subscriptionConnections.delete(type);
     }
-    this.isRunning = false;
     this.queue = null;
   }
 
@@ -191,31 +232,19 @@ export class TxEventQAdapter implements EventAdapter {
     if (!this.connection || !topics?.length) return backlogMap;
 
     const sql = `
-      SELECT NVL(SUM(s.ENQUEUED_MSGS - s.DEQUEUED_MSGS), 0) AS BACKLOG
-        FROM GV$AQ_SHARDED_SUBSCRIBER_STAT s
-        JOIN USER_QUEUES q
-          ON q.QID = s.QUEUE_ID
-        JOIN USER_QUEUE_SUBSCRIBERS sub
-          ON sub.SUBSCRIBER_ID = s.SUBSCRIBER_ID
-         AND sub.QUEUE_NAME = q.NAME
-       WHERE q.NAME IN (:queueName1, :queueName2)
-         AND (:consumerName IS NULL OR sub.CONSUMER_NAME = :consumerName)
+      SELECT NVL(ENQUEUED_MSGS - DEQUEUED_MSGS, 0) AS BACKLOG
+        FROM V$PERSISTENT_QUEUES
+       WHERE QUEUE_NAME = :queueName
     `;
 
-    const consumerName =
-      typeof this.options.consumerName === "string"
-        ? this.options.consumerName
-        : null;
-
     for (const topic of topics) {
-      const queueName1 = `TXEVENTQ_USER.${topic}`;
-      const queueName2 = topic;
+      const queueName = topic;
 
       try {
         const result = await this.connection.execute(
           sql,
-          { queueName1, queueName2, consumerName },
-          { outFormat: oracledb.OUT_FORMAT_OBJECT }
+          { queueName },
+          { outFormat: oracledb.OUT_FORMAT_OBJECT },
         );
 
         const rows = (result.rows || []) as Array<{ BACKLOG: number }>;
