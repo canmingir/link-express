@@ -3,7 +3,6 @@ import { EventMetrics, PushgatewayConfig } from "./metrics";
 
 import { KafkaAdapter } from "./adapters/KafkaAdapter";
 import { SocketAdapter } from "./adapters/SocketAdapter";
-import { TxEventQAdapter } from "./adapters/TxEventQAdapter";
 import { logEvent } from "../eventLogger";
 
 const TOPICS = [
@@ -47,22 +46,6 @@ export class EventManager {
           clientId: options.clientId,
           brokers: options.brokers,
           groupId: options.groupId,
-        });
-        this.startBacklogMonitoring();
-        break;
-
-      case "txeventq":
-        this.adapter = new TxEventQAdapter({
-          connectString: options.connectString,
-          user: options.user,
-          password: options.password,
-          instantClientPath: options.instantClientPath,
-          walletPath: options.walletPath,
-          walletPassword: options.walletPassword,
-          consumerName: options.consumerName,
-          batchSize: options.batchSize,
-          waitTime: options.waitTime,
-          autoCommit: true,
         });
         this.startBacklogMonitoring();
         break;
