@@ -4,7 +4,7 @@ import { EventAdapter } from "../types/types";
 
 export class SocketAdapter implements EventAdapter {
   private socket: Socket | null = null;
-  private messageHandler?: (type: string, payload: object) => void;
+  private messageHandler?: (type: string, payload: Record<string, unknown>) => void;
   private readonly subscribedTypes = new Set<string>();
 
   constructor(
@@ -30,7 +30,7 @@ export class SocketAdapter implements EventAdapter {
 
     this.socket.on(
       "event",
-      ({ type, payload }: { type: string; payload: object }) => {
+      ({ type, payload }: { type: string; payload: Record<string, unknown> }) => {
         if (this.messageHandler) {
           this.messageHandler(type, payload);
         }
@@ -46,7 +46,7 @@ export class SocketAdapter implements EventAdapter {
     this.subscribedTypes.clear();
   }
 
-  async publish(type: string, payload: object): Promise<void> {
+  async publish(type: string, payload: Record<string, unknown>): Promise<void> {
     this.ensureConnected();
     this.socket.emit("publish", { type, payload });
   }
@@ -63,7 +63,7 @@ export class SocketAdapter implements EventAdapter {
     this.socket.emit("unsubscribe", type);
   }
 
-  onMessage(handler: (type: string, payload: object) => void): void {
+  onMessage(handler: (type: string, payload: Record<string, unknown>) => void): void {
     this.messageHandler = handler;
   }
 
@@ -82,7 +82,6 @@ export class SocketAdapter implements EventAdapter {
     }
 
     if (typeof socket.once !== "function" || typeof socket.off !== "function") {
-      // Test doubles may not implement full socket.io client API.
       return;
     }
 

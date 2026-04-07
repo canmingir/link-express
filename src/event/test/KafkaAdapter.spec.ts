@@ -80,9 +80,13 @@ describe("KafkaAdapter", () => {
       connect: sinon.stub().resolves(),
       disconnect: sinon.stub().resolves(),
       subscribe: sinon.stub().resolves(),
-      run: sinon.stub().callsFake(async ({ eachMessage }: { eachMessage: EachMessageHandler }) => {
-        fakeConsumer._runHandler = eachMessage;
-      }),
+      run: sinon
+        .stub()
+        .callsFake(
+          async ({ eachMessage }: { eachMessage: EachMessageHandler }) => {
+            fakeConsumer._runHandler = eachMessage;
+          },
+        ),
       stop: sinon.stub().resolves(),
     };
 
@@ -106,7 +110,11 @@ describe("KafkaAdapter", () => {
   });
 
   afterEach(async () => {
-    try { await adapter.disconnect(); } catch { /* ignore */ }
+    try {
+      await adapter.disconnect();
+    } catch {
+      /* ignore */
+    }
   });
 
   // ── connect() ─────────────────────────────────────────────────────────────
@@ -115,7 +123,9 @@ describe("KafkaAdapter", () => {
     it("creates a Kafka instance with the provided clientId and brokers", async () => {
       await adapter.connect();
       assert.ok(FakeKafkaConstructor.called);
-      const [opts] = FakeKafkaConstructor.lastCall.args as [{ clientId: string; brokers: string[] }];
+      const [opts] = FakeKafkaConstructor.lastCall.args as [
+        { clientId: string; brokers: string[] },
+      ];
       assert.strictEqual(opts.clientId, "test-client");
       assert.deepStrictEqual(opts.brokers, ["localhost:9092"]);
     });
@@ -133,18 +143,25 @@ describe("KafkaAdapter", () => {
     it("subscribes to all non-internal topics via regex", async () => {
       await adapter.connect();
       assert.ok(fakeConsumer.subscribe.calledOnce);
-      const [subOpts] = fakeConsumer.subscribe.firstCall.args as [{ topics: RegExp[] }];
+      const [subOpts] = fakeConsumer.subscribe.firstCall.args as [
+        { topics: RegExp[] },
+      ];
       assert.ok(Array.isArray(subOpts.topics));
       const regex = subOpts.topics[0];
       assert.ok(regex instanceof RegExp);
       assert.ok(regex.test("MY_TOPIC"), "should match regular topics");
-      assert.ok(!regex.test("__consumer_offsets"), "should NOT match internal kafka topics");
+      assert.ok(
+        !regex.test("__consumer_offsets"),
+        "should NOT match internal kafka topics",
+      );
     });
 
     it("runs the consumer with 1 concurrent partition by default", async () => {
       await adapter.connect();
       assert.ok(fakeConsumer.run.calledOnce);
-      const [runOpts] = fakeConsumer.run.firstCall.args as [{ partitionsConsumedConcurrently: number }];
+      const [runOpts] = fakeConsumer.run.firstCall.args as [
+        { partitionsConsumedConcurrently: number },
+      ];
       assert.strictEqual(runOpts.partitionsConsumedConcurrently, 1);
     });
 
@@ -156,7 +173,9 @@ describe("KafkaAdapter", () => {
 
       await adapter.connect();
       assert.ok(fakeConsumer.run.calledOnce);
-      const [runOpts] = fakeConsumer.run.firstCall.args as [{ partitionsConsumedConcurrently: number }];
+      const [runOpts] = fakeConsumer.run.firstCall.args as [
+        { partitionsConsumedConcurrently: number },
+      ];
       assert.strictEqual(runOpts.partitionsConsumedConcurrently, 4);
     });
   });
@@ -202,7 +221,7 @@ describe("KafkaAdapter", () => {
         fakeConsumer._runHandler!({
           topic: "MY_TOPIC",
           message: { value: Buffer.from("not-json") },
-        })
+        }),
       );
       assert.strictEqual(received.length, 0);
     });
@@ -212,7 +231,7 @@ describe("KafkaAdapter", () => {
         fakeConsumer._runHandler!({
           topic: "MY_TOPIC",
           message: { value: null },
-        })
+        }),
       );
     });
   });
@@ -221,7 +240,10 @@ describe("KafkaAdapter", () => {
 
   describe("publish()", () => {
     it("throws when called before connect()", async () => {
-      await assert.rejects(() => adapter.publish("TOPIC", {}), /Producer not connected/);
+      await assert.rejects(
+        () => adapter.publish("TOPIC", {}),
+        /Producer not connected/,
+      );
     });
 
     it("calls producer.send with the correct topic and JSON-stringified payload", async () => {
@@ -232,10 +254,13 @@ describe("KafkaAdapter", () => {
       await Promise.resolve();
       assert.ok(fakeProducer.send.called);
       const [sendOpts] = fakeProducer.send.firstCall.args as [
-        { topic: string; messages: Array<{ value: string }> }
+        { topic: string; messages: Array<{ value: string }> },
       ];
       assert.strictEqual(sendOpts.topic, "MY_TOPIC");
-      assert.strictEqual(sendOpts.messages[0].value, JSON.stringify({ key: "value" }));
+      assert.strictEqual(
+        sendOpts.messages[0].value,
+        JSON.stringify({ key: "value" }),
+      );
     });
   });
 
