@@ -67,7 +67,10 @@ export class KafkaAdapter implements EventAdapter {
     }
   }
 
-  async publish<T extends object = object>(type: string, payload: T): Promise<void> {
+  async publish<T extends object = object>(
+    type: string,
+    payload: T,
+  ): Promise<void> {
     if (!this.producer) {
       throw new Error("Producer not connected");
     }
@@ -75,7 +78,6 @@ export class KafkaAdapter implements EventAdapter {
       topic: type,
       messages: [
         {
-          key: this.getMessageKey(type, payload),
           value: JSON.stringify(payload),
         },
       ],
@@ -136,26 +138,5 @@ export class KafkaAdapter implements EventAdapter {
     }
 
     return backlogMap;
-  }
-
-  private getMessageKey(type: string, payload: object): string {
-    const routingKeyFields = [
-      "taskId",
-      "stepId",
-      "sessionId",
-      "conversationId",
-      "agentId",
-      "id",
-    ] as const;
-
-    const payloadRecord = payload as Record<string, unknown>;
-    for (const field of routingKeyFields) {
-      const value = payloadRecord[field];
-      if (typeof value === "string" && value.length > 0) {
-        return value;
-      }
-    }
-
-    return type;
   }
 }
