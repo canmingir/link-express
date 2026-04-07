@@ -141,11 +141,23 @@ describe("KafkaAdapter", () => {
       assert.ok(!regex.test("__consumer_offsets"), "should NOT match internal kafka topics");
     });
 
-    it("runs the consumer with 160 concurrent partitions", async () => {
+    it("runs the consumer with 1 concurrent partition by default", async () => {
       await adapter.connect();
       assert.ok(fakeConsumer.run.calledOnce);
       const [runOpts] = fakeConsumer.run.firstCall.args as [{ partitionsConsumedConcurrently: number }];
-      assert.strictEqual(runOpts.partitionsConsumedConcurrently, 160);
+      assert.strictEqual(runOpts.partitionsConsumedConcurrently, 1);
+    });
+
+    it("uses provided partitionsConsumedConcurrently when configured", async () => {
+      adapter = new KafkaAdapterClass({
+        ...defaultOptions,
+        partitionsConsumedConcurrently: 4,
+      });
+
+      await adapter.connect();
+      assert.ok(fakeConsumer.run.calledOnce);
+      const [runOpts] = fakeConsumer.run.firstCall.args as [{ partitionsConsumedConcurrently: number }];
+      assert.strictEqual(runOpts.partitionsConsumedConcurrently, 4);
     });
   });
 

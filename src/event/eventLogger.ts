@@ -46,7 +46,7 @@ function getLogger(): pino.Logger | null {
           },
         },
       },
-      pino.multistream(streams)
+      pino.multistream(streams),
     );
 
     isElasticsearchConfigured = true;
@@ -58,7 +58,7 @@ function getLogger(): pino.Logger | null {
 export function logEvent(
   action: "publish" | "subscribe",
   topic: string,
-  payload?: any
+  payload?: unknown,
 ) {
   const log = getLogger();
 

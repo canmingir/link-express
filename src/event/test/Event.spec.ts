@@ -1,6 +1,7 @@
 import assert from "assert";
 import sinon from "sinon";
 import * as promClient from "prom-client";
+import type { SubscriptionRegistry } from "../src/Event";
 
 // Helper: fresh require of Event.ts, clearing the module and prom-client registry first
 function loadEvent() {
@@ -8,9 +9,9 @@ function loadEvent() {
   const eventPath = require.resolve("../src/Event");
   delete require.cache[eventPath];
   return require("../src/Event") as {
-    subscribe: (...args: any[]) => any;
-    publish: (...args: any[]) => void;
-    last: (type: string, init?: any) => any;
+    subscribe: (...args: unknown[]) => SubscriptionRegistry;
+    publish: (...args: unknown[]) => void;
+    last: (type: string, init?: unknown) => unknown;
   };
 }
 

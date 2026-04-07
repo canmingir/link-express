@@ -26,6 +26,7 @@ export interface KafkaOptions extends BaseInitOptions {
   clientId: string;
   brokers: string[];
   groupId: string;
+  partitionsConsumedConcurrently?: number;
 }
 
 export type InitOptions = InMemoryOptions | KafkaOptions;

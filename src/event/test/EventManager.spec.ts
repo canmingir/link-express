@@ -142,7 +142,7 @@ describe("EventManager", () => {
     it("throws for an unknown adapter type", async () => {
       const m = new EventManagerClass();
       await assert.rejects(
-        () => m.init({ type: "unknown" as any }),
+        () => m.init({ type: "unknown" as never }),
         /Unknown adapter type/,
       );
     });
