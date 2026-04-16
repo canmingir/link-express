@@ -1,10 +1,3 @@
-/**
- * KafkaAdapter tests
- *
- * kafkajs is pure JavaScript but we mock it to prevent real broker connections.
- * The kafkajs cache is poisoned before KafkaAdapter is loaded.
- */
-
 import assert from "assert";
 import sinon from "sinon";
 
@@ -17,8 +10,6 @@ let KafkaAdapterClass: typeof import("../client/adapters/KafkaAdapter").KafkaAda
 let FakeKafkaConstructor: sinon.SinonStub;
 
 before(() => {
-  // Create a stable Kafka constructor stub; the individual instance methods
-  // will be set fresh in each beforeEach.
   FakeKafkaConstructor = sinon.stub();
 
   const kafkaPath = require.resolve("kafkajs");
@@ -36,8 +27,6 @@ before(() => {
   KafkaAdapterClass = require("../client/adapters/KafkaAdapter").KafkaAdapter;
 });
 
-// ─────────────────────────────────────────────────────────────────────────────
-
 const defaultOptions = {
   clientId: "test-client",
   brokers: ["localhost:9092"],
@@ -48,7 +37,6 @@ const defaultOptions = {
 describe("KafkaAdapter", () => {
   let adapter: InstanceType<typeof KafkaAdapterClass>;
 
-  // Fresh stubs created per test so reset() is never needed
   let fakeProducer: {
     connect: sinon.SinonStub;
     disconnect: sinon.SinonStub;
@@ -117,8 +105,6 @@ describe("KafkaAdapter", () => {
     }
   });
 
-  // ── connect() ─────────────────────────────────────────────────────────────
-
   describe("connect()", () => {
     it("creates a Kafka instance with the provided clientId and brokers", async () => {
       await adapter.connect();
@@ -180,8 +166,6 @@ describe("KafkaAdapter", () => {
     });
   });
 
-  // ── message handling ───────────────────────────────────────────────────────
-
   describe("message handling (eachMessage)", () => {
     beforeEach(async () => {
       await adapter.connect();
@@ -236,8 +220,6 @@ describe("KafkaAdapter", () => {
     });
   });
 
-  // ── publish() ─────────────────────────────────────────────────────────────
-
   describe("publish()", () => {
     it("throws when called before connect()", async () => {
       await assert.rejects(
@@ -249,7 +231,6 @@ describe("KafkaAdapter", () => {
     it("calls producer.send with the correct topic and JSON-stringified payload", async () => {
       await adapter.connect();
       await adapter.publish("MY_TOPIC", { key: "value" });
-      // send is fire-and-forget via .then — wait for microtasks to settle
       await Promise.resolve();
       await Promise.resolve();
       assert.ok(fakeProducer.send.called);
@@ -264,8 +245,6 @@ describe("KafkaAdapter", () => {
     });
   });
 
-  // ── subscribe() / unsubscribe() ───────────────────────────────────────────
-
   describe("subscribe() and unsubscribe()", () => {
     it("subscribe() is a no-op — does not emit or throw", async () => {
       await assert.doesNotReject(() => adapter.subscribe("TOPIC"));
@@ -275,8 +254,6 @@ describe("KafkaAdapter", () => {
       await assert.doesNotReject(() => adapter.unsubscribe("TOPIC"));
     });
   });
-
-  // ── disconnect() ──────────────────────────────────────────────────────────
 
   describe("disconnect()", () => {
     beforeEach(async () => {
@@ -299,8 +276,6 @@ describe("KafkaAdapter", () => {
     });
   });
 
-  // ── getBacklog() ──────────────────────────────────────────────────────────
-
   describe("getBacklog()", () => {
     beforeEach(async () => {
       await adapter.connect();
@@ -320,7 +295,6 @@ describe("KafkaAdapter", () => {
       fakeAdmin.fetchTopicOffsets.resolves([{ partition: 0, offset: "10" }]);
 
       const result = await adapter.getBacklog(["MY_TOPIC"]);
-      // lag = 10 - 5 = 5
       assert.strictEqual(result.get("MY_TOPIC"), 5);
       assert.ok(fakeAdmin.connect.calledOnce);
       assert.ok(fakeAdmin.disconnect.calledOnce);

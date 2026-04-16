@@ -1,19 +1,6 @@
-/**
- * EventManager tests
- *
- * Strategy: test EventManager using the `inMemory` adapter type (SocketAdapter).
- *
- * IMPORTANT: We use `import type` (no runtime code) for EventManager, and load it
- * with require() AFTER poisoning the socket.io-client cache. This is necessary because
- * TypeScript `import` statements are hoisted by tsx/cjs — any top-level import of
- * EventManager would load SocketAdapter before our fake socket can be installed.
- */
-
 import assert from "assert";
 import sinon from "sinon";
 import type { EventManager as EventManagerType } from "../client/eventManager";
-
-// ── Fake socket factory ───────────────────────────────────────────────────────
 
 type EventHandler = (data: unknown) => void;
 
@@ -38,19 +25,11 @@ let fakeSocket: ReturnType<typeof makeFakeSocket>;
 let fakeIo: sinon.SinonStub;
 let EventManagerClass: new () => EventManagerType;
 
-// ── Module-level setup: poison socket.io-client BEFORE EventManager is loaded ─
-
-// This module-level code runs when the spec file is first required by Mocha.
-// At this point no spec file has caused socket.io-client to be loaded yet
-// (because we use `import type` for EventManager, not a value import).
-// So we can safely poison the cache here.
 const socketIoPath = require.resolve("socket.io-client");
 fakeIo = sinon.stub();
 fakeSocket = makeFakeSocket();
 fakeIo.callsFake(() => fakeSocket);
 
-// Ensure socket.io-client is not already cached with the real implementation.
-// If it is, replace the exports with our fake.
 if (!require.cache[socketIoPath]) {
   require.cache[socketIoPath] = {
     id: socketIoPath,
@@ -65,18 +44,13 @@ if (!require.cache[socketIoPath]) {
   require.cache[socketIoPath]!.exports = { io: fakeIo };
 }
 
-// Now delete SocketAdapter from the cache (if already loaded) so it gets fresh-required
-// with the fake io when EventManager is loaded below.
 try {
   delete require.cache[require.resolve("../client/adapters/SocketAdapter")];
 } catch {
   /* not in cache */
 }
 
-// Load EventManager (and its dependencies including SocketAdapter) NOW with the fake io
 EventManagerClass = require("../client/eventManager").EventManager;
-
-// ─────────────────────────────────────────────────────────────────────────────
 
 describe("EventManager", () => {
   let manager: EventManagerType;
@@ -104,8 +78,6 @@ describe("EventManager", () => {
     clock.restore();
   });
 
-  // ── init() ──────────────────────────────────────────────────────────────────
-
   describe("init()", () => {
     it("calls connect() on the adapter — io() is invoked with the correct URL", () => {
       assert.ok(fakeIo.calledOnce, "io() should have been called once");
@@ -123,19 +95,16 @@ describe("EventManager", () => {
     it("re-initialising disconnects the previous adapter before creating a new one", async () => {
       const firstSocket = fakeSocket;
 
-      // Prepare a new socket for the re-init
       fakeSocket = makeFakeSocket();
       fakeIo.reset();
       fakeIo.callsFake(() => fakeSocket);
 
       await manager.init(inMemoryOpts);
 
-      // The first socket should have been disconnected
       assert.ok(
         firstSocket.disconnect.calledOnce,
         "previous socket should be disconnected",
       );
-      // io() should have been called again for the new connection
       assert.ok(fakeIo.calledOnce, "io() should be called again on re-init");
     });
 
@@ -147,8 +116,6 @@ describe("EventManager", () => {
       );
     });
   });
-
-  // ── publish() ───────────────────────────────────────────────────────────────
 
   describe("publish()", () => {
     it("emits 'publish' on the socket with the correct type and payload", async () => {
@@ -193,8 +160,6 @@ describe("EventManager", () => {
       );
     });
   });
-
-  // ── subscribe() ─────────────────────────────────────────────────────────────
 
   describe("subscribe()", () => {
     it("calls adapter.subscribe for the first subscriber", async () => {
@@ -242,8 +207,6 @@ describe("EventManager", () => {
     });
   });
 
-  // ── message routing ─────────────────────────────────────────────────────────
-
   describe("message routing", () => {
     it("invokes registered callback when adapter fires a message", async () => {
       const received: object[] = [];
@@ -275,8 +238,6 @@ describe("EventManager", () => {
       });
     });
   });
-
-  // ── disconnect() ────────────────────────────────────────────────────────────
 
   describe("disconnect()", () => {
     it("calls socket.disconnect()", async () => {

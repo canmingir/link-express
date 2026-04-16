@@ -1,16 +1,5 @@
-/**
- * SocketAdapter tests
- *
- * socket.io-client is mocked via require-cache poisoning before the adapter is loaded.
- * The EventManager spec also poisons socket.io-client — these two specs share the same
- * poisoned cache entry (both use the same fakeIo), which is fine because SocketAdapter
- * is loaded once and cached.
- */
-
 import assert from "assert";
 import sinon from "sinon";
-
-// ── Fake socket.io-client ─────────────────────────────────────────────────────
 
 type EventHandler = (data: unknown) => void;
 
@@ -36,8 +25,6 @@ let fakeIo: sinon.SinonStub;
 let SocketAdapterClass: typeof import("../client/adapters/SocketAdapter").SocketAdapter;
 
 before(() => {
-  // The socket.io-client cache is already poisoned by EventManager.spec.ts
-  // (or by this file if loaded first). We update the io stub to use ours.
   fakeSocket = makeFakeSocket();
   fakeIo = sinon.stub().callsFake(() => fakeSocket);
 
@@ -56,12 +43,9 @@ before(() => {
     require.cache[socketIoPath]!.exports = { io: fakeIo };
   }
 
-  // Fresh-require SocketAdapter so it picks up our io stub
   delete require.cache[require.resolve("../client/adapters/SocketAdapter")];
   SocketAdapterClass = require("../client/adapters/SocketAdapter").SocketAdapter;
 });
-
-// ─────────────────────────────────────────────────────────────────────────────
 
 describe("SocketAdapter", () => {
   let adapter: InstanceType<typeof SocketAdapterClass>;
@@ -82,8 +66,6 @@ describe("SocketAdapter", () => {
     try { await adapter.disconnect(); } catch { /* ignore */ }
   });
 
-  // ── connect() ─────────────────────────────────────────────────────────────
-
   describe("connect()", () => {
     it("calls io() with protocol://host:port when port is provided", async () => {
       await adapter.connect();
@@ -102,8 +84,6 @@ describe("SocketAdapter", () => {
       assert.ok(fakeSocket.on.calledWith("event"), "should register 'event' listener");
     });
   });
-
-  // ── message handling ───────────────────────────────────────────────────────
 
   describe("message handling", () => {
     it("invokes onMessage handler when 'event' fires", async () => {
@@ -126,8 +106,6 @@ describe("SocketAdapter", () => {
     });
   });
 
-  // ── publish() ─────────────────────────────────────────────────────────────
-
   describe("publish()", () => {
     it("throws when called before connect()", async () => {
       await assert.rejects(() => adapter.publish("TOPIC", {}), /Socket not connected/);
@@ -139,8 +117,6 @@ describe("SocketAdapter", () => {
       assert.ok(fakeSocket.emit.calledWith("publish", { type: "MY_TOPIC", payload: { val: 1 } }));
     });
   });
-
-  // ── subscribe() ───────────────────────────────────────────────────────────
 
   describe("subscribe()", () => {
     it("throws when called before connect()", async () => {
@@ -154,8 +130,6 @@ describe("SocketAdapter", () => {
     });
   });
 
-  // ── unsubscribe() ─────────────────────────────────────────────────────────
-
   describe("unsubscribe()", () => {
     it("throws when called before connect()", async () => {
       await assert.rejects(() => adapter.unsubscribe("TOPIC"), /Socket not connected/);
@@ -167,8 +141,6 @@ describe("SocketAdapter", () => {
       assert.ok(fakeSocket.emit.calledWith("unsubscribe", "MY_TOPIC"));
     });
   });
-
-  // ── disconnect() ──────────────────────────────────────────────────────────
 
   describe("disconnect()", () => {
     it("calls socket.disconnect()", async () => {

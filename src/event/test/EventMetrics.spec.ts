@@ -7,11 +7,8 @@ describe("EventMetrics", () => {
   let clock: sinon.SinonFakeTimers;
 
   beforeEach(() => {
-    // EventMetrics creates its own isolated Registry per instance — no global registry conflicts
     metrics = new EventMetrics();
   });
-
-  // ── recordPublish() ────────────────────────────────────────────────────────
 
   describe("recordPublish()", () => {
     it("returns a timer function", () => {
@@ -25,8 +22,6 @@ describe("EventMetrics", () => {
     });
   });
 
-  // ── recordPublishError() ───────────────────────────────────────────────────
-
   describe("recordPublishError()", () => {
     it("does not throw when called with type and error type", () => {
       assert.doesNotThrow(() =>
@@ -34,8 +29,6 @@ describe("EventMetrics", () => {
       );
     });
   });
-
-  // ── recordCallback() ───────────────────────────────────────────────────────
 
   describe("recordCallback()", () => {
     it("returns a timer function", () => {
@@ -49,8 +42,6 @@ describe("EventMetrics", () => {
     });
   });
 
-  // ── updateSubscriptions() ─────────────────────────────────────────────────
-
   describe("updateSubscriptions()", () => {
     it("does not throw when setting subscription count to a positive number", () => {
       assert.doesNotThrow(() => metrics.updateSubscriptions("MY_TOPIC", 3));
@@ -61,15 +52,11 @@ describe("EventMetrics", () => {
     });
   });
 
-  // ── updateEventBacklog() ──────────────────────────────────────────────────
-
   describe("updateEventBacklog()", () => {
     it("does not throw when updating backlog", () => {
       assert.doesNotThrow(() => metrics.updateEventBacklog("MY_TOPIC", 42));
     });
   });
-
-  // ── startPushgateway() / stopPushgateway() ────────────────────────────────
 
   describe("startPushgateway()", () => {
     beforeEach(() => {
@@ -112,12 +99,9 @@ describe("EventMetrics", () => {
       const clearIntervalSpy = sinon.spy(global, "clearInterval");
       metrics.startPushgateway({ interval: 1000 });
       metrics.startPushgateway({ interval: 2000 });
-      // stopPushgateway is called internally on second startPushgateway
       assert.ok(clearIntervalSpy.called);
     });
   });
-
-  // ── pushMetricsToGateway() ────────────────────────────────────────────────
 
   describe("pushMetricsToGateway()", () => {
     it("throws when pushgateway is not configured", async () => {

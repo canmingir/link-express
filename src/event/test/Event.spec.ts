@@ -3,7 +3,6 @@ import sinon from "sinon";
 import * as promClient from "prom-client";
 import type { SubscriptionRegistry } from "../src/Event";
 
-// Helper: fresh require of Event.ts, clearing the module and prom-client registry first
 function loadEvent() {
   promClient.register.clear();
   const eventPath = require.resolve("../src/Event");
@@ -27,8 +26,6 @@ describe("Event (in-memory pub/sub)", () => {
   afterEach(() => {
     clock.restore();
   });
-
-  // ── subscribe() ────────────────────────────────────────────────────────────
 
   describe("subscribe()", () => {
     it("returns a registry with id, type, callback and unsubscribe", () => {
@@ -84,16 +81,12 @@ describe("Event (in-memory pub/sub)", () => {
     });
   });
 
-  // ── publish() ──────────────────────────────────────────────────────────────
-
   describe("publish()", () => {
     it("throws when called with fewer than 2 arguments", () => {
       assert.throws(() => event.publish({}), /publish requires at least 2 arguments/);
     });
 
     it("throws for __proto__ as type", () => {
-      // prototype pollution guard — note: messages.set runs before the check, but the
-      // type check still throws afterward
       assert.throws(() => event.publish("__proto__", {}), /Invalid publish type/);
     });
 
@@ -148,8 +141,6 @@ describe("Event (in-memory pub/sub)", () => {
       assert.ok(calls.includes("b"));
     });
   });
-
-  // ── last() ─────────────────────────────────────────────────────────────────
 
   describe("last()", () => {
     it("returns undefined when no message has been published for that type", () => {
