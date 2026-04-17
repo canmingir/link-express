@@ -206,8 +206,8 @@ export class EventManager {
       backlog.forEach((size, topic) => {
         this.metrics.updateEventBacklog(topic, size);
       });
-    } catch {
-      console.error("Error updating backlog metrics");
+    } catch (error) {
+      console.error("Error updating backlog metrics", error);
     }
   }
 
