@@ -46,7 +46,8 @@ export class EventManager {
           clientId: options.clientId,
           brokers: options.brokers,
           groupId: options.groupId,
-          partitionsConsumedConcurrently: options.partitionsConsumedConcurrently,
+          partitionsConsumedConcurrently:
+            options.partitionsConsumedConcurrently,
         });
         this.startBacklogMonitoring();
         break;
@@ -71,7 +72,7 @@ export class EventManager {
       throw new Error("Event system not initialized");
     }
 
-    const payload = args[args.length - 1];
+    const payload = args[args.length - 1] as T;
     const typeParts = args.slice(0, -1);
     const mergedType = typeParts.join("_");
 
@@ -82,9 +83,9 @@ export class EventManager {
     const payloadSize = this.getPayloadSize(payload);
     const endTimer = this.metrics.recordPublish(mergedType, payloadSize);
     try {
-      await this.adapter.publish(mergedType, payload);
+      await this.adapter.publish(mergedType, payload as Record<string, unknown>);
       if (this.adapter instanceof SocketAdapter) {
-        this.executeCallbacks(mergedType, payload);
+        this.executeCallbacks(mergedType, payload as Record<string, unknown>);
       }
       endTimer();
     } catch (error) {

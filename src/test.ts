@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 import path from "path";
 import fs from "fs";
-import platform from "./platform";
+import * as platform from "./platform";
 
 dotenv.config({ path: ".env.test" });
 
@@ -33,7 +33,7 @@ function project(id: string): void {
 async function reset(): Promise<void> {
   const {
     Postgres: { sequelize },
-  } = platform.module();
+  } = platform.getModules();
 
   await sequelize.sync({ force: true });
 

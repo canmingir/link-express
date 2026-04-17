@@ -6,7 +6,9 @@ export interface EventAdapter {
   publish(type: string, payload: Record<string, unknown>): Promise<void>;
   subscribe(type: string): Promise<void>;
   unsubscribe(type: string): Promise<void>;
-  onMessage(handler: (type: string, payload: Record<string, unknown>) => void): void;
+  onMessage(
+    handler: (type: string, payload: Record<string, unknown>) => void,
+  ): void;
   getBacklog?(topics: string[]): Promise<Map<string, number>>;
 }
 

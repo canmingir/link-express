@@ -6,7 +6,10 @@ export class KafkaAdapter implements EventAdapter {
   private kafka: Kafka;
   private consumer: Consumer | null = null;
   private producer: Producer | null = null;
-  private messageHandler?: (type: string, payload: object) => void;
+  private messageHandler?: (
+    type: string,
+    payload: Record<string, unknown>,
+  ) => void;
 
   constructor(
     private readonly options: {
@@ -42,7 +45,9 @@ export class KafkaAdapter implements EventAdapter {
 
         if (this.messageHandler) {
           try {
-            const payload = JSON.parse(message.value?.toString() || "{}");
+            const payload = JSON.parse(
+              message.value?.toString() || "{}",
+            ) as Record<string, unknown>;
             this.messageHandler(topic, payload);
           } catch (error) {
             console.error(
@@ -92,7 +97,9 @@ export class KafkaAdapter implements EventAdapter {
     // No-op: EventManager handles callback removal in memory
   }
 
-  onMessage(handler: (type: string, payload: object) => void): void {
+  onMessage(
+    handler: (type: string, payload: Record<string, unknown>) => void,
+  ): void {
     this.messageHandler = handler;
   }
 

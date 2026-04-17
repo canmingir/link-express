@@ -47,30 +47,34 @@ export class SocketAdapter implements EventAdapter {
   }
 
   async publish(type: string, payload: Record<string, unknown>): Promise<void> {
-    this.ensureConnected();
-    this.socket.emit("publish", { type, payload });
+    const socket = this.ensureConnected();
+    socket.emit("publish", { type, payload });
   }
 
   async subscribe(type: string): Promise<void> {
-    this.ensureConnected();
     this.subscribedTypes.add(type);
-    this.socket.emit("subscribe", type);
+    if (this.socket?.connected) {
+      this.socket.emit("subscribe", type);
+    }
+    // If not yet connected, resubscribeAll() will send it on connect
   }
 
   async unsubscribe(type: string): Promise<void> {
-    this.ensureConnected();
     this.subscribedTypes.delete(type);
-    this.socket.emit("unsubscribe", type);
+    if (this.socket?.connected) {
+      this.socket.emit("unsubscribe", type);
+    }
   }
 
   onMessage(handler: (type: string, payload: Record<string, unknown>) => void): void {
     this.messageHandler = handler;
   }
 
-  private ensureConnected(): asserts this is { socket: Socket } {
+  private ensureConnected(): Socket {
     if (!this.socket || this.socket.connected === false) {
       throw new Error("Socket not connected");
     }
+    return this.socket;
   }
 
   private async waitForSocketConnection(

@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import platform from "../platform";
+import * as platform from "../platform";
 import { Sequelize } from "sequelize";
 
 dotenv.config({ path: ".env.test" });
