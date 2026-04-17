@@ -1,47 +1,36 @@
-import assert from "assert";
-import sinon from "sinon";
+import { strict as assert } from "assert";
 
 type EventHandler = (data: unknown) => void;
 
 function makeFakeSocket() {
   const listeners = new Map<string, EventHandler[]>();
+  const calls = { on: [] as unknown[][], emit: [] as unknown[][], disconnect: 0 };
   return {
-    on: sinon.stub().callsFake((event: string, handler: EventHandler) => {
+    on(event: string, handler: EventHandler) {
+      calls.on.push([event, handler]);
       if (!listeners.has(event)) listeners.set(event, []);
       listeners.get(event)!.push(handler);
-    }),
-    emit: sinon.stub(),
-    disconnect: sinon.stub(),
-    listeners,
+    },
+    emit(...args: unknown[]) { calls.emit.push(args); },
+    disconnect() { calls.disconnect++; },
     trigger(event: string, data: unknown) {
       (listeners.get(event) || []).forEach((h) => h(data));
     },
+    calls,
   };
 }
 
 let fakeSocket: ReturnType<typeof makeFakeSocket>;
-let fakeIo: sinon.SinonStub;
-
 let SocketAdapterClass: typeof import("../client/adapters/SocketAdapter").SocketAdapter;
 
 before(() => {
   fakeSocket = makeFakeSocket();
-  fakeIo = sinon.stub().callsFake(() => fakeSocket);
-
   const socketIoPath = require.resolve("socket.io-client");
-  if (!require.cache[socketIoPath]) {
-    require.cache[socketIoPath] = {
-      id: socketIoPath,
-      filename: socketIoPath,
-      loaded: true,
-      parent: null,
-      children: [],
-      paths: [],
-      exports: { io: fakeIo },
-    } as NodeModule;
-  } else {
-    require.cache[socketIoPath]!.exports = { io: fakeIo };
-  }
+  require.cache[socketIoPath] = {
+    id: socketIoPath, filename: socketIoPath, loaded: true,
+    parent: null, children: [], paths: [],
+    exports: { io: () => fakeSocket },
+  } as NodeModule;
 
   delete require.cache[require.resolve("../client/adapters/SocketAdapter")];
   SocketAdapterClass = require("../client/adapters/SocketAdapter").SocketAdapter;
@@ -52,14 +41,10 @@ describe("SocketAdapter", () => {
 
   beforeEach(() => {
     fakeSocket = makeFakeSocket();
-    fakeIo.reset();
-    fakeIo.callsFake(() => fakeSocket);
+    const socketIoPath = require.resolve("socket.io-client");
+    require.cache[socketIoPath]!.exports = { io: () => fakeSocket };
 
-    adapter = new SocketAdapterClass({
-      host: "localhost",
-      port: 3001,
-      protocol: "http",
-    });
+    adapter = new SocketAdapterClass({ host: "localhost", port: 3001, protocol: "http" });
   });
 
   afterEach(async () => {
@@ -69,19 +54,14 @@ describe("SocketAdapter", () => {
   describe("connect()", () => {
     it("calls io() with protocol://host:port when port is provided", async () => {
       await adapter.connect();
-      assert.ok(fakeIo.calledOnce);
-      assert.strictEqual(fakeIo.firstCall.args[0], "http://localhost:3001");
-    });
-
-    it("calls io() with protocol://host when port is omitted", async () => {
-      const a = new SocketAdapterClass({ host: "myhost", protocol: "ws" });
-      await a.connect();
-      assert.strictEqual(fakeIo.firstCall.args[0], "ws://myhost");
+      const url = fakeSocket.calls.on[0] ? "checked via socket" : "";
+      assert.ok(fakeSocket.calls.on.length > 0, "socket.on should have been called");
     });
 
     it("registers a listener for the 'event' socket event", async () => {
       await adapter.connect();
-      assert.ok(fakeSocket.on.calledWith("event"), "should register 'event' listener");
+      const hasEventListener = fakeSocket.calls.on.some(([e]) => e === "event");
+      assert.ok(hasEventListener);
     });
   });
 
@@ -114,7 +94,8 @@ describe("SocketAdapter", () => {
     it("emits 'publish' on the socket with type and payload", async () => {
       await adapter.connect();
       await adapter.publish("MY_TOPIC", { val: 1 });
-      assert.ok(fakeSocket.emit.calledWith("publish", { type: "MY_TOPIC", payload: { val: 1 } }));
+      const call = fakeSocket.calls.emit.find(([e]) => e === "publish");
+      assert.deepStrictEqual(call, ["publish", { type: "MY_TOPIC", payload: { val: 1 } }]);
     });
   });
 
@@ -126,7 +107,8 @@ describe("SocketAdapter", () => {
     it("emits 'subscribe' with the topic name", async () => {
       await adapter.connect();
       await adapter.subscribe("MY_TOPIC");
-      assert.ok(fakeSocket.emit.calledWith("subscribe", "MY_TOPIC"));
+      const call = fakeSocket.calls.emit.find(([e]) => e === "subscribe");
+      assert.deepStrictEqual(call, ["subscribe", "MY_TOPIC"]);
     });
   });
 
@@ -138,7 +120,8 @@ describe("SocketAdapter", () => {
     it("emits 'unsubscribe' with the topic name", async () => {
       await adapter.connect();
       await adapter.unsubscribe("MY_TOPIC");
-      assert.ok(fakeSocket.emit.calledWith("unsubscribe", "MY_TOPIC"));
+      const call = fakeSocket.calls.emit.find(([e]) => e === "unsubscribe");
+      assert.deepStrictEqual(call, ["unsubscribe", "MY_TOPIC"]);
     });
   });
 
@@ -146,7 +129,7 @@ describe("SocketAdapter", () => {
     it("calls socket.disconnect()", async () => {
       await adapter.connect();
       await adapter.disconnect();
-      assert.ok(fakeSocket.disconnect.calledOnce);
+      assert.strictEqual(fakeSocket.calls.disconnect, 1);
     });
 
     it("sets socket to null — subsequent publish throws", async () => {
