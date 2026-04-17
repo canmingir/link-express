@@ -1,4 +1,4 @@
-import { Callback, EventAdapter, InitOptions } from "./types/types";
+import { Callback, EventAdapter, EventPayload, InitOptions } from "./types/types";
 import { EventMetrics, PushgatewayConfig } from "./metrics";
 
 import { KafkaAdapter } from "./adapters/KafkaAdapter";
@@ -25,7 +25,7 @@ const TOPICS = [
 ];
 export class EventManager {
   private adapter: EventAdapter | null = null;
-  private callbacks: Map<string, Set<Callback<object>>> = new Map();
+  private callbacks: Map<string, Set<Callback<EventPayload>>> = new Map();
   private metrics = new EventMetrics();
   private backlogInterval: NodeJS.Timeout | null = null;
 
@@ -62,7 +62,7 @@ export class EventManager {
     });
   }
 
-  async publish<T extends object = object>(
+  async publish<T extends EventPayload = EventPayload>(
     ...args: [...string[], T]
   ): Promise<void> {
     if (args.length < 2) {
@@ -83,9 +83,9 @@ export class EventManager {
     const payloadSize = this.getPayloadSize(payload);
     const endTimer = this.metrics.recordPublish(mergedType, payloadSize);
     try {
-      await this.adapter.publish(mergedType, payload as Record<string, unknown>);
+      await this.adapter.publish(mergedType, payload);
       if (this.adapter instanceof SocketAdapter) {
-        this.executeCallbacks(mergedType, payload as Record<string, unknown>);
+        this.executeCallbacks(mergedType, payload);
       }
       endTimer();
     } catch (error) {
@@ -95,7 +95,7 @@ export class EventManager {
     }
   }
 
-  async subscribe<T extends object = object>(
+  async subscribe<T extends EventPayload = EventPayload>(
     type: string,
     callback: Callback<T>,
   ): Promise<() => void> {
@@ -103,7 +103,7 @@ export class EventManager {
     this.validateEventType(type);
 
     const callbackSet = this.getOrCreateCallbackSet(type);
-    const callbackWrapper: Callback<object> = (payload: object) => {
+    const callbackWrapper: Callback<EventPayload> = (payload: EventPayload) => {
       callback(payload as T);
     };
 
@@ -140,7 +140,7 @@ export class EventManager {
     this.callbacks.clear();
   }
 
-  private executeCallbacks(type: string, payload: object): void {
+  private executeCallbacks(type: string, payload: EventPayload): void {
     const callbackSet = this.callbacks.get(type);
     if (!callbackSet) return;
 
@@ -216,7 +216,7 @@ export class EventManager {
     await this.updateBacklogMetrics();
   }
 
-  private getOrCreateCallbackSet(type: string): Set<Callback<object>> {
+  private getOrCreateCallbackSet(type: string): Set<Callback<EventPayload>> {
     let callbackSet = this.callbacks.get(type);
     if (!callbackSet) {
       callbackSet = new Set();
@@ -225,7 +225,7 @@ export class EventManager {
     return callbackSet;
   }
 
-  private getPayloadSize(payload: object): number {
+  private getPayloadSize(payload: EventPayload): number {
     try {
       return JSON.stringify(payload).length;
     } catch {

@@ -1,10 +1,10 @@
 import { Socket, io } from "socket.io-client";
 
-import { EventAdapter } from "../types/types";
+import { EventAdapter, EventPayload } from "../types/types";
 
 export class SocketAdapter implements EventAdapter {
   private socket: Socket | null = null;
-  private messageHandler?: (type: string, payload: Record<string, unknown>) => void;
+  private messageHandler?: (type: string, payload: EventPayload) => void;
   private readonly subscribedTypes = new Set<string>();
 
   constructor(
@@ -30,7 +30,7 @@ export class SocketAdapter implements EventAdapter {
 
     this.socket.on(
       "event",
-      ({ type, payload }: { type: string; payload: Record<string, unknown> }) => {
+      ({ type, payload }: { type: string; payload: EventPayload }) => {
         if (this.messageHandler) {
           this.messageHandler(type, payload);
         }
@@ -46,7 +46,7 @@ export class SocketAdapter implements EventAdapter {
     this.subscribedTypes.clear();
   }
 
-  async publish(type: string, payload: Record<string, unknown>): Promise<void> {
+  async publish(type: string, payload: EventPayload): Promise<void> {
     const socket = this.ensureConnected();
     socket.emit("publish", { type, payload });
   }
@@ -66,7 +66,7 @@ export class SocketAdapter implements EventAdapter {
     }
   }
 
-  onMessage(handler: (type: string, payload: Record<string, unknown>) => void): void {
+  onMessage(handler: (type: string, payload: EventPayload) => void): void {
     this.messageHandler = handler;
   }
 

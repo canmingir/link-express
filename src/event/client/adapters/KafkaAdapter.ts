@@ -1,6 +1,6 @@
 import { Consumer, Kafka, Producer } from "kafkajs";
 
-import { EventAdapter } from "../types/types";
+import { EventAdapter, EventPayload } from "../types/types";
 
 export class KafkaAdapter implements EventAdapter {
   private kafka: Kafka;
@@ -8,7 +8,7 @@ export class KafkaAdapter implements EventAdapter {
   private producer: Producer | null = null;
   private messageHandler?: (
     type: string,
-    payload: Record<string, unknown>,
+    payload: EventPayload,
   ) => void;
 
   constructor(
@@ -47,7 +47,7 @@ export class KafkaAdapter implements EventAdapter {
           try {
             const payload = JSON.parse(
               message.value?.toString() || "{}",
-            ) as Record<string, unknown>;
+            ) as EventPayload;
             this.messageHandler(topic, payload);
           } catch (error) {
             console.error(
@@ -72,10 +72,7 @@ export class KafkaAdapter implements EventAdapter {
     }
   }
 
-  async publish<T extends object = object>(
-    type: string,
-    payload: T,
-  ): Promise<void> {
+  async publish(type: string, payload: EventPayload): Promise<void> {
     if (!this.producer) {
       throw new Error("Producer not connected");
     }
@@ -98,7 +95,7 @@ export class KafkaAdapter implements EventAdapter {
   }
 
   onMessage(
-    handler: (type: string, payload: Record<string, unknown>) => void,
+    handler: (type: string, payload: EventPayload) => void,
   ): void {
     this.messageHandler = handler;
   }

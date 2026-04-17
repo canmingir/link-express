@@ -1,12 +1,12 @@
-import { EventAdapter } from "../../client/types/types";
+import { EventAdapter, EventPayload } from "../../client/types/types";
 
 export class MockAdapter implements EventAdapter {
   public connected = false;
-  public published: Array<{ type: string; payload: Record<string, unknown> }> =
+  public published: Array<{ type: string; payload: EventPayload }> =
     [];
   public subscribed: string[] = [];
   public unsubscribedTypes: string[] = [];
-  private handler?: (type: string, payload: Record<string, unknown>) => void;
+  private handler?: (type: string, payload: EventPayload) => void;
 
   async connect(): Promise<void> {
     this.connected = true;
@@ -18,7 +18,7 @@ export class MockAdapter implements EventAdapter {
 
   async publish(
     type: string,
-    payload: Record<string, unknown>,
+    payload: EventPayload,
   ): Promise<void> {
     this.published.push({ type, payload });
   }
@@ -33,13 +33,13 @@ export class MockAdapter implements EventAdapter {
   }
 
   onMessage(
-    handler: (type: string, payload: Record<string, unknown>) => void,
+    handler: (type: string, payload: EventPayload) => void,
   ): void {
     this.handler = handler;
   }
 
   /** Simulate an incoming message from the transport */
-  simulateMessage(type: string, payload: Record<string, unknown>): void {
+  simulateMessage(type: string, payload: EventPayload): void {
     this.handler?.(type, payload);
   }
 }

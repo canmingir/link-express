@@ -1,6 +1,6 @@
 import * as client from "prom-client";
 
-import { Callback, InitOptions } from "./types/types";
+import { Callback, EventPayload, InitOptions } from "./types/types";
 import { EventMetrics, PushgatewayConfig } from "./metrics";
 
 import { EventManager } from "./eventManager";
@@ -11,9 +11,9 @@ const manager = new EventManager();
 
 export const event = {
   init: (options: InitOptions) => manager.init(options),
-  publish: <T extends object = object>(...args: [...string[], T]) =>
+  publish: <T extends EventPayload = EventPayload>(...args: [...string[], T]) =>
     manager.publish(...args),
-  subscribe: <T extends object = object>(type: string, callback: Callback<T>) =>
+  subscribe: <T extends EventPayload = EventPayload>(type: string, callback: Callback<T>) =>
     manager.subscribe(type, callback),
   disconnect: () => manager.disconnect(),
   checkBacklog: () => manager.checkBacklog(),

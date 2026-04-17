@@ -1,14 +1,14 @@
-export type Callback<T = Record<string, unknown>> = (payload: T) => void;
+export type EventPayload = Record<string, unknown> | Record<string, unknown>[];
+
+export type Callback<T = EventPayload> = (payload: T) => void;
 
 export interface EventAdapter {
   connect(): Promise<void>;
   disconnect(): Promise<void>;
-  publish(type: string, payload: Record<string, unknown>): Promise<void>;
+  publish(type: string, payload: EventPayload): Promise<void>;
   subscribe(type: string): Promise<void>;
   unsubscribe(type: string): Promise<void>;
-  onMessage(
-    handler: (type: string, payload: Record<string, unknown>) => void,
-  ): void;
+  onMessage(handler: (type: string, payload: EventPayload) => void): void;
   getBacklog?(topics: string[]): Promise<Map<string, number>>;
 }
 
