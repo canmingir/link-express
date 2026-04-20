@@ -1,6 +1,6 @@
 export type EventPayload = Record<string, unknown> | Record<string, unknown>[];
 
-export type Callback<T = EventPayload> = (payload: T) => void;
+export type Callback<T = EventPayload> = (payload: T) => void | Promise<void>;
 
 export interface EventAdapter {
   connect(): Promise<void>;
