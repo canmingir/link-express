@@ -22,12 +22,13 @@ export class SocketAdapter implements EventAdapter {
       : `${protocol}://${host}`;
 
     this.socket = io(socketPath);
-    await this.waitForSocketConnection(this.socket, socketPath);
 
     this.socket.on("connect", () => {
       this.resubscribeAll();
     });
 
+    await this.waitForSocketConnection(this.socket, socketPath);
+    this.resubscribeAll();
     this.socket.on(
       "event",
       ({ type, payload }: { type: string; payload: EventPayload }) => {
