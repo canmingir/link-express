@@ -1,4 +1,9 @@
-import { Callback, EventAdapter, EventPayload, InitOptions } from "./types/types";
+import {
+  Callback,
+  EventAdapter,
+  EventPayload,
+  InitOptions,
+} from "./types/types";
 import { EventMetrics, PushgatewayConfig } from "./metrics";
 
 import { KafkaAdapter } from "./adapters/KafkaAdapter";
@@ -103,11 +108,8 @@ export class EventManager {
     this.validateEventType(type);
 
     const callbackSet = this.getOrCreateCallbackSet(type);
-    const callbackWrapper: Callback<EventPayload> = (payload: EventPayload) => {
-      callback(payload as T);
-    };
 
-    callbackSet.add(callbackWrapper);
+    callbackSet.add(callback as Callback<EventPayload>);
 
     this.metrics.updateSubscriptions(type, callbackSet.size);
 
@@ -116,7 +118,7 @@ export class EventManager {
     }
 
     return async () => {
-      callbackSet.delete(callbackWrapper);
+      callbackSet.delete(callback as Callback<EventPayload>);
 
       if (callbackSet.size === 0) {
         this.callbacks.delete(type);
