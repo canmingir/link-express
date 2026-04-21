@@ -28,7 +28,7 @@ export class SocketAdapter implements EventAdapter {
     });
 
     await this.waitForSocketConnection(this.socket, socketPath);
-    this.resubscribeAll();
+
     this.socket.on(
       "event",
       ({ type, payload }: { type: string; payload: EventPayload }) => {
