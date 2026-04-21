@@ -1,0 +1,6 @@
+{
+  "require": ["tsx/cjs", "src/event/test/helpers/setup.ts"],
+  "spec": "src/event/**/*.spec.ts",
+  "timeout": 5000,
+  "exit": true
+}

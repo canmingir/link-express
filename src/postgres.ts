@@ -3,7 +3,7 @@ import config from "./config";
 import path from "path";
 import fs from "fs";
 import { DBMetrics } from "./metrics/dbMetrics";
-import { DestroyOptions, InstanceDestroyOptions } from "sequelize";
+import { InstanceDestroyOptions } from "sequelize";
 
 const appConfig = config();
 

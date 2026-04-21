@@ -1,20 +1,23 @@
 import { Consumer, Kafka, Producer } from "kafkajs";
 
-import { EventAdapter } from "../types/types";
+import { EventAdapter, EventPayload } from "../types/types";
 
 export class KafkaAdapter implements EventAdapter {
   private kafka: Kafka;
   private consumer: Consumer | null = null;
   private producer: Producer | null = null;
-  private messageHandler?: (type: string, payload: object) => void;
+  private messageHandler?: (
+    type: string,
+    payload: EventPayload,
+  ) => void;
 
   constructor(
     private readonly options: {
       clientId: string;
       brokers: string[];
       groupId: string;
-      topics: string[]; 
-    }
+      partitionsConsumedConcurrently?: number;
+    },
   ) {
     this.kafka = new Kafka({
       clientId: options.clientId,
@@ -33,7 +36,8 @@ export class KafkaAdapter implements EventAdapter {
       fromBeginning: false,
     });
     await this.consumer.run({
-      partitionsConsumedConcurrently: 160,
+      partitionsConsumedConcurrently:
+        this.options.partitionsConsumedConcurrently ?? 1,
       eachMessage: async ({ topic, message }) => {
         if (topic.startsWith("__")) {
           return;
@@ -41,18 +45,19 @@ export class KafkaAdapter implements EventAdapter {
 
         if (this.messageHandler) {
           try {
-            const payload = JSON.parse(message.value?.toString() || "{}");
+            const payload = JSON.parse(
+              message.value?.toString() || "{}",
+            ) as EventPayload;
             this.messageHandler(topic, payload);
           } catch (error) {
             console.error(
               `Error processing message for topic ${topic}:`,
-              error
+              error,
             );
           }
         }
       },
     });
-    console.log(`Kafka consumer connected`);
   }
 
   async disconnect(): Promise<void> {
@@ -67,30 +72,31 @@ export class KafkaAdapter implements EventAdapter {
     }
   }
 
-  async publish<T = object>(type: string, payload: T): Promise<void> {
+  async publish(type: string, payload: EventPayload): Promise<void> {
     if (!this.producer) {
       throw new Error("Producer not connected");
     }
-    this.producer.send({
+    await this.producer.send({
       topic: type,
-      messages: [{ value: JSON.stringify(payload) }],
-    }).then(() => {
-      console.log(`Message published to topic ${type}`);
-    }).catch((error) => {
-      console.error(`Error publishing message to topic ${type}:`, error);
-      return Promise.reject(error);
+      messages: [
+        {
+          value: JSON.stringify(payload),
+        },
+      ],
     });
   }
 
-  async subscribe(type: string): Promise<void> {
+  async subscribe(_type: string): Promise<void> {
     // No-op: EventManager handles callback registration in memory
   }
 
-  async unsubscribe(type: string): Promise<void> {
+  async unsubscribe(_type: string): Promise<void> {
     // No-op: EventManager handles callback removal in memory
   }
 
-  onMessage(handler: (type: string, payload: object) => void): void {
+  onMessage(
+    handler: (type: string, payload: EventPayload) => void,
+  ): void {
     this.messageHandler = handler;
   }
 
@@ -118,7 +124,7 @@ export class KafkaAdapter implements EventAdapter {
         if (topicResponse) {
           topicResponse.partitions.forEach((partitionOffset) => {
             const latestOffset = topicOffsets.find(
-              (to) => to.partition === partitionOffset.partition
+              (to) => to.partition === partitionOffset.partition,
             );
 
             if (latestOffset) {

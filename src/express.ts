@@ -24,7 +24,7 @@ app.use(
 );
 
 if (appConfig.project) {
-  import("./routes/oauth.ts").then((oauthModule) => {
+  import("./routes/oauth").then((oauthModule) => {
     const oauth = oauthModule.default || oauthModule;
     app.use(
       "/oauth",
@@ -44,9 +44,9 @@ setImmediate(async () => {
   if (appConfig.project) {
     const [permissionsModule, organizationsModule, projectsModule] =
       await Promise.all([
-        import("./routes/permissions.ts"),
-        import("./routes/organizations.ts"),
-        import("./routes/projects.ts"),
+        import("./routes/permissions"),
+        import("./routes/organizations"),
+        import("./routes/projects"),
       ]);
 
     const permissions = permissionsModule.default || permissionsModule;
