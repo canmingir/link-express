@@ -1,12 +1,4 @@
-#!/usr/bin/env node
-
-require("ts-node").register({
-  transpileOnly: true,
-  compilerOptions: {
-    module: "commonjs",
-    esModuleInterop: true,
-  },
-});
+#!/usr/bin/env bun
 
 const args = process.argv.slice(2);
 const command = args[0];

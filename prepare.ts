@@ -1,11 +1,11 @@
 import fs from "fs";
 
-const prePush = `#!/usr/bin/env node
+const prePush = `#!/usr/bin/env bun
 const { execSync } = require("child_process");
 
 try {
-  execSync("npm run lint");
-  execSync("npm test");
+  execSync("bun run lint");
+  execSync("bun run test");
 } catch (err) {
   console.log(err.stdout.toString());
   process.exit(1);

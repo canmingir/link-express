@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env bun
 
 const { Server } = require("socket.io");
 const http = require("http");
@@ -31,9 +31,7 @@ io.on("connection", (socket) => {
     console.log(`Publish: ${type}`, payload);
     if (subscriptions[type]) {
       subscriptions[type].forEach((sid) => {
-        if (sid !== socket.id) {
-          io.to(sid).emit("event", { type, payload });
-        }
+        io.to(sid).emit("event", { type, payload });
       });
     }
   });
