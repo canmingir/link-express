@@ -2,8 +2,8 @@
   "name": "@canmingir/link-express",
   "version": "1.7.14",
   "description": "",
-  "main": "index.ts",
-  "types": "index.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "typesVersions": {
     "*": {
       "models": [
@@ -34,16 +34,16 @@
     "event-listener": "./bin/cli.js"
   },
   "exports": {
-    ".": "./index.ts",
-    "./models": "./src/models/index.ts",
-    "./test": "./src/test.ts",
-    "./authorization": "./src/authorization.ts",
-    "./error": "./src/error.ts",
-    "./types": "./src/types/index.ts",
-    "./sequelize": "./src/sequelize.ts",
-    "./event": "./src/event/serc/Event.ts",
-    "./event/client": "./src/event/client/index.ts",
-    "./event/server": "./src/event/server/server.js"
+    ".": "./dist/index.js",
+    "./models": "./dist/src/models/index.js",
+    "./test": "./dist/src/test.js",
+    "./authorization": "./dist/src/authorization.js",
+    "./error": "./dist/src/error.js",
+    "./types": "./dist/src/types/index.js",
+    "./sequelize": "./dist/src/sequelize.js",
+    "./event": "./dist/src/event/index.js",
+    "./event/client": "./dist/src/event/client/index.js",
+    "./event/server": "./dist/src/event/server/server.js"
   },
   "scripts": {
     "prepare": "tsx prepare.ts",
