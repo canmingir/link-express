@@ -19,7 +19,7 @@ if (command === "start") {
   if (options.port) {
     process.env.PORT = options.port;
   }
-  require("../src/event/server/server.js");
+  require("../dist/src/event/server/server.js");
 } else {
   console.log("Usage: event-listener start [-p <port>]");
   console.log("\nCommands:");
