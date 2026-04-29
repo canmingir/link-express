@@ -1,6 +1,6 @@
 {
   "name": "@canmingir/link-express",
-  "version": "1.7.15",
+  "version": "1.7.16",
   "description": "",
   "packageManager": "bun@1.3.9",
   "files": [
