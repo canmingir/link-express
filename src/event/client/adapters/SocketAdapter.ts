@@ -3,6 +3,8 @@ import { Socket, io } from "socket.io-client";
 import { EventAdapter, EventPayload } from "../types/types";
 
 export class SocketAdapter implements EventAdapter {
+  private static readonly DEFAULT_CONNECT_TIMEOUT_MS = 5000;
+  private static readonly LOCAL_LISTENER_CONNECT_TIMEOUT_MS = 30000;
   private socket: Socket | null = null;
   private messageHandler?: (type: string, payload: EventPayload) => void;
   private readonly subscribedTypes = new Set<string>();
@@ -90,11 +92,20 @@ export class SocketAdapter implements EventAdapter {
       return;
     }
 
+    const timeoutMs = this.isLocalListenerTarget()
+      ? SocketAdapter.LOCAL_LISTENER_CONNECT_TIMEOUT_MS
+      : SocketAdapter.DEFAULT_CONNECT_TIMEOUT_MS;
+
     await new Promise<void>((resolve, reject) => {
+      let lastConnectError: Error | undefined;
+
       const timeoutId = setTimeout(() => {
         cleanup();
-        reject(new Error(`Socket connection timeout: ${socketPath}`));
-      }, 5000);
+        const reason = lastConnectError?.message
+          ? ` Last connect error: ${lastConnectError.message}`
+          : "";
+        reject(new Error(`Socket connection timeout (${timeoutMs}ms): ${socketPath}.${reason}`));
+      }, timeoutMs);
 
       const onConnect = () => {
         cleanup();
@@ -102,8 +113,7 @@ export class SocketAdapter implements EventAdapter {
       };
 
       const onConnectError = (error: Error) => {
-        cleanup();
-        reject(error);
+        lastConnectError = error;
       };
 
       const cleanup = () => {
@@ -113,8 +123,18 @@ export class SocketAdapter implements EventAdapter {
       };
 
       socket.once("connect", onConnect);
-      socket.once("connect_error", onConnectError);
+      socket.on("connect_error", onConnectError);
     });
+  }
+
+  private isLocalListenerTarget(): boolean {
+    const { host, port } = this.options;
+    const normalizedHost = host.trim().toLowerCase();
+    const isLocalHost =
+      normalizedHost === "localhost" ||
+      normalizedHost === "127.0.0.1" ||
+      normalizedHost === "::1";
+    return isLocalHost && port === 8080;
   }
 
   private resubscribeAll(): void {

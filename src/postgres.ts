@@ -40,7 +40,9 @@ Model.prototype.destroy = async function (
 const sequelize = new Sequelize(process.env.PG || postgres.uri, {
   logging: postgres.debug && console.log,
   models: [
+    path.join(__dirname, "models/*.model.js"),
     path.join(__dirname, "models/*.model.ts"),
+    path.join(process.cwd(), "src/models/[A-Z]*.js"),
     path.join(process.cwd(), "src/models/[A-Z]*.ts"),
   ],
   define: {

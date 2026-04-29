@@ -9,7 +9,7 @@ import type { Logger } from "pino";
 let _express: Application;
 let _postgres: { sequelize: Sequelize };
 let _dynamodb: { docClient: DynamoDBDocumentClient };
-let _logger: Logger | Console;
+let _logger: Logger | Console = console;
 
 async function init(config: Partial<Config> = {}): Promise<void> {
   const configModule = await import("./config");

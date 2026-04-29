@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env bun
 
 import { Server, Socket } from "socket.io";
 import http = require("http");
@@ -34,9 +34,7 @@ io.on("connection", (socket: Socket) => {
       console.log(`Publish: ${type}`, payload);
       if (subscriptions[type]) {
         subscriptions[type].forEach((sid) => {
-          if (sid !== socket.id) {
-            io.to(sid).emit("event", { type, payload });
-          }
+          io.to(sid).emit("event", { type, payload });
         });
       }
     }

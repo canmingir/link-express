@@ -3,10 +3,13 @@ import "express-async-errors";
 import cors from "cors";
 import morgan from "morgan";
 import helmet from "helmet";
-import * as error from "./error";
 import * as authorization from "./authorization";
 import settings from "./routes/settings";
 import metrics from "./routes/metrics";
+import oauth from "./routes/oauth";
+import permissions from "./routes/permissions";
+import organizations from "./routes/organizations";
+import projects from "./routes/projects";
 import { getConfig } from "./config";
 
 const app = express();
@@ -23,44 +26,22 @@ app.use(
     err ? res.status(422).end() : next()
 );
 
-if (appConfig.project) {
-  import("./routes/oauth").then((oauthModule) => {
-    const oauth = oauthModule.default || oauthModule;
-    app.use(
-      "/oauth",
-      express.urlencoded(),
-      (err: Error, _req: Request, res: Response, next: NextFunction) =>
-        err ? res.status(422).end() : next(),
-      oauth
-    );
-  });
-}
-
 app.use("/metrics", metrics);
 
-setImmediate(async () => {
-  process.env.PROFILE === "TEST" && app.use(authorization.verify);
+if (appConfig.project) {
+  app.use(
+    "/oauth",
+    express.urlencoded(),
+    (err: Error, _req: Request, res: Response, next: NextFunction) =>
+      err ? res.status(422).end() : next(),
+    oauth
+  );
 
-  if (appConfig.project) {
-    const [permissionsModule, organizationsModule, projectsModule] =
-      await Promise.all([
-        import("./routes/permissions"),
-        import("./routes/organizations"),
-        import("./routes/projects"),
-      ]);
-
-    const permissions = permissionsModule.default || permissionsModule;
-    const organizations = organizationsModule.default || organizationsModule;
-    const projects = projectsModule.default || projectsModule;
-
-    app.use("/projects", projects);
-    app.use("/organizations", organizations);
-    app.use("/permissions", permissions);
-    app.use("/projects/:projectId/settings", settings);
-  }
-
-  app.use((_req: Request, res: Response) => res.status(404).end());
-  app.use(error.handle);
-});
+  app.use(authorization.verify);
+  app.use("/projects", projects);
+  app.use("/organizations", organizations);
+  app.use("/permissions", permissions);
+  app.use("/projects/:projectId/settings", settings);
+}
 
 export default app;
