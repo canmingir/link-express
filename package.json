@@ -38,7 +38,7 @@
   },
   "author": "NucTeam",
   "bin": {
-    "event-listener": "./bin/cli.js"
+    "event-listener": "./bin/event-listener.ts"
   },
   "exports": {
     ".": "./dist/index.js",
