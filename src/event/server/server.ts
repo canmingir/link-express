@@ -34,10 +34,12 @@ io.on("connection", (socket: Socket) => {
       console.log(`Publish: ${type}`, payload);
       if (subscriptions[type]) {
         subscriptions[type].forEach((sid) => {
-          io.to(sid).emit("event", { type, payload });
+          if (sid !== socket.id) {
+            io.to(sid).emit("event", { type, payload });
+          }
         });
       }
-    }
+    },
   );
 
   socket.on("disconnect", () => {
