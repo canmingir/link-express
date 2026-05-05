@@ -23,7 +23,7 @@ app.use(morgan("tiny"));
 app.use(
   express.json(),
   (err: Error, _req: Request, res: Response, next: NextFunction) =>
-    err ? res.status(422).end() : next()
+    err ? res.status(422).end() : next(),
 );
 
 app.use("/metrics", metrics);
@@ -34,14 +34,17 @@ if (appConfig.project) {
     express.urlencoded(),
     (err: Error, _req: Request, res: Response, next: NextFunction) =>
       err ? res.status(422).end() : next(),
-    oauth
+    oauth,
   );
 
   app.use(authorization.verify);
-  app.use("/projects", projects);
-  app.use("/organizations", organizations);
-  app.use("/permissions", permissions);
-  app.use("/projects/:projectId/settings", settings);
+
+  setImmediate(() => {
+    app.use("/projects", projects);
+    app.use("/organizations", organizations);
+    app.use("/permissions", permissions);
+    app.use("/projects/:projectId/settings", settings);
+  });
 }
 
 export default app;
