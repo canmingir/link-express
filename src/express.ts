@@ -10,6 +10,8 @@ import oauth from "./routes/oauth";
 import permissions from "./routes/permissions";
 import organizations from "./routes/organizations";
 import projects from "./routes/projects";
+import notebooks from "./routes/notebooks";
+import notebookBlocks from "./routes/notebookBlocks";
 import { getConfig } from "./config";
 
 const app = express();
@@ -44,6 +46,8 @@ if (appConfig.project) {
     app.use("/organizations", organizations);
     app.use("/permissions", permissions);
     app.use("/projects/:projectId/settings", settings);
+    app.use("/notebooks", notebooks);
+    app.use("/notebook-blocks", notebookBlocks);
   });
 }
 
