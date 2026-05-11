@@ -2,6 +2,8 @@ import Project from "./Project.model";
 import Organization from "./Organization.model";
 import Permission from "./Permission.model";
 import Setting from "./Settings.model";
+import Notebook from "./Notebook.model";
+import NotebookBlock from "./NotebookBlock.model";
 
 let _init = false;
 
@@ -45,7 +47,18 @@ async function init(): Promise<boolean> {
     });
   });
 
+  Notebook.hasMany(NotebookBlock, {
+    foreignKey: "notebookId",
+    as: "blocks",
+    onDelete: "CASCADE",
+  });
+
+  NotebookBlock.belongsTo(Notebook, {
+    foreignKey: "notebookId",
+    as: "notebook",
+  });
+
   return true;
 }
 
-export { Project, Organization, Permission, init, Setting };
+export { Project, Organization, Permission, init, Setting, Notebook, NotebookBlock };
