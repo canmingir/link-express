@@ -18,7 +18,7 @@ if (!project) {
 
 const providers = project?.oauth?.providers || {};
 
-const identityProviders: Record<string, typeof providers[string]> = {};
+const identityProviders: Record<string, (typeof providers)[string]> = {};
 
 for (const [key, value] of Object.entries(providers)) {
   const identityProviderKey = key.toLowerCase();
@@ -483,7 +483,7 @@ router.get("/user", async (req: Request, res: Response): Promise<Response> => {
     sub: string;
     identityProvider: string;
   };
-  const userId = decoded.sub;
+  const userId = (req.query.userId as string) || decoded.sub;
   const identityProvider = decoded.identityProvider;
 
   if (!userId || !identityProvider) {
@@ -535,7 +535,9 @@ router.get("/user", async (req: Request, res: Response): Promise<Response> => {
   }
 
   const userResponse = await axios.get<Record<string, unknown>>(
-    providerConfig.userUrl,
+    userId !== decoded.sub
+      ? `${providerConfig.userUrl}/${userId}`
+      : providerConfig.userUrl,
     {
       headers: {
         Authorization: `Bearer ${refreshTokenHeader}`,
