@@ -536,7 +536,7 @@ router.get("/user", async (req: Request, res: Response): Promise<Response> => {
 
   const userResponse = await axios.get<Record<string, unknown>>(
     userId !== decoded.sub
-      ? `${providerConfig.userUrl}/${userId}`
+      ? `${providerConfig.userUrl.replace(/\/$/, "")}/${encodeURIComponent(userId)}`
       : providerConfig.userUrl,
     {
       headers: {
