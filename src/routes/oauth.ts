@@ -483,7 +483,7 @@ router.get("/user", async (req: Request, res: Response): Promise<Response> => {
     sub: string;
     identityProvider: string;
   };
-  const userId = (req.query.userId as string) || decoded.sub;
+  const userId = decoded.sub;
   const identityProvider = decoded.identityProvider;
 
   if (!userId || !identityProvider) {
@@ -535,9 +535,7 @@ router.get("/user", async (req: Request, res: Response): Promise<Response> => {
   }
 
   const userResponse = await axios.get<Record<string, unknown>>(
-    userId !== decoded.sub
-      ? `${providerConfig.userUrl.replace(/\/$/, "")}/${encodeURIComponent(userId)}`
-      : providerConfig.userUrl,
+    providerConfig.userUrl,
     {
       headers: {
         Authorization: `Bearer ${refreshTokenHeader}`,
@@ -562,6 +560,78 @@ router.get("/user", async (req: Request, res: Response): Promise<Response> => {
   return res.status(200).json({
     user: userDetails,
   });
+});
+
+router.get("/users", async (req: Request, res: Response): Promise<Response> => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).end();
+  }
+
+  const token = authHeader.split(" ")[1];
+
+  const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as {
+    sub: string;
+    identityProvider: string;
+    aid?: string;
+    aud?: string;
+  };
+
+  const {
+    sub: requesterId,
+    identityProvider,
+    aid: appId,
+    aud: projectId,
+  } = decoded;
+
+  if (!requesterId || !identityProvider) {
+    return res.status(401).end();
+  }
+
+  if (!appId || !projectId) {
+    return res
+      .status(400)
+      .send("Token must include appId and projectId to list users");
+  }
+
+  const permissions = await Permission.findAll({
+    where: { appId, projectId },
+  });
+
+  const userIds = [...new Set(permissions.map((p: Permission) => p.userId))];
+
+  if (identityProvider.toUpperCase() === "DEMO") {
+    const demoUserId = "1001";
+    return res.status(200).json({
+      users: [
+        {
+          id: demoUserId,
+          identityProvider: "DEMO",
+          name: "admin",
+          displayName: "Demo Admin",
+          avatarUrl: `https://api.dicebear.com/7.x/bottts/svg?seed=${demoUserId}`,
+          email: "admin@demo.local",
+        },
+      ],
+    });
+  }
+
+  if (identityProvider.toUpperCase() === "COGNITO") {
+    return res.status(200).json({
+      users: [
+        {
+          id: requesterId,
+          identityProvider: "COGNITO",
+          name: "Cognito",
+          displayName: "Cognito Admin",
+          avatarUrl: `https://api.dicebear.com/7.x/bottts/svg?seed=${requesterId}`,
+        },
+      ],
+    });
+  }
+
+  return res.status(200).json({ userIds });
 });
 
 export default router;
