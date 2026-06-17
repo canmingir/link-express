@@ -18,7 +18,7 @@ if (!project) {
 
 const providers = project?.oauth?.providers || {};
 
-const identityProviders: Record<string, typeof providers[string]> = {};
+const identityProviders: Record<string, (typeof providers)[string]> = {};
 
 for (const [key, value] of Object.entries(providers)) {
   const identityProviderKey = key.toLowerCase();
