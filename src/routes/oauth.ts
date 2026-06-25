@@ -479,10 +479,17 @@ router.get("/user", async (req: Request, res: Response): Promise<Response> => {
 
   const token = authHeader.split(" ")[1];
 
-  const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as {
-    sub: string;
-    identityProvider: string;
-  };
+  let decoded;
+
+  try {
+    decoded = jwt.verify(token, process.env.JWT_SECRET as string) as {
+      sub: string;
+      identityProvider: string;
+    };
+  } catch (_) {
+    return res.status(401).end();
+  }
+
   const userId = decoded.sub;
   const identityProvider = decoded.identityProvider;
 
