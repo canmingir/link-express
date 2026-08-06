@@ -5,6 +5,7 @@ import morgan from "morgan";
 import helmet from "helmet";
 import * as authorization from "./authorization";
 import settings from "./routes/settings";
+import health from "./routes/health";
 import metrics from "./routes/metrics";
 import oauth from "./routes/oauth";
 import permissions from "./routes/permissions";
@@ -28,6 +29,7 @@ app.use(
     err ? res.status(422).end() : next(),
 );
 
+app.use("/health", health);
 app.use("/metrics", metrics);
 
 if (appConfig.project) {

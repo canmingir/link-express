@@ -1,3 +1,4 @@
+import health from "./health";
 import metrics from "./metrics";
 import permissions from "./permissions";
 import oauth from "./oauth";
@@ -7,4 +8,4 @@ import settings from "./settings";
 import notebooks from "./notebooks";
 import notebookBlocks from "./notebookBlocks";
 
-export { metrics, permissions, oauth, organizations, projects, settings, notebooks, notebookBlocks };
+export { health, metrics, permissions, oauth, organizations, projects, settings, notebooks, notebookBlocks };
