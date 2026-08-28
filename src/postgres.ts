@@ -29,7 +29,7 @@ interface SequelizeOptions {
 
 const originalDestroy = Model.prototype.destroy;
 Model.prototype.destroy = async function (
-  options?: InstanceDestroyOptions
+  options?: InstanceDestroyOptions,
 ): Promise<void> {
   return originalDestroy.call(this, {
     ...options,
@@ -187,7 +187,7 @@ const seed = async (): Promise<void> => {
       try {
         const { seed: extProjectSeed } = require(path.join(
           seedDir,
-          "Project.json"
+          "Project.json",
         ));
         if (extProjectSeed) {
           projectSeed.push(...extProjectSeed);
@@ -195,7 +195,7 @@ const seed = async (): Promise<void> => {
         console.log(
           `[NUC] Loading internal${
             extProjectSeed ? " and external" : ""
-          } seed data for Project`
+          } seed data for Project`,
         );
       } catch (error) {
         console.log(`[NUC] Loading internal seed data for Project`);
@@ -248,7 +248,7 @@ const seed = async (): Promise<void> => {
       try {
         const { seed: extPermissionsSeed } = require(path.join(
           seedDir,
-          "Permission.json"
+          "Permission.json",
         ));
         if (extPermissionsSeed) {
           permissionsSeed.push(...extPermissionsSeed);
@@ -256,7 +256,7 @@ const seed = async (): Promise<void> => {
         console.log(
           `[NUC] Loading internal${
             extPermissionsSeed ? " and external" : ""
-          } seed data for Permission`
+          } seed data for Permission`,
         );
       } catch (error) {
         console.log(`[NUC] Loading internal seed data for Permission`);
@@ -271,7 +271,7 @@ const seed = async (): Promise<void> => {
       try {
         const { seed: extSettingsSeed } = require(path.join(
           seedDir,
-          "Settings.json"
+          "Settings.json",
         ));
         if (extSettingsSeed) {
           settingsSeed.push(...extSettingsSeed);
@@ -279,7 +279,7 @@ const seed = async (): Promise<void> => {
         console.log(
           `[NUC] Loading internal${
             extSettingsSeed ? " and external" : ""
-          } seed data for Settings`
+          } seed data for Settings`,
         );
       } catch (error) {
         console.log(`[NUC] Loading internal seed data for Settings`);
@@ -301,14 +301,10 @@ const associateModels = async (): Promise<void> => {
 };
 
 const ready: Promise<void> = postgres.sync
-  ? new Promise<void>((resolve, reject) => {
-      setImmediate(() => {
-        (async () => {
-          project && (await associateModels());
-          await sequelize.sync({ force: true });
-          await seed();
-        })().then(resolve, reject);
-      });
+  ? new Promise<void>((resolve) => setImmediate(resolve)).then(async () => {
+      project && (await associateModels());
+      await sequelize.sync({ force: true });
+      await seed();
     })
   : Promise.resolve();
 
