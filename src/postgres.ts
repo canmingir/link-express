@@ -29,7 +29,7 @@ interface SequelizeOptions {
 
 const originalDestroy = Model.prototype.destroy;
 Model.prototype.destroy = async function (
-  options?: InstanceDestroyOptions
+  options?: InstanceDestroyOptions,
 ): Promise<void> {
   return originalDestroy.call(this, {
     ...options,
@@ -167,7 +167,7 @@ const seed = async (): Promise<void> => {
     if (project) {
       const { seed: companiesSeed } = require("./seeds/Organization.json");
 
-      sequelize.models.Organization.bulkCreate(companiesSeed, {
+      await sequelize.models.Organization.bulkCreate(companiesSeed, {
         validate: true,
       });
 
@@ -176,7 +176,7 @@ const seed = async (): Promise<void> => {
       if (fs.existsSync(path.join(seedDir, "Organization.json"))) {
         const seedData = require(path.join(seedDir, "Organization.json"));
         const seed = seedData["seed"];
-        sequelize.models.Organization.bulkCreate(seed, {
+        await sequelize.models.Organization.bulkCreate(seed, {
           validate: true,
         });
         console.log(`[NUC] Loading seed data for Organization`);
@@ -187,7 +187,7 @@ const seed = async (): Promise<void> => {
       try {
         const { seed: extProjectSeed } = require(path.join(
           seedDir,
-          "Project.json"
+          "Project.json",
         ));
         if (extProjectSeed) {
           projectSeed.push(...extProjectSeed);
@@ -195,13 +195,13 @@ const seed = async (): Promise<void> => {
         console.log(
           `[NUC] Loading internal${
             extProjectSeed ? " and external" : ""
-          } seed data for Project`
+          } seed data for Project`,
         );
       } catch (error) {
         console.log(`[NUC] Loading internal seed data for Project`);
       }
 
-      sequelize.models.Project.bulkCreate(projectSeed, {
+      await sequelize.models.Project.bulkCreate(projectSeed, {
         validate: true,
       });
     }
@@ -248,7 +248,7 @@ const seed = async (): Promise<void> => {
       try {
         const { seed: extPermissionsSeed } = require(path.join(
           seedDir,
-          "Permission.json"
+          "Permission.json",
         ));
         if (extPermissionsSeed) {
           permissionsSeed.push(...extPermissionsSeed);
@@ -256,13 +256,13 @@ const seed = async (): Promise<void> => {
         console.log(
           `[NUC] Loading internal${
             extPermissionsSeed ? " and external" : ""
-          } seed data for Permission`
+          } seed data for Permission`,
         );
       } catch (error) {
         console.log(`[NUC] Loading internal seed data for Permission`);
       }
 
-      sequelize.models.Permission.bulkCreate(permissionsSeed, {
+      await sequelize.models.Permission.bulkCreate(permissionsSeed, {
         validate: true,
       });
 
@@ -271,7 +271,7 @@ const seed = async (): Promise<void> => {
       try {
         const { seed: extSettingsSeed } = require(path.join(
           seedDir,
-          "Settings.json"
+          "Settings.json",
         ));
         if (extSettingsSeed) {
           settingsSeed.push(...extSettingsSeed);
@@ -279,13 +279,13 @@ const seed = async (): Promise<void> => {
         console.log(
           `[NUC] Loading internal${
             extSettingsSeed ? " and external" : ""
-          } seed data for Settings`
+          } seed data for Settings`,
         );
       } catch (error) {
         console.log(`[NUC] Loading internal seed data for Settings`);
       }
 
-      sequelize.models.Settings.bulkCreate(settingsSeed, {
+      await sequelize.models.Settings.bulkCreate(settingsSeed, {
         validate: true,
       });
     }
@@ -300,12 +300,12 @@ const associateModels = async (): Promise<void> => {
   await models.init();
 };
 
-if (postgres.sync) {
-  setImmediate(async () => {
-    project && (await associateModels());
-    await sequelize.sync({ force: true });
-    await seed();
-  });
-}
+const ready: Promise<void> = postgres.sync
+  ? new Promise<void>((resolve) => setImmediate(resolve)).then(async () => {
+      project && (await associateModels());
+      await sequelize.sync({ force: true });
+      await seed();
+    })
+  : Promise.resolve();
 
-export { sequelize };
+export { sequelize, ready };
