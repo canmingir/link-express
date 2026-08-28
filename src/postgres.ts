@@ -167,7 +167,7 @@ const seed = async (): Promise<void> => {
     if (project) {
       const { seed: companiesSeed } = require("./seeds/Organization.json");
 
-      sequelize.models.Organization.bulkCreate(companiesSeed, {
+      await sequelize.models.Organization.bulkCreate(companiesSeed, {
         validate: true,
       });
 
@@ -176,7 +176,7 @@ const seed = async (): Promise<void> => {
       if (fs.existsSync(path.join(seedDir, "Organization.json"))) {
         const seedData = require(path.join(seedDir, "Organization.json"));
         const seed = seedData["seed"];
-        sequelize.models.Organization.bulkCreate(seed, {
+        await sequelize.models.Organization.bulkCreate(seed, {
           validate: true,
         });
         console.log(`[NUC] Loading seed data for Organization`);
@@ -201,7 +201,7 @@ const seed = async (): Promise<void> => {
         console.log(`[NUC] Loading internal seed data for Project`);
       }
 
-      sequelize.models.Project.bulkCreate(projectSeed, {
+      await sequelize.models.Project.bulkCreate(projectSeed, {
         validate: true,
       });
     }
@@ -262,7 +262,7 @@ const seed = async (): Promise<void> => {
         console.log(`[NUC] Loading internal seed data for Permission`);
       }
 
-      sequelize.models.Permission.bulkCreate(permissionsSeed, {
+      await sequelize.models.Permission.bulkCreate(permissionsSeed, {
         validate: true,
       });
 
@@ -285,7 +285,7 @@ const seed = async (): Promise<void> => {
         console.log(`[NUC] Loading internal seed data for Settings`);
       }
 
-      sequelize.models.Settings.bulkCreate(settingsSeed, {
+      await sequelize.models.Settings.bulkCreate(settingsSeed, {
         validate: true,
       });
     }
@@ -300,12 +300,16 @@ const associateModels = async (): Promise<void> => {
   await models.init();
 };
 
-if (postgres.sync) {
-  setImmediate(async () => {
-    project && (await associateModels());
-    await sequelize.sync({ force: true });
-    await seed();
-  });
-}
+const ready: Promise<void> = postgres.sync
+  ? new Promise<void>((resolve, reject) => {
+      setImmediate(() => {
+        (async () => {
+          project && (await associateModels());
+          await sequelize.sync({ force: true });
+          await seed();
+        })().then(resolve, reject);
+      });
+    })
+  : Promise.resolve();
 
-export { sequelize };
+export { sequelize, ready };

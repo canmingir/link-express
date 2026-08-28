@@ -27,6 +27,7 @@ async function init(config: Partial<Config> = {}): Promise<void> {
 
   if (postgres) {
     const postgresModule = await import("./postgres");
+    await postgresModule.ready;
     _postgres = { sequelize: postgresModule.sequelize };
   }
 
