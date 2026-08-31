@@ -46,6 +46,15 @@ function verify(req: Request, _res: Response, next: NextFunction): void {
           roles: ["ADMIN"],
         };
         break;
+      case "a829d2d6-8e52-41cd-ac10-0c92b21debcf":
+        req.session = {
+          appId: "10b7bc8c-a49c-4002-b0ec-63599e4b5210",
+          organizationId: "dfb990bb-81dd-4584-82ce-050eb8f6a12f",
+          projectId: "a829d2d6-8e52-41cd-ac10-0c92b21debcf",
+          userId: "1001",
+          roles: ["ADMIN"],
+        };
+        break;
       case "e6d4744d-a11b-4c75-acad-e24a02903729":
         req.session = {
           appId: "10b7bc8c-a49c-4002-b0ec-63599e4b5210",
