@@ -1,19 +1,22 @@
-import express, { Request, Response, NextFunction } from "express";
 import "express-async-errors";
-import cors from "cors";
-import morgan from "morgan";
-import helmet from "helmet";
+
 import * as authorization from "./authorization";
-import settings from "./routes/settings";
-import health from "./routes/health";
-import metrics from "./routes/metrics";
-import oauth from "./routes/oauth";
-import permissions from "./routes/permissions";
-import organizations from "./routes/organizations";
-import projects from "./routes/projects";
-import notebooks from "./routes/notebooks";
-import notebookBlocks from "./routes/notebookBlocks";
+
+import express, { NextFunction, Request, Response } from "express";
+
+import cors from "cors";
 import { getConfig } from "./config";
+import health from "./routes/health";
+import helmet from "helmet";
+import metrics from "./routes/metrics";
+import morgan from "morgan";
+import notebookBlocks from "./routes/notebookBlocks";
+import notebooks from "./routes/notebooks";
+import oauth from "./routes/oauth";
+import organizations from "./routes/organizations";
+import permissions from "./routes/permissions";
+import projects from "./routes/projects";
+import settings from "./routes/settings";
 
 const app = express();
 
@@ -42,15 +45,20 @@ if (appConfig.project) {
   );
 
   app.use(authorization.verify);
+}
 
-  setImmediate(() => {
-    app.use("/projects", projects);
-    app.use("/organizations", organizations);
-    app.use("/permissions", permissions);
-    app.use("/projects/:projectId/settings", settings);
-    app.use("/notebooks", notebooks);
-    app.use("/notebook-blocks", notebookBlocks);
-  });
+let routesMounted = false;
+function mountRoutes(): void {
+  if (routesMounted || !appConfig.project) return;
+  routesMounted = true;
+
+  app.use("/projects", projects);
+  app.use("/organizations", organizations);
+  app.use("/permissions", permissions);
+  app.use("/projects/:projectId/settings", settings);
+  app.use("/notebooks", notebooks);
+  app.use("/notebook-blocks", notebookBlocks);
 }
 
 export default app;
+export { mountRoutes };

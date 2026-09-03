@@ -1,10 +1,11 @@
 import * as authorization from "./authorization";
 import * as error from "./error";
+
 import { Application } from "express";
-import { Sequelize } from "sequelize-typescript";
 import { Config } from "./config";
 import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 import type { Logger } from "pino";
+import { Sequelize } from "sequelize-typescript";
 
 let _express: Application;
 let _postgres: { sequelize: Sequelize };
@@ -17,6 +18,7 @@ async function init(config: Partial<Config> = {}): Promise<void> {
 
   const expressModule = await import("./express");
   _express = (expressModule as any).default as Application;
+  const mountRoutes = (expressModule as any).mountRoutes as () => void;
 
   if (logger) {
     const loggerModule = await import("./logger");
@@ -35,6 +37,7 @@ async function init(config: Partial<Config> = {}): Promise<void> {
     const dynamodbModule = await import("./dynamodb");
     _dynamodb = { docClient: dynamodbModule.docClient };
   }
+  setImmediate(mountRoutes);
 }
 
 const getModules = () => ({
