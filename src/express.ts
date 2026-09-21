@@ -19,6 +19,7 @@ import projects from "./routes/projects";
 import settings from "./routes/settings";
 
 const app = express();
+const publicRouter = express.Router();
 
 const appConfig = getConfig();
 
@@ -44,6 +45,7 @@ if (appConfig.project) {
     oauth,
   );
 
+  app.use(publicRouter);
   app.use(authorization.verify);
 }
 
@@ -61,4 +63,4 @@ function mountRoutes(): void {
 }
 
 export default app;
-export { mountRoutes };
+export { mountRoutes, publicRouter };
