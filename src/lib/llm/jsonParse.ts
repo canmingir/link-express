@@ -161,6 +161,69 @@ function escapeControlCharsInStrings(content: string): string | null {
   return changed ? result : null;
 }
 
+const MAX_BALANCED_CANDIDATES = 50;
+
+function balancedEnd(content: string, start: number): number {
+  const stack: string[] = [];
+  let inString = false;
+  let escaped = false;
+
+  for (let i = start; i < content.length; i++) {
+    const ch = content[i];
+
+    if (inString) {
+      if (escaped) escaped = false;
+      else if (ch === "\\") escaped = true;
+      else if (ch === '"') inString = false;
+      continue;
+    }
+
+    if (ch === '"') inString = true;
+    else if (ch === "{" || ch === "[") stack.push(ch === "{" ? "}" : "]");
+    else if (ch === "}" || ch === "]") {
+      if (stack.pop() !== ch) return -1;
+      if (stack.length === 0) return i;
+    }
+  }
+
+  return -1;
+}
+
+function balancedValues(content: string): string[] {
+  const values: string[] = [];
+
+  for (
+    let i = 0;
+    i < content.length && values.length < MAX_BALANCED_CANDIDATES;
+    i++
+  ) {
+    const ch = content[i];
+    if (ch !== "{" && ch !== "[") continue;
+
+    const end = balancedEnd(content, i);
+    if (end === -1) break;
+
+    values.push(content.slice(i, end + 1));
+    i = end;
+  }
+
+  return values;
+}
+
+function parseFirstBalancedValue(content: string): unknown {
+  for (const candidate of balancedValues(content)) {
+    try {
+      return JSON.parse(candidate);
+    } catch {}
+
+    try {
+      return JSON.parse(quoteUnquotedKeys(candidate));
+    } catch {}
+  }
+
+  return undefined;
+}
+
 function parseJsonWithRepair(content: string, providerLabel: string): unknown {
   try {
     return parseJsonContent(content, providerLabel);
@@ -171,6 +234,11 @@ function parseJsonWithRepair(content: string, providerLabel: string): unknown {
     try {
       return JSON.parse(codeBlockMatch[1].trim());
     } catch {}
+  }
+
+  const balanced = parseFirstBalancedValue(content);
+  if (balanced !== undefined) {
+    return balanced;
   }
 
   const jsonMatch = content.match(/(\{[\s\S]*\}|\[[\s\S]*\])/);
@@ -221,6 +289,7 @@ function parseJsonWithRepair(content: string, providerLabel: string): unknown {
 }
 
 export {
+  balancedValues,
   stripMarkdownFence,
   parseJsonContent,
   parseJsonWithRepair,

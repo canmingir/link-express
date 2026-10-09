@@ -1,8 +1,8 @@
 import OpenAI from "openai";
 
-import { log } from "./logger";
+import { errorMessage, log } from "./logger";
 import { parseJsonWithRepair } from "./jsonParse";
-import type { GenerateParams, LLMAdapter } from "./types";
+import type { GenerateParams, LLMAdapter, LLMLogEntry } from "./types";
 
 type OpenAICompatibleOptions = {
   providerLabel: string;
@@ -143,36 +143,47 @@ function createOpenAICompatibleAdapter(
 
       let response: OpenAI.ChatCompletion;
       let firstChoice: OpenAI.ChatCompletion.Choice;
+      let entry: LLMLogEntry;
 
       for (let attempt = 1; ; attempt++) {
         const startedAt = Date.now();
-        response = await request();
 
-        const choice = response.choices?.[0];
-
-        if (choice) {
-          const usage = response.usage as
-            | (OpenAI.CompletionUsage & { cost?: number })
-            | undefined;
-
-          if (usage) {
-            const { prompt_tokens, completion_tokens } = usage;
-            console.info({ prompt_tokens, completion_tokens });
-          }
-
+        try {
+          response = await request();
+        } catch (err) {
           log({
             provider: providerLabel,
-            model: response.model || model,
+            model,
             messages: chatMessages,
-            response,
-            inputTokens: usage?.prompt_tokens,
-            outputTokens: usage?.completion_tokens,
-            totalTokens: usage?.total_tokens,
-            cost: extractCost ? usage?.cost : undefined,
             durationMs: Date.now() - startedAt,
+            error: errorMessage(err),
             meta,
           });
+          throw err;
         }
+
+        const choice = response.choices?.[0];
+        const usage = response.usage as
+          | (OpenAI.CompletionUsage & { cost?: number })
+          | undefined;
+
+        if (usage) {
+          const { prompt_tokens, completion_tokens } = usage;
+          console.info({ prompt_tokens, completion_tokens });
+        }
+
+        entry = {
+          provider: providerLabel,
+          model: response.model || model,
+          messages: chatMessages,
+          response,
+          inputTokens: usage?.prompt_tokens,
+          outputTokens: usage?.completion_tokens,
+          totalTokens: usage?.total_tokens,
+          cost: extractCost ? usage?.cost : undefined,
+          durationMs: Date.now() - startedAt,
+          meta,
+        };
 
         const error = choice
           ? choiceError(choice)
@@ -182,6 +193,8 @@ function createOpenAICompatibleAdapter(
           firstChoice = choice!;
           break;
         }
+
+        log({ ...entry, error: describe(providerLabel, error) });
 
         if (attempt < MAX_ATTEMPTS && isRetryable(error)) {
           console.warn(
@@ -195,29 +208,35 @@ function createOpenAICompatibleAdapter(
         throw new Error(describe(providerLabel, error));
       }
 
-      const content = firstChoice.message.content;
-      const usage = response.usage;
+      try {
+        const content = firstChoice.message.content;
 
-      if (!content) {
-        if (firstChoice.finish_reason === "length") {
-          throw new Error(
-            `${providerLabel} truncated the response for model ${model} before any content was produced ` +
-              `(max_tokens=${max_tokens}, reasoning_tokens=${
-                (
-                  usage as {
-                    completion_tokens_details?: { reasoning_tokens?: number };
-                  }
-                )?.completion_tokens_details?.reasoning_tokens ?? 0
-              }). Raise max_tokens or disable reasoning for this model.`
-          );
+        if (!content) {
+          if (firstChoice.finish_reason === "length") {
+            throw new Error(
+              `${providerLabel} truncated the response for model ${model} before any content was produced ` +
+                `(max_tokens=${max_tokens}, reasoning_tokens=${
+                  (
+                    response.usage as {
+                      completion_tokens_details?: { reasoning_tokens?: number };
+                    }
+                  )?.completion_tokens_details?.reasoning_tokens ?? 0
+                }). Raise max_tokens or disable reasoning for this model.`
+            );
+          }
+          throw new Error(`${providerLabel} is not responding`);
         }
-        throw new Error(`${providerLabel} is not responding`);
-      }
 
-      return parseJsonWithRepair(content, providerLabel) as Record<
-        string,
-        unknown
-      >;
+        const result = parseJsonWithRepair(content, providerLabel) as Record<
+          string,
+          unknown
+        >;
+        log(entry);
+        return result;
+      } catch (err) {
+        log({ ...entry, error: errorMessage(err) });
+        throw err;
+      }
     },
   };
 }

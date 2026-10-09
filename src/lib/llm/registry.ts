@@ -68,7 +68,7 @@ function extendAdapter(name: string, extender: AdapterExtender): void {
     );
   }
 
-  loaders.set(id, async () => extender(await base()));
+  loaders.set(id, async () => unwrap({ default: await extender(await base()) }));
   cache.delete(id);
 }
 

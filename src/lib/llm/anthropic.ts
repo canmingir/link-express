@@ -1,8 +1,8 @@
 import { Anthropic } from "@anthropic-ai/sdk";
 
-import { log } from "./logger";
+import { errorMessage, log } from "./logger";
 import { parseJsonWithRepair } from "./jsonParse";
-import type { GenerateParams, LLMAdapter } from "./types";
+import type { GenerateParams, LLMAdapter, LLMLogEntry } from "./types";
 
 const apiKey = process.env.ANTHROPIC_API_KEY;
 if (!apiKey || apiKey.trim() === "") {
@@ -49,39 +49,59 @@ async function generate({
   };
 
   const startedAt = Date.now();
-  const reponse = await anthropic.messages.create(params);
+  let response: Anthropic.Message;
+  try {
+    response = await anthropic.messages.create(params);
+  } catch (err) {
+    log({
+      provider: "anthropic",
+      model,
+      messages,
+      durationMs: Date.now() - startedAt,
+      error: errorMessage(err),
+      meta,
+    });
+    throw err;
+  }
 
-  const { content, usage } = reponse;
+  const { content, usage } = response;
 
   if (usage) {
     const { input_tokens, output_tokens } = usage;
     console.info({ input_tokens, output_tokens });
   }
 
-  log({
+  const entry: LLMLogEntry = {
     provider: "anthropic",
-    model: reponse.model || model,
+    model: response.model || model,
     messages,
-    response: reponse,
+    response,
     inputTokens: usage?.input_tokens,
     outputTokens: usage?.output_tokens,
     durationMs: Date.now() - startedAt,
     meta,
-  });
+  };
 
-  if (content) {
+  try {
+    if (!content) {
+      throw new Error("Claude is not responding");
+    }
+
     const textContent = content
       .filter((block) => block.type === "text")
       .map((block) => block.text)
       .join("")
       .trim();
 
-    return parseJsonWithRepair(textContent, "anthropic") as Record<
+    const result = parseJsonWithRepair(textContent, "anthropic") as Record<
       string,
       unknown
     >;
-  } else {
-    throw new Error("Claude is not responding");
+    log(entry);
+    return result;
+  } catch (err) {
+    log({ ...entry, error: errorMessage(err) });
+    throw err;
   }
 }
 

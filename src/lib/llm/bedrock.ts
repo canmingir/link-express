@@ -1,29 +1,48 @@
 import {
   BedrockRuntimeClient,
   ConverseCommand,
+  ConverseCommandOutput,
   Message,
 } from "@aws-sdk/client-bedrock-runtime";
 
-import { log } from "./logger";
+import { errorMessage, log } from "./logger";
 import {
   parseJsonWithRepair,
   parseWithBraceRepair,
   unwrapSchemaValues,
 } from "./jsonParse";
-import type { GenerateParams, LLMAdapter } from "./types";
+import type { GenerateParams, LLMAdapter, LLMLogEntry } from "./types";
 
-const bedrock = new BedrockRuntimeClient({
-  region: process.env.AWS_REGION || "us-east-1",
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "",
-  },
-});
+function createClient(): BedrockRuntimeClient {
+  return new BedrockRuntimeClient({
+    region: process.env.AWS_REGION || "us-east-1",
+    credentials: {
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "",
+    },
+  });
+}
+
+const bedrock = createClient();
+
+async function send(command: ConverseCommand): Promise<ConverseCommandOutput> {
+  try {
+    return await bedrock.send(command);
+  } catch (err: unknown) {
+    const msg = errorMessage(err);
+    if (msg.includes("http2") || msg.includes("did not get a response")) {
+      return await createClient().send(command);
+    }
+    throw err;
+  }
+}
 
 async function generate({
   model = "meta.llama3-3-70b-instruct-v1:0",
   messages = [],
   responseFormat,
+  temperature = 0,
+  max_tokens = 8192,
   meta,
 }: GenerateParams): Promise<Record<string, unknown>> {
   const systemPrompts: { text: string }[] = [];
@@ -58,8 +77,8 @@ async function generate({
     system: systemPrompts,
     messages: conversationMessages,
     inferenceConfig: {
-      ...(omitTemperature ? {} : { temperature: 0 }),
-      maxTokens: 8192,
+      ...(omitTemperature ? {} : { temperature }),
+      maxTokens: max_tokens,
     },
     ...(useToolConfig && {
       toolConfig: {
@@ -79,23 +98,20 @@ async function generate({
     }),
   });
 
-  let response;
+  const startedAt = Date.now();
+  let response: ConverseCommandOutput;
   try {
-    response = await bedrock.send(command);
+    response = await send(command);
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    if (msg.includes("http2") || msg.includes("did not get a response")) {
-      const freshClient = new BedrockRuntimeClient({
-        region: process.env.AWS_REGION || "us-east-1",
-        credentials: {
-          accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
-          secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "",
-        },
-      });
-      response = await freshClient.send(command);
-    } else {
-      throw err;
-    }
+    log({
+      provider: "bedrock",
+      model,
+      messages,
+      durationMs: Date.now() - startedAt,
+      error: errorMessage(err),
+      meta,
+    });
+    throw err;
   }
 
   if (response.usage) {
@@ -106,7 +122,7 @@ async function generate({
     });
   }
 
-  log({
+  const entry: LLMLogEntry = {
     provider: "bedrock",
     model,
     messages,
@@ -114,10 +130,24 @@ async function generate({
     inputTokens: response.usage?.inputTokens,
     outputTokens: response.usage?.outputTokens,
     totalTokens: response.usage?.totalTokens,
-    durationMs: response.metrics?.latencyMs,
+    durationMs: response.metrics?.latencyMs ?? Date.now() - startedAt,
     meta,
-  });
+  };
 
+  try {
+    const result = parseOutput(response, jsonFormat);
+    log(entry);
+    return result;
+  } catch (err) {
+    log({ ...entry, error: errorMessage(err) });
+    throw err;
+  }
+}
+
+function parseOutput(
+  response: ConverseCommandOutput,
+  jsonFormat: string | null,
+): Record<string, unknown> {
   if (response.stopReason === "max_tokens") {
     console.error("Response was truncated due to max_tokens limit");
     throw new Error(
