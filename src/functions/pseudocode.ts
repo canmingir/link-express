@@ -39,7 +39,19 @@ async function generatePseudocode({
     meta: { source: "pseudocode.generate", ...meta },
   });
 
-  return (response.pseudocode as string) ?? "";
+  const { pseudocode } = response;
+
+  if (pseudocode === undefined || pseudocode === null) {
+    return "";
+  }
+
+  if (typeof pseudocode !== "string") {
+    throw new TypeError(
+      `Expected pseudocode to be a string, received ${Array.isArray(pseudocode) ? "array" : typeof pseudocode}`,
+    );
+  }
+
+  return pseudocode;
 }
 
 function sanitize<T extends PseudocodeNode>(nodes?: T[]): T[] | undefined {
