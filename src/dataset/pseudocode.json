@@ -1,44 +1,760 @@
 {
   "data": [
     {
-      "content": "Check product availability, if not exist, create order.",
-      "pseudocode": "class Product:\n    pass\n\nclass Order(product):\n    this.product = product\n\nif not $Product.available:\n    Order($Product)"
+      "content": "i is 1.",
+      "pseudocode": "i = 1"
     },
     {
-      "content": "Check the parking lot; if there are no spaces available, put the person in line.",
-      "pseudocode": "class ParkingLot:\n    pass\n\nclass Person:\n    pass\n\nqueue = []\n\nif parkingLot.spaces == 0:\n    queue.push(person)"
+      "content": "j is 1.",
+      "pseudocode": "j = 1"
     },
     {
-      "content": "Human beings are mortal.",
-      "pseudocode": "class Human:\n    pass\n\n$Human.mortal = true"
+      "content": "k is 1.",
+      "pseudocode": "k = 1\n\nk"
     },
     {
-      "content": "If it rains, the ground becomes wet.",
-      "pseudocode": "if weather == \"RAIN\":\n    ground.state = \"WET\""
+      "content": "t is e plus 1.",
+      "pseudocode": "t = e + 1"
     },
     {
-      "content": "If an employee works more than 40 hours in a week, they receive overtime pay.",
-      "pseudocode": "class Employee:\n    pass\n\nif $Employee.weeklyHours > 40:\n    $Employee.overtime = true"
+      "content": "k is 99. if k is greater than or equal to 99, then throw \"INVALID\".",
+      "pseudocode": "k = 99\n\nif k >= 99:\n    throw \"INVALID\""
     },
     {
-      "content": "Orders above 1000 need manager approval, orders above 100 need team lead approval, the rest are approved automatically.",
-      "pseudocode": "class Order:\n    pass\n\nif $Order.amount > 1000:\n    $Order.approval = \"MANAGER\"\nelse if $Order.amount > 100:\n    $Order.approval = \"TEAM_LEAD\"\nelse:\n    $Order.approval = \"AUTOMATIC\""
+      "content": "length is 0.1. if length is less than 1, then throw length. if length is less than 1.1, then throw 'length'.",
+      "pseudocode": "length = 0.1\n\nif length < 1:\n    throw length\n\nif length < 1.1:\n    throw 'length'"
     },
     {
-      "content": "Find the customer by email. If there is no customer, reject the request with CUSTOMER_NOT_FOUND, otherwise return the customer.",
-      "pseudocode": "class Customer(email: str):\n    this.email = email\n\n{\n    customer = Customer.find(c => c.email == email)\n    if not customer:\n        throw \"CUSTOMER_NOT_FOUND\"\n    return customer\n}"
+      "content": "There is a Shape type, which has a type as a string. shape1 is a Shape whose type is \"Square\".",
+      "pseudocode": "class Shape(type: str):\n    this.type = type\n\nshape1 = Shape(\"Square\")"
     },
     {
-      "content": "For every open ticket, send a reminder to its assignee.",
-      "pseudocode": "class Ticket:\n    pass\n\nreminders = []\n\nfor ticket of Ticket:\n    if ticket.status == \"OPEN\":\n        reminders.push(ticket.assignee)"
+      "content": "There is a Shape type, which has a type as a string. shape1 is a Shape whose type is \"Rectangle\".",
+      "pseudocode": "class Shape:\n    type: str\n\n    def init(type: str):\n        this.type = type\n\nshape1 = Shape(\"Rectangle\")"
     },
     {
-      "content": "The invoice total is the subtotal plus 18 percent tax.",
-      "pseudocode": "class Invoice:\n    pass\n\n$Invoice.tax = $Invoice.subtotal * 18 / 100\n\n$Invoice.total = $Invoice.subtotal + $Invoice.tax"
+      "content": "There is a Student type. user0 is a Student.",
+      "pseudocode": "class Student:\n    pass\n\nuser0 = Student()"
     },
     {
-      "content": "A user's password must be at least 8 characters.",
-      "pseudocode": "class User:\n    pass\n\nif $User.password.length < 8:\n    throw \"INVALID_PASSWORD\""
+      "content": "There is a User type. There is a User. There is a User type. There is a User.",
+      "pseudocode": "class User:\n    pass\n\nUser()\n\nclass User:\n    pass\n\nUser()"
+    },
+    {
+      "content": "There is a Student type. student1 is a Student.",
+      "pseudocode": "class Student:\n    pass\n\nstudent1 = Student()"
+    },
+    {
+      "content": "There is a Person type, which has a name as a string. There is a Student type, which is a subtype of Person and has a school as a string. student1 is a Student, whose name is \"Emma\" and whose school is \"Riverside High\".",
+      "pseudocode": "class Person(name: str):\n    this.name = name\n\nclass Student: Person\n    def init(name, school):\n        super(name)\n        this.name = name\n        this.school = school\n\nstudent1 = Student(\"Emma\", \"Riverside High\")"
+    },
+    {
+      "content": "There is a Human type, which has a name as a string. All humans are mortal. human1 is a Human whose name is \"Socrates\".",
+      "pseudocode": "class Human(name: str):\n    this.name = name\n\n$Human.mortal = true\n\nhuman1 = Human(\"Socrates\")"
+    },
+    {
+      "content": "There is a Device type, which has a profile as a string. Any device that has a profile is active. device1 has no profile. device2 has profile \"PROFILE-1\".",
+      "pseudocode": "class Device(profile: str):\n    this.profile = profile\n\nif $Device.profile:\n    $Device.active = true\n\ndevice1 = Device()\n\ndevice2 = Device(\"PROFILE-1\")"
+    },
+    {
+      "content": "There is a Room type. There is a Meeting type. room1 is a Room. Any meeting's time is now plus \" @ \" plus the meeting's date as a date string. meeting is a Meeting whose date is January 1, 2020, and room1's meeting is meeting.",
+      "pseudocode": "class Room:\n    pass\n\nclass Meeting:\n    pass\n\nroom1 = Room()\n\n$Meeting.time = Date.now() + \" @ \" + $Meeting.date.toDateString()\n\n{\n    meeting = Meeting()\n    meeting.date = Date(\"2020-1-1\")\n    room1.meeting = meeting\n}"
+    },
+    {
+      "content": "There is a Timesheet type. There is a Task type. There is a Project type. Any project's code is \"N-\" plus the project's number. timesheet1 is a Timesheet. task is a Task whose project is a Project whose number is 3668347, and timesheet1's task is task.",
+      "pseudocode": "class Timesheet:\n    pass\n\nclass Task:\n    pass\n\nclass Project:\n    pass\n\n$Project.code = \"N-\" + $Project.number\n\ntimesheet1 = Timesheet()\n\n{\n    task = Task()\n    task.project = Project()\n    task.project.number = 3668347\n    timesheet1.task = task\n}"
+    },
+    {
+      "content": "integer is 30. equivalency is null. while in the block, division is a local variable that is integer divided by 10, and equivalency is division times 10. integer is 40.",
+      "pseudocode": "integer = 30\n\nequivalency = null\n\n{\n    division = integer / 10\n    equivalency = division * 10\n}\n\ninteger = 40"
+    },
+    {
+      "content": "while in the block, f is a local Boolean that is false, and condition is f.",
+      "pseudocode": "{\n    f = Boolean(false)\n    condition = f\n}"
+    },
+    {
+      "content": "There is a Device type. Any device's renew is the device's creation time plus 604800000. device is a Device whose creation time is now.",
+      "pseudocode": "class Device:\n    pass\n\n$Device.renew = $Device.created + 604800000\n\n{\n    device = Device()\n    device.created = Date.now()\n}"
+    },
+    {
+      "content": "There is a Member type, which has a first as a string and a last as a string. Any member's display is the member's last plus \", \" plus the member's first. member is a Member whose first is \"First\" and whose last is \"Last\".",
+      "pseudocode": "class Member(first: str, last: str):\n    this.first = first\n    this.last = last\n\n$Member.display = $Member.last + \", \" + $Member.first\n\n{\n    member = Member(\"First\", \"Last\")\n}"
+    },
+    {
+      "content": "There is a Member type. registration is an Object whose date is January 2, 2019, and any member's registration is registration. member1 is a Member.",
+      "pseudocode": "class Member:\n    pass\n\n{\n    registration = Object()\n    registration.date = Date(\"2019-1-2\")\n    $Member.registration = registration\n}\n\nmember1 = Member()"
+    },
+    {
+      "content": "There is a Distance type. distance1 is a Distance. location is an Object whose coordinates is \"40.6976701,-74.2598779\", and any distance's starting point is location.",
+      "pseudocode": "class Distance:\n    pass\n\ndistance1 = Distance()\n\n{\n    location = Object()\n    location.coordinates = \"40.6976701,-74.2598779\"\n    $Distance.startingPoint = location\n}"
+    },
+    {
+      "content": "multiply returns the product of two factors. x is 1. y is 2. z is the result of the multiply function call with x and y, plus 1.",
+      "pseudocode": "def multiply(first_factor, second_factor):\n    product = first_factor * second_factor\n    return product\n\nx = 1\n\ny = 2\n\nz = multiply(x, y) + 1"
+    },
+    {
+      "content": "There is a Student type. student1 is a Student whose age is 7. student2 is a Student whose age is 8. student3 is a Student whose age is 9. age is 8. student is the Student whose age is age. age is 9.",
+      "pseudocode": "class Student:\n    pass\n\nstudent1 = Student()\nstudent1.age = 7\n\nstudent2 = Student()\nstudent2.age = 8\n\nstudent3 = Student()\nstudent3.age = 9\n\nage = 8\n\nstudent = Student.find(s => s.age == age)\n\nage = 9"
+    },
+    {
+      "content": "There is a Result type, which has a score as a number. There are Results whose scores are 10, 15 and 20. upperThreshold is 18. lowerThreshold is 12. list is Results whose score is greater than lowerThreshold, filtered to those whose score is less than upperThreshold. lowerThreshold is 7. upperThreshold is 14.",
+      "pseudocode": "class Result(score: int):\n    this.score = score\n\nResult(10); Result(15); Result(20)\n\nupperThreshold = 18\n\nlowerThreshold = 12\n\nlist = Result.filter(r => r.score > lowerThreshold).filter(r => r.score < upperThreshold)\n\nlowerThreshold = 7\n\nupperThreshold = 14"
+    },
+    {
+      "content": "states is a list of \"NY\", \"GA\", \"CT\" and \"MI\". The value of states at index 2.",
+      "pseudocode": "states = [\"NY\", \"GA\", \"CT\", \"MI\"]\n\nstates[2]"
+    },
+    {
+      "content": "whether e is equal to 2.71828.",
+      "pseudocode": "e == 2.71828"
+    },
+    {
+      "content": "number is -1.",
+      "pseudocode": "number = -1\n\nnumber"
+    },
+    {
+      "content": "There is a Ticket type. while in the block, ticket is a local Ticket, and ticket's event's group is \"ENTERTAINMENT\".",
+      "pseudocode": "class Ticket:\n    pass\n\n{\n    ticket = Ticket()\n    ticket.event.group = \"ENTERTAINMENT\"\n}"
+    },
+    {
+      "content": "There is a Device type, which has a code as a string. device1 is a Device whose code is \"A0\". device2 is a Device whose code is \"B1\". While in the block, device is a local variable that is the Device whose code is \"A0\", and if there is no device, then throw \"INVALID_DEVICE\", and return device.",
+      "pseudocode": "class Device(code: str):\n    this.code = code\n\ndevice1 = Device(\"A0\")\n\ndevice2 = Device(\"B1\")\n\n{\n    device = Device.find(d => d.code == \"A0\")\n    if not device:\n        throw \"INVALID_DEVICE\"\n    return device\n}"
+    },
+    {
+      "content": "There is a Device type, which has a code as a string. device1 is a Device whose code is \"A0\". device2 is a Device whose code is \"B1\". While in the block, device is a local variable that is the Device whose code is \"A1\", and if there is no device, then throw \"INVALID_DEVICE\".",
+      "pseudocode": "class Device(code: str):\n    this.code = code\n\ndevice1 = Device(\"A0\")\n\ndevice2 = Device(\"B1\")\n\n{\n    device = Device.find(d => d.code == \"A1\")\n    if not device:\n        throw \"INVALID_DEVICE\"\n    return device\n}"
+    },
+    {
+      "content": "There is a Shipment type. While in the block, shipment is a local Shipment whose date is January 3, 2019, and shipment1 is shipment.",
+      "pseudocode": "class Shipment:\n    pass\n\n{\n    shipment = Shipment()\n    shipment.date = Date(\"2019-1-3\")\n    shipment1 = shipment\n}"
+    },
+    {
+      "content": "There is a User type. user0 is a User. While in the block, user is a local variable that is the User whose id is \"user0\", and if there is a user, then the user's name is \"TEST\".",
+      "pseudocode": "class User:\n    pass\n\nuser0 = User()\n\n{\n    user = User[\"user0\"]\n    if user:\n        user.name = \"TEST\"\n}"
+    },
+    {
+      "content": "a is 1. b is 2. c is sum of a and b. a is 2.",
+      "pseudocode": "a = 1\n\nb = 2\n\nc = a + b\n\na = 2"
+    },
+    {
+      "content": "m is false. n is false. if m is true, then n is m and true. m is true.",
+      "pseudocode": "m = false\n\nn = false\n\nif m == true:\n    n = m and true\n\nm = true"
+    },
+    {
+      "content": "p is 0.01. s is 0.02. if p is less than 1, then r is p times 10. if p is less than 1, then r is s times 10. s is 0.03.",
+      "pseudocode": "p = 0.01\n\ns = 0.02\n\nif p < 1:\n    r = p * 10\n\nif p < 1:\n    r = s * 10\n\ns = 0.03"
+    },
+    {
+      "content": "g is 11. earth is 9.8. mars is 3.71. mass is 10. if g is greater than 9, then weight is earth times mass, else if g is greater than 3, then weight is mars times mass. g is 5. mars is 3.72.",
+      "pseudocode": "g = 11\n\nearth = 9.8\n\nmars = 3.71\n\nmass = 10\n\nif g > 9:\n    weight = earth * mass\nelse if g > 3:\n    weight = mars * mass\n\ng = 5\n\nmars = 3.72"
+    },
+    {
+      "content": "fraction is -0.1. point is 1. if fraction is greater than 1, then score is fraction times point times 3, else if fraction is greater than 0, then score is fraction times point times 2, else score is fraction times point. point is 2.",
+      "pseudocode": "fraction = -0.1\n\npoint = 1\n\nif fraction > 1:\n    score = fraction * point * 3\nelse if fraction > 0:\n    score = fraction * point * 2\nelse:\n    score = fraction * point\n\npoint = 2"
+    },
+    {
+      "content": "There is a Vehicle type, and any vehicle's tag is \"US-\" plus the vehicle's plate. vehicle1 is a Vehicle. vehicle1's plate is \"XSJ422\".",
+      "pseudocode": "class Vehicle:\n    pass\n\n$Vehicle.tag = \"US-\" + $Vehicle.plate\n\nvehicle1 = Vehicle()\n\nvehicle1.plate = \"XSJ422\""
+    },
+    {
+      "content": "any is 0. if any is bigger than 1, then result is 1. if any is bigger than 2, then result is 2. if any is bigger than 3, then result is 3. if any is bigger than 2, then result is 4. if any is bigger than 1, then result is 5. any is 4.",
+      "pseudocode": "any = 0\n\nif any > 1:\n    result = 1\n\nif any > 2:\n    result = 2\n\nif any > 3:\n    result = 3\n\nif any > 2:\n    result = 4\n\nif any > 1:\n    result = 5\n\nany = 4"
+    },
+    {
+      "content": "e is 2.71828. number is null. a local e shadows the outer e inside the block, and number is the local e.",
+      "pseudocode": "e = 2.71828\n\nnumber = null\n\n{\n    e = 3\n    number = e\n}"
+    },
+    {
+      "content": "pi is 3.14. number is pi. a local pi shadows the outer pi inside the block.",
+      "pseudocode": "pi = 3.14\n\nnumber = pi\n\n{\n    pi = 3.141\n    number = pi\n}"
+    },
+    {
+      "content": "There is a Person type. person1 is a Person. person1's last name is \"Brown\". person1's full name is first and last name.",
+      "pseudocode": "class Person:\n    pass\n\nperson1 = Person()\n\nperson1.lastName = \"Brown\"\n\nperson1.fullName = person1.firstName + \" \" + person1.lastName"
+    },
+    {
+      "content": "a is 1. c is null. while in the block, b is a local variable that is null, and c is b divided by a.",
+      "pseudocode": "a = 1\n\nc = null\n\n{\n    b = null\n    c = b / a\n}"
+    },
+    {
+      "content": "There is a Schedule type. schedule1 is a Schedule whose expression is \"0 */2 * * *\" and whose script is null. schedule1's run is schedule1's expression plus \" \" plus schedule1's script.",
+      "pseudocode": "class Schedule:\n    pass\n\nschedule1 = Schedule()\nschedule1.expression = \"0 */2 * * *\"\nschedule1.script = null\n\nschedule1.run = schedule1.expression + \" \" + schedule1.script"
+    },
+    {
+      "content": "There is a Product type. product1 is a Product. score is product1's quality score.",
+      "pseudocode": "class Product:\n    pass\n\nproduct1 = Product()\n\nscore = product1.quality.score"
+    },
+    {
+      "content": "There is a Vehicle type. There is a Vehicle.",
+      "pseudocode": "class Vehicle:\n    pass\n\nVehicle()"
+    },
+    {
+      "content": "generate returns number times 10. random is 10. number is the result of the generate function call with random. random is 20.",
+      "pseudocode": "def generate(number):\n    return number * 10\n\nrandom = 10\n\nnumber = generate(random)\n\nrandom = 20"
+    },
+    {
+      "content": "list is an empty list. count is the list filtered to odd numbers. Add 1 to the list. Add 2 to the list. Add 3 to the list. Remove the last item from the list.",
+      "pseudocode": "list = []\n\ncount = list.filter(n => n % 2)\n\nlist.push(1)\n\nlist.push(2)\n\nlist.push(3)\n\nlist.pop()"
+    },
+    {
+      "content": "There is a User type. If any user's password does not match /.{4,8}/, then throw 'INVALID_PASSWORD'. user1 is a User. user1's password is 'PAS'.",
+      "pseudocode": "class User:\n    pass\n\nif not /.{4,8}/.test($User.password):\n    throw 'INVALID_PASSWORD'\n\nuser1 = User()\n\nuser1.password = 'PAS'"
+    },
+    {
+      "content": "There is a Person type. person1 is a Person whose weight is 90 and whose height is 1.8. while in the block, weight is a local variable that is person1's weight, and height is a local variable that is person1's height, and any person's bmi is weight divided by height squared.",
+      "pseudocode": "class Person:\n    pass\n\nperson1 = Person()\nperson1.weight = 90\nperson1.height = 1.8\n\n{\n    weight = person1.weight\n    height = person1.height\n    $Person.bmi = weight / (height * height)\n}"
+    },
+    {
+      "content": "number1 is 10. number2 is number1 times 10. number1 is number2 times 10.",
+      "pseudocode": "number1 = 10\n\nnumber2 = number1 * 10\n\nnumber1 = number2 * 10"
+    },
+    {
+      "content": "a is 5. if a is greater than 5, then throw 'INVALID_VALUE'. a is 6.",
+      "pseudocode": "a = 5\n\nif a > 5:\n    throw 'INVALID_VALUE'\n\na = 6"
+    },
+    {
+      "content": "There is an Item type. If any item's sku is 'A', then throw 'INVALID_SKU'. item1 is an Item. item1's sku is 'A'.",
+      "pseudocode": "class Item:\n    pass\n\nif $Item.sku == 'A':\n    throw 'INVALID_SKU'\n\nitem1 = Item()\n\nitem1.sku = 'A'"
+    },
+    {
+      "content": "There is a User type, which has a first as a string and a last as a string. If any user's first is shorter than 3 characters, then throw 'INVALID_USER'. user1 is a User whose first is 'F' and whose last is 'L'. user1.",
+      "pseudocode": "class User(first: str, last: str):\n    this.first = first\n    this.last = last\n\nif $User.first.length < 3:\n    throw 'INVALID_USER'\n\nuser1 = User('F', 'L')\n\nuser1"
+    },
+    {
+      "content": "a is 1. b is 2. c is a plus 3. c is b plus 3. b is 4.",
+      "pseudocode": "a = 1\n\nb = 2\n\nc = a + 3\n\nc = b + 3\n\nb = 4"
+    },
+    {
+      "content": "radius is 10. radius is radius plus 10.",
+      "pseudocode": "radius = 10\n\nradius = radius + 10"
+    },
+    {
+      "content": "t is 1. q is t plus 1. q is deleted. t is 2. q.",
+      "pseudocode": "t = 1\n\nq = t + 1\n\ndelete q\n\nt = 2\n\nq"
+    },
+    {
+      "content": "x is 1.",
+      "pseudocode": "x = 1"
+    },
+    {
+      "content": "str1 is \"ABC\". str2 is str1 lowercased plus \"d\". str3 is str2 concatenated with str1. str1 is \"AAA\".",
+      "pseudocode": "str1 = \"ABC\"\n\nstr2 = str1.lower() + \"d\"\n\nstr3 = str2 + str1\n\nstr1 = \"AAA\""
+    },
+    {
+      "content": "goldenRatio is 1.618. altitude is 10. width is goldenRatio's value times altitude. depth is goldenRatio's value times altitude. goldenRatio is 1.62. altitude is 100.",
+      "pseudocode": "goldenRatio = 1.618\n\naltitude = 10\n\nwidth = goldenRatio.value * altitude\n\ndepth = goldenRatio.value * altitude\n\ngoldenRatio = 1.62\n\naltitude = 100"
+    },
+    {
+      "content": "There is an Account type. There is a Currency type. Any currency's description is \"Code:\" plus the currency's code. balance is an Object whose currency is an Object whose code is \"USD\", and any account's balance is balance. account1 is an Account.",
+      "pseudocode": "class Account:\n    pass\n\nclass Currency:\n    pass\n\n$Currency.description = \"Code:\" + $Currency.code\n\n{\n    balance = Object()\n    balance.currency = Object()\n    balance.currency.code = \"USD\"\n    $Account.balance = balance\n}\n\naccount1 = Account()"
+    },
+    {
+      "content": "There is a Warehouse type. warehouse1 is a Warehouse. inventory is an Object whose item is an Object whose sku is \"699546085767\", and any warehouse's inventory is inventory.",
+      "pseudocode": "class Warehouse:\n    pass\n\nwarehouse1 = Warehouse()\n\n{\n    inventory = Object()\n    inventory.item = Object()\n    inventory.item.sku = \"699546085767\"\n    $Warehouse.inventory = inventory\n}"
+    },
+    {
+      "content": "There is a Device type, which has a name as a string. No device is deleted. Any device's key is \"X-\" plus the device's name. name is \"Hall\", and device1 is a Device whose name is name.",
+      "pseudocode": "class Device(name: str):\n    this.name = name\n\n$Device.deleted = false\n\n$Device.key = \"X-\" + $Device.name\n\n{\n    name = \"Hall\"\n    device1 = Device(name)\n}"
+    },
+    {
+      "content": "There is a Summary type, which has a rate as a number. Any summary's score is the summary's rate times 100. rate is 4, and there is a Summary whose rate is rate.",
+      "pseudocode": "class Summary(rate: int):\n    this.rate = rate\n\n$Summary.score = $Summary.rate * 100\n\n{\n    rate = 4\n    Summary(rate)\n}"
+    },
+    {
+      "content": "a is 5. b is 10. if a is greater than 9, then while in the block, c is a plus b, and d is c times 10. a is 10. a is 15. b is 20.",
+      "pseudocode": "a = 5\n\nb = 10\n\nif a > 9:\n    c = a + b\n    d = c * 10\n\na = 10\n\na = 15\n\nb = 20"
+    },
+    {
+      "content": "There is a Plane type. There is a Trip type. plane1 is a Plane whose speed is 903. trip1 is a Trip whose distance is 5540. while in the block trip is any plane's trip, and any plane's time is trip's distance divided by the plane's speed. plane1's trip is trip1.",
+      "pseudocode": "class Plane:\n    pass\n\nclass Trip:\n    pass\n\nplane1 = Plane()\nplane1.speed = 903\n\ntrip1 = Trip()\ntrip1.distance = 5540\n\n{\n    trip = $Plane.trip\n    $Plane.time = trip.distance / $Plane.speed\n}\n\nplane1.trip = trip1"
+    },
+    {
+      "content": "There is a Seller type. There is a Commission type. seller1 is a Seller whose sales is 1000000. comm1 is a Commission whose rate is 0.05. seller1's commission is comm1. While in the block, commission is any seller's commission, and any seller's pay is the seller's sales times commission's rate.",
+      "pseudocode": "class Seller:\n    pass\n\nclass Commission:\n    pass\n\nseller1 = Seller()\nseller1.sales = 1000000\n\ncomm1 = Commission()\ncomm1.rate = 0.05\n\nseller1.commission = comm1\n\n{\n    commission = $Seller.commission\n    $Seller.pay = $Seller.sales * commission.rate\n}"
+    },
+    {
+      "content": "There is a Stock type. There is a Trade type. stock1 is a Stock whose price is 100. trade1 is a Trade whose quantity is 1. stock1's trade is trade1. While in the block, trade is any stock's trade, and trade's worth is the stock's price times trade's quantity.",
+      "pseudocode": "class Stock:\n    pass\n\nclass Trade:\n    pass\n\nstock1 = Stock()\nstock1.price = 100\n\ntrade1 = Trade()\ntrade1.quantity = 1\n\nstock1.trade = trade1\n\n{\n    trade = $Stock.trade\n    trade.worth = $Stock.price * trade.quantity\n}"
+    },
+    {
+      "content": "barcode is \"barcode\". a local barcode shadows the outer barcode inside the block, and a nested block reassigns the local barcode to \"barcode2\".",
+      "pseudocode": "barcode = \"barcode\"\n\n{\n    barcode = \"barcode\"\n    {\n        barcode = \"barcode2\"\n    }\n}"
+    },
+    {
+      "content": "bugs is an empty list. ticket is 1. There is a Bug type. bug1 is a Bug whose ticket is 1 and whose priority is \"LOW\", and bug1 is added to bugs. bug2 is a Bug whose ticket is 2 and whose priority is \"MEDIUM\", and bug2 is added to bugs. While in the block, bug is the bug in bugs whose ticket is ticket, and bug is selected. ticket is 2.",
+      "pseudocode": "bugs = []\n\nticket = 1\n\nclass Bug:\n    pass\n\nbug1 = Bug()\nbug1.ticket = 1\nbug1.priority = \"LOW\"\nbugs.push(bug1)\n\nbug2 = Bug()\nbug2.ticket = 2\nbug2.priority = \"MEDIUM\"\nbugs.push(bug2)\n\n{\n    bug = bugs.find(b => b.ticket == ticket)\n    bug.selected = true\n}\n\nticket = 2"
+    },
+    {
+      "content": "h is 1. while in the block, value is a local variable that is h times 2, and j is value times 2. h is 2.",
+      "pseudocode": "h = 1\n\n{\n    value = h * 2\n    j = value * 2\n}\n\nh = 2"
+    },
+    {
+      "content": "radius is 10. while in the block, area is a local variable that is radius squared times 3.14, and in a nested block, volume is area times 5.",
+      "pseudocode": "radius = 10\n\n{\n    area = Math.pow(radius, 2) * 3.14\n    {\n        volume = area * 5\n    }\n}"
+    },
+    {
+      "content": "gravity is 9.8. time is 10. distance is 480. target is true. while in the block, dist is a local variable that is one half times gravity times time times time, and if dist is greater than distance, then hit is target. target is false.",
+      "pseudocode": "gravity = 9.8\n\ntime = 10\n\ndistance = 480\n\ntarget = true\n\n{\n    dist = 1 / 2 * gravity * time * time\n    if dist > distance:\n        hit = target\n}\n\ntarget = false"
+    },
+    {
+      "content": "percentage is 28. density is 0.899. substance is \"NH3\". molarConcentration is null. fallback is 0. while in the block, concentration is a local variable that is percentage times density divided by 100 times 1000, and if substance is \"NH3\", then molarConcentration is concentration divided by 17.04, else molarConcentration is fallback. substance is \"NH16\". fallback is 1.",
+      "pseudocode": "percentage = 28\n\ndensity = 0.899\n\nsubstance = \"NH3\"\n\nmolarConcentration = null\n\nfallback = 0\n\n{\n    concentration = percentage * density / 100 * 1000\n    if substance == \"NH3\":\n        molarConcentration = concentration / 17.04\n    else:\n        molarConcentration = fallback\n}\n\nsubstance = \"NH16\"\n\nfallback = 1"
+    },
+    {
+      "content": "a is 1. b is a. a is 2.",
+      "pseudocode": "a = 1\n\nb = a\n\na = 2"
+    },
+    {
+      "content": "There is a Model type. model1 is a Model.",
+      "pseudocode": "class Model:\n    pass\n\nmodel1 = Model()"
+    },
+    {
+      "content": "There is an Entity type.",
+      "pseudocode": "class Entity:\n    pass"
+    },
+    {
+      "content": "chart1 is a Chart. There is a Chart type. chart1 is a Chart. chart1's plot is a Plot. any chart's plot is a Plot.",
+      "pseudocode": "chart1 = Chart()\n\nclass Chart:\n    pass\n\nchart1 = Chart()\n\nchart1.plot = Plot()\n\n$Chart.plot = Plot()"
+    },
+    {
+      "content": "There is an Order type. order1 is an Order. order1's upc is \"04061\" plus order1's barcode. order1's barcode is \"94067\".",
+      "pseudocode": "class Order:\n    pass\n\norder1 = Order()\n\norder1.upc = \"04061\" + order1.barcode\n\norder1.barcode = \"94067\""
+    },
+    {
+      "content": "There is a User type. user1 is a User. user1's name is \"sample\". user1's email is user1's name plus \"@example.com\". user1's name is \"samplex\".",
+      "pseudocode": "class User:\n    pass\n\nuser1 = User()\n\nuser1.name = \"sample\"\n\nuser1.email = user1.name + \"@example.com\"\n\nuser1.name = \"samplex\""
+    },
+    {
+      "content": "There is a Channel type. channel1 is a Channel. channel1's frequency's type is \"ANGULAR\".",
+      "pseudocode": "class Channel:\n    pass\n\nchannel1 = Channel()\n\nchannel1.frequency.type = \"ANGULAR\""
+    },
+    {
+      "content": "There is an Item type, which has a name as a string. item1 is an Item whose name is \"NAME-1\". item2 is an Item with no name.",
+      "pseudocode": "class Item(name: str):\n    this.name = name\n\nitem1 = Item(\"NAME-1\")\n\nitem2 = Item()"
+    },
+    {
+      "content": "There is a Worker type. There is a Schedule type. worker1 is a Worker. worker1's duty's schedule is a Schedule.",
+      "pseudocode": "class Worker:\n    pass\n\nclass Schedule:\n    pass\n\nworker1 = Worker()\n\nworker1.duty.schedule = Schedule()"
+    },
+    {
+      "content": "There is a Construction type. construction1 is a Construction. construction1's timeline is 120. construction1's timeline is 2 times construction1's timeline.",
+      "pseudocode": "class Construction:\n    pass\n\nconstruction1 = Construction()\n\nconstruction1.timeline = 120\n\nconstruction1.timeline = 2 * construction1.timeline"
+    },
+    {
+      "content": "There is an Agent type. There is a Distance type. Any distance's total is the square root of the distance's x squared plus the distance's y squared. agent1 is an Agent. agent1's distance is a Distance. agent1's distance's x is 3 and its y is 4.",
+      "pseudocode": "class Agent:\n    pass\n\nclass Distance:\n    pass\n\n$Distance.total = Math.sqrt($Distance.x * $Distance.x + $Distance.y * $Distance.y)\n\nagent1 = Agent()\n\nagent1.distance = Distance()\n\nagent1.distance.x = 3\nagent1.distance.y = 4"
+    },
+    {
+      "content": "There is a Product type. product1 is a Product. There is a Quality type. product1's quality is a Quality whose score is 15. Any quality's class is the character with the code 65 plus the floor of the quality's score divided by 10.",
+      "pseudocode": "class Product:\n    pass\n\nproduct1 = Product()\n\nclass Quality:\n    pass\n\nproduct1.quality = Quality()\nproduct1.quality.score = 15\n\n$Quality.class = String.fromCharCode(65 + Math.floor($Quality.score / 10))"
+    },
+    {
+      "content": "There is a Schedule type. There is a Place type. value is a Schedule. value's value is a Place.",
+      "pseudocode": "class Schedule:\n    pass\n\nclass Place:\n    pass\n\nvalue = Schedule()\n\nvalue.value = Place()"
+    },
+    {
+      "content": "There is a Value type. value is a Value. value's value is 2147483647.",
+      "pseudocode": "class Value:\n    pass\n\nvalue = Value()\n\nvalue.value = 2147483647"
+    },
+    {
+      "content": "There is a Weight type. weight1 is a Weight whose gravity is 1.352 and whose mass is 1000. weight1's force is weight1's gravity times weight1's mass's value. weight1's mass is 2000. weight1's gravity is 2.",
+      "pseudocode": "class Weight:\n    pass\n\nweight1 = Weight()\nweight1.gravity = 1.352\nweight1.mass = 1000\n\nweight1.force = weight1.gravity * weight1.mass.value\n\nweight1.mass = 2000\n\nweight1.gravity = 2"
+    },
+    {
+      "content": "There is a Question type. question1 is a Question whose text is \"How was the service?\". if question1's text is not question1's text's value, then throw \"QUESTION_ARCHIVED\". question1's text is \"How would you rate us?\".",
+      "pseudocode": "class Question:\n    pass\n\nquestion1 = Question()\nquestion1.text = \"How was the service?\"\n\nif question1.text != question1.text.value:\n    throw \"QUESTION_ARCHIVED\"\n\nquestion1.text = \"How would you rate us?\""
+    },
+    {
+      "content": "There is a Travel type. travel1 is a Travel whose speed is 65. travel1's duration is travel1's distance divided by travel1's speed. travel1's time is travel1's distance's value divided by travel1's speed.",
+      "pseudocode": "class Travel:\n    pass\n\ntravel1 = Travel()\ntravel1.speed = 65\n\ntravel1.duration = travel1.distance / travel1.speed\n\ntravel1.time = travel1.distance.value / travel1.speed"
+    },
+    {
+      "content": "There is an Interest type. interest1 is an Interest whose rate is 3 and whose amount is null. interest1's annual is interest1's rate times interest1's amount's value divided by 100. interest1's amount is 10000.",
+      "pseudocode": "class Interest:\n    pass\n\ninterest1 = Interest()\ninterest1.rate = 3\ninterest1.amount = null\n\ninterest1.annual = interest1.rate * interest1.amount.value / 100\n\ninterest1.amount = 10000"
+    },
+    {
+      "content": "There is an Alarm type. while in the block, value is a local Alarm, and value's value is \"22:00\".",
+      "pseudocode": "class Alarm:\n    pass\n\n{\n    value = Alarm()\n    value.value = \"22:00\"\n}"
+    },
+    {
+      "content": "speedOfLight is 299792. roundTrip is null. while in the block, time is a local variable that is speedOfLight divided by 225623, and roundTrip is time's value times 2.",
+      "pseudocode": "speedOfLight = 299792\n\nroundTrip = null\n\n{\n    time = speedOfLight / 225623\n    roundTrip = time.value * 2\n}"
+    },
+    {
+      "content": "count is 0. There is a Device type. device1 is a Device. while in the block, any device's code is \"A\" plus count's value, and count is count plus 1.",
+      "pseudocode": "count = 0\n\nclass Device:\n    pass\n\ndevice1 = Device()\n\n{\n    $Device.code = \"A\" + count.value\n    count = count + 1\n}"
+    },
+    {
+      "content": "There is a Summary type, which has a question as a Question. There is a Question type. Any summary's count is the value of the summary's question's count. question1 is a Question whose count is 10. summary1 is a Summary whose question is question1. question1's count is 11.",
+      "pseudocode": "class Summary(question):\n    this.question = question\n\nclass Question:\n    pass\n\n$Summary.count = $Summary.question.count.value\n\nquestion1 = Question()\nquestion1.count = 10\n\nsummary1 = Summary(question1)\n\nquestion1.count = 11"
+    },
+    {
+      "content": "There is an Account type. account1 is an Account whose balance is 1000. if account1's balance is less than 1500, then account1's status is \"OK\". if account1's balance is less than 1500, then account1's status is \"LOW\".",
+      "pseudocode": "class Account:\n    pass\n\naccount1 = Account()\naccount1.balance = 1000\n\nif account1.balance < 1500:\n    account1.status = \"OK\"\n\nif account1.balance < 1500:\n    account1.status = \"LOW\""
+    },
+    {
+      "content": "compound is 0.0001. acidic is 'ACIDIC'. basic is 'BASIC'. if compound is greater than 0.0000001, then pH is acidic, else pH is basic. compound is 0.000000001. basic is '+7'.",
+      "pseudocode": "compound = 0.0001\n\nacidic = 'ACIDIC'\n\nbasic = 'BASIC'\n\nif compound > 0.0000001:\n    pH = acidic\nelse:\n    pH = basic\n\ncompound = 0.000000001\n\nbasic = '+7'"
+    },
+    {
+      "content": "There is a Toy type. toy1 is a Toy whose color is \"BLUE\". if toy1's color is \"RED\", then toy1's shape is \"CIRCLE\". toy1's color is \"RED\".",
+      "pseudocode": "class Toy:\n    pass\n\ntoy1 = Toy()\ntoy1.color = \"BLUE\"\n\nif toy1.color == \"RED\":\n    toy1.shape = \"CIRCLE\"\n\ntoy1.color = \"RED\""
+    },
+    {
+      "content": "There is an Engine type. engine1 is an Engine whose type is \"V8\". mpl is \"MPL\". bsd is \"BSD\". if engine1's type is \"Gecko\", then engine1's license is mpl, else engine1's license is bsd. bsd is \"Berkeley Software Distribution\". engine1's type is \"Gecko\".",
+      "pseudocode": "class Engine:\n    pass\n\nengine1 = Engine()\nengine1.type = \"V8\"\n\nmpl = \"MPL\"\n\nbsd = \"BSD\"\n\nif engine1.type == \"Gecko\":\n    engine1.license = mpl\nelse:\n    engine1.license = bsd\n\nbsd = \"Berkeley Software Distribution\"\n\nengine1.type = \"Gecko\""
+    },
+    {
+      "content": "There is a Contact type. contact1 is a Contact whose type is \"PERSON\", whose first is \"First\" and whose last is \"Last\". if contact1's type is \"BUSINESS\", then contact1's full is \"B\" plus contact1's first, else contact1's full is contact1's first plus \" \" plus contact1's last. contact1's first is \"F\" and contact1's last is \"L\". contact1's type is \"BUSINESS\".",
+      "pseudocode": "class Contact:\n    pass\n\ncontact1 = Contact()\ncontact1.type = \"PERSON\"\ncontact1.first = \"First\"\ncontact1.last = \"Last\"\n\nif contact1.type == \"BUSINESS\":\n    contact1.full = \"B\" + contact1.first\nelse:\n    contact1.full = contact1.first + \" \" + contact1.last\n\ncontact1.first = \"F\"\ncontact1.last = \"L\"\n\ncontact1.type = \"BUSINESS\""
+    },
+    {
+      "content": "There is a Taxpayer type. taxpayer1 is a Taxpayer whose income is 60000 and whose member is 1. rate is 22. if taxpayer1's member is greater than 4, then taxpayer1's tax is taxpayer1's income times rate divided by 100 minus 2000, else if taxpayer1's member is greater than 2, then taxpayer1's tax is taxpayer1's income times rate divided by 100 minus 1000, else taxpayer1's tax is taxpayer1's income times rate divided by 100. rate is 23. taxpayer1's member is 3. taxpayer1's member is 5.",
+      "pseudocode": "class Taxpayer:\n    pass\n\ntaxpayer1 = Taxpayer()\ntaxpayer1.income = 60000\ntaxpayer1.member = 1\n\nrate = 22\n\nif taxpayer1.member > 4:\n    taxpayer1.tax = taxpayer1.income * rate / 100 - 2000\nelse if taxpayer1.member > 2:\n    taxpayer1.tax = taxpayer1.income * rate / 100 - 1000\nelse:\n    taxpayer1.tax = taxpayer1.income * rate / 100\n\nrate = 23\n\ntaxpayer1.member = 3\n\ntaxpayer1.member = 5"
+    },
+    {
+      "content": "There is a Matter type. matter1 is a Matter whose mass is 10. matter1's weight is matter1's mass times 9.8. matter1's weight is matter1's mass times 3.7. matter1's mass is 20.",
+      "pseudocode": "class Matter:\n    pass\n\nmatter1 = Matter()\nmatter1.mass = 10\n\nmatter1.weight = matter1.mass * 9.8\n\nmatter1.weight = matter1.mass * 3.7\n\nmatter1.mass = 20"
+    },
+    {
+      "content": "There is a Circle type. circle1 is a Circle. circle1 is deleted. circle1.",
+      "pseudocode": "class Circle:\n    pass\n\ncircle1 = Circle()\n\ndelete circle1\n\ncircle1"
+    },
+    {
+      "content": "There is an Item type. item1 is an Item. item2 is an Item. The Item whose id is \"item1\" is deleted. While in the block, item is a local variable that is \"item2\", and the Item whose id is item is deleted.",
+      "pseudocode": "class Item:\n    pass\n\nitem1 = Item()\n\nitem2 = Item()\n\ndelete Item[\"item1\"]\n\n{\n    item = \"item2\"\n    delete Item[item]\n}"
+    },
+    {
+      "content": "There is a Location type. location1 is a Location. Deleting location1 returns true. Deleting location2, which is not defined, returns false.",
+      "pseudocode": "class Location:\n    pass\n\nlocation1 = Location()"
+    },
+    {
+      "content": "There is a Channel type. channel1 is a Channel. channel1's frequency is 440. channel1 is deleted. channel1's frequency is deleted. channel1 is deleted.",
+      "pseudocode": "class Channel:\n    pass\n\nchannel1 = Channel()\n\nchannel1.frequency = 440\n\ndelete channel1\n\ndelete channel1.frequency\n\ndelete channel1"
+    },
+    {
+      "content": "There is a Shape type. There is a Type type. shape1 is a Shape. shape1's type is a Type. shape1 is deleted. shape1's type is deleted. shape1 is deleted.",
+      "pseudocode": "class Shape:\n    pass\n\nclass Type:\n    pass\n\nshape1 = Shape()\n\nshape1.type = Type()\n\ndelete shape1\n\ndelete shape1.type\n\ndelete shape1"
+    },
+    {
+      "content": "There is an Agent type. agent is an Agent. agent's time is 52926163455. agent's location is \"CITY\". agent's report is agent's time plus \"@\" plus agent's location. agent's time is deleted. agent's report is deleted.",
+      "pseudocode": "class Agent:\n    pass\n\nagent = Agent()\n\nagent.time = 52926163455\n\nagent.location = \"CITY\"\n\nagent.report = agent.time + \"@\" + agent.location\n\ndelete agent.time\n\ndelete agent.report"
+    },
+    {
+      "content": "There is an Item type. item1 is an Item. item1's sku is \"0000001\". while in the block, custom is a local variable that is \"US\" plus item1's sku, and item1's custom is custom. item1's sku is \"0000002\".",
+      "pseudocode": "class Item:\n    pass\n\nitem1 = Item()\n\nitem1.sku = \"0000001\"\n\n{\n    custom = \"US\" + item1.sku\n    item1.custom = custom\n}\n\nitem1.sku = \"0000002\""
+    },
+    {
+      "content": "There is a Figure type. figure1 is a Figure. figure1's width is 9. figure1's height is 10. while in the block, base is a local variable that is figure1's width squared, and in a nested block, figure1's volume is base times figure1's height. figure1's height is 9.",
+      "pseudocode": "class Figure:\n    pass\n\nfigure1 = Figure()\n\nfigure1.width = 9\n\nfigure1.height = 10\n\n{\n    base = Math.pow(figure1.width, 2)\n    {\n        figure1.volume = base * figure1.height\n    }\n}\n\nfigure1.height = 9"
+    },
+    {
+      "content": "There is a Sale type. sale1 is a Sale. sale1's price is 50. sale1's quantity is 2. while in the block, amount is a local variable that is sale1's price times sale1's quantity, and if amount is greater than 100, then sale1's tax is amount times 10 divided by 100. sale1's quantity is 3.",
+      "pseudocode": "class Sale:\n    pass\n\nsale1 = Sale()\n\nsale1.price = 50\n\nsale1.quantity = 2\n\n{\n    amount = sale1.price * sale1.quantity\n    if amount > 100:\n        sale1.tax = amount * 10 / 100\n}\n\nsale1.quantity = 3"
+    },
+    {
+      "content": "There is a Chart type. chart1 is a Chart. chart1's percentage is 1. invalid is \"INVALID\". valid is \"VALID\". while in the block, ratio is a local variable that is chart1's percentage divided by 100, and if ratio is greater than 1, then chart1's status is invalid, else chart1's status is valid. valid is \"V\".",
+      "pseudocode": "class Chart:\n    pass\n\nchart1 = Chart()\n\nchart1.percentage = 1\n\ninvalid = \"INVALID\"\n\nvalid = \"VALID\"\n\n{\n    ratio = chart1.percentage / 100\n    if ratio > 1:\n        chart1.status = invalid\n    else:\n        chart1.status = valid\n}\n\nvalid = \"V\""
+    },
+    {
+      "content": "There is a Person type. person1 is a Person. There is an Address type. address1 is an Address. Any address's print is the address's city plus \", \" plus the address's state. person1's address is an Address. person1's address's city is \"Syracuse\". person1's address's state is \"NY\".",
+      "pseudocode": "class Person:\n    pass\n\nperson1 = Person()\n\nclass Address:\n    pass\n\naddress1 = Address()\n\n$Address.print = $Address.city + \", \" + $Address.state\n\nperson1.address = Address()\n\nperson1.address.city = \"Syracuse\"\n\nperson1.address.state = \"NY\""
+    },
+    {
+      "content": "There is a Server type. server1 is a Server. server1's name is \"HOST1\". There is an IP type. ip1 is an IP. server1's ip is ip1. ip1's address is \"10.0.0.1\". server1's summary is server1's name plus \"@\" plus server1's ip's address. ip1's address is \"10.0.0.2\".",
+      "pseudocode": "class Server:\n    pass\n\nserver1 = Server()\n\nserver1.name = \"HOST1\"\n\nclass IP:\n    pass\n\nip1 = IP()\n\nserver1.ip = ip1\n\nip1.address = \"10.0.0.1\"\n\nserver1.summary = server1.name + \"@\" + server1.ip.address\n\nip1.address = \"10.0.0.2\""
+    },
+    {
+      "content": "There is a Schedule type. schedule1 is a Schedule. There is a Template type. template1 is a Template. template1's type is \"W\". schedule1's template is template1. schedule1's template's name is schedule1's template's type plus \"-0001\". template1's type is \"D\". template1's shape is template1's type plus \"-Form\". template1's type is \"C\".",
+      "pseudocode": "class Schedule:\n    pass\n\nschedule1 = Schedule()\n\nclass Template:\n    pass\n\ntemplate1 = Template()\n\ntemplate1.type = \"W\"\n\nschedule1.template = template1\n\nschedule1.template.name = schedule1.template.type + \"-0001\"\n\ntemplate1.type = \"D\"\n\ntemplate1.shape = template1.type + \"-Form\"\n\ntemplate1.type = \"C\""
+    },
+    {
+      "content": "There is a Vote type. vote1 is a Vote whose rate is 4. There is a Question type. Any question's rate is 0. Any question's count is 0. question1 is a Question. vote1's question is question1. While in the block, question is vote1's question, and question's rate is question's rate times question's count plus vote1's rate, divided by question's count plus 1, and question's count is question's count plus 1. vote1's rate is 5.",
+      "pseudocode": "class Vote:\n    pass\n\nvote1 = Vote()\nvote1.rate = 4\n\nclass Question:\n    pass\n\n$Question.rate = 0\n\n$Question.count = 0\n\nquestion1 = Question()\n\nvote1.question = question1\n\n{\n    question = vote1.question\n    question.rate = (question.rate * question.count + vote1.rate) / (question.count + 1)\n    question.count = question.count + 1\n}\n\nvote1.rate = 5"
+    },
+    {
+      "content": "There is an Element type. alkalis is an empty list. element1 is an Element whose number is 3. While in the block, number is any element's number, and if number is 3, then the element is added to alkalis.",
+      "pseudocode": "class Element:\n    pass\n\nalkalis = []\n\nelement1 = Element()\nelement1.number = 3\n\n{\n    number = $Element.number\n    if number == 3:\n        alkalis.push($Element)\n}"
+    },
+    {
+      "content": "a is declared as a number but not defined.",
+      "pseudocode": "a: int"
+    },
+    {
+      "content": "str1 is \"ABC\". i1 is str1's length plus 1. str1 is \"ABCD\". if str1's length is greater than 5, then i2 is i1. str1 is \"ABCDEF\".",
+      "pseudocode": "str1 = \"ABC\"\n\ni1 = str1.length + 1\n\nstr1 = \"ABCD\"\n\nif str1.length > 5:\n    i2 = i1\n\nstr1 = \"ABCDEF\""
+    },
+    {
+      "content": "There is a Student type. There is a User type.",
+      "pseudocode": "class Student:\n    pass\n\nclass User:\n    pass"
+    },
+    {
+      "content": "There is a Message type. No message is read. message1 is a Message. There is a Message type, which has a payload as a string. message2 is a Message whose payload is \"MESSAGE\".",
+      "pseudocode": "class Message:\n    pass\n\n$Message.read = false\n\nmessage1 = Message()\n\nclass Message(payload: str):\n    this.payload = payload\n\nmessage2 = Message(\"MESSAGE\")"
+    },
+    {
+      "content": "a is 123.",
+      "pseudocode": "a = 123"
+    },
+    {
+      "content": "condition is false.",
+      "pseudocode": "condition = false"
+    },
+    {
+      "content": "max is the maximum integer. now is the current time.",
+      "pseudocode": "max = Number.MAX_INTEGER\n\nnow = Date.now()\n\na = 5\nb = 9\npeak = Math.max(a, b)\nfloor = Math.min(a, b)\n\nb = Number.NaN\n\nb = 3\n\nb = null\n\nb = 2"
+    },
+    {
+      "content": "date is July 24, 2019.",
+      "pseudocode": "date = Date(\"2019-7-24\")"
+    },
+    {
+      "content": "date1 is the current date. date2 is a date whose time is date1's time. date3 is the parsed date of \"04 Dec 1995 00:12:00 GMT\". date4 is the wrong date.",
+      "pseudocode": "date1 = Date()\n\ndate2 = Date(date1.getTime())\n\ndate3 = Date.parse(\"04 Dec 1995 00:12:00 GMT\")\n\ndate4 = Date.wrong()"
+    },
+    {
+      "content": "a is 1. copy assigns val to b. Call copy with a.",
+      "pseudocode": "a = 1\n\ndef copy(val):\n    b = val\n\ncopy(a)"
+    },
+    {
+      "content": "a is 1. copy assigns val to b and returns val. Call copy with a.",
+      "pseudocode": "a = 1\n\ndef copy(val):\n    b = val\n    return val\n\ncopy(a)"
+    },
+    {
+      "content": "list is a list of 1, 2 and 3.",
+      "pseudocode": "list = [1, 2, 3]"
+    },
+    {
+      "content": "samples is a list of 38.2, 39.1, 38.8 and 39. ratio is 2.1. element is 38.5. The element parameter shadows the outer element in each function.",
+      "pseudocode": "samples = [38.2, 39.1, 38.8, 39]\n\nratio = 2.1\n\nelement = 38.5"
+    },
+    {
+      "content": "While in the block, payload is a local variable whose data is \"TEST\" and whose nested data is \"NESTED_TEST\". message is an object whose pid is 1200. While in the block, scope is a local variable whose query is \"test\", and i is a local variable whose test is scope's query.",
+      "pseudocode": "{\n    payload = { \"data\": \"TEST\", \"nested\": { \"data\": \"NESTED_TEST\" } }\n}\n\nmessage = { \"pid\": 1200 }\n\n{\n    scope = { \"query\": \"test\" }\n    i = { \"test\": scope.query }\n}"
+    },
+    {
+      "content": "While in the block, return an object whose number is 123, whose string is \"ABC\" and whose bool is true.",
+      "pseudocode": "{\n    return { \"number\": 123, \"string\": \"ABC\", \"bool\": true }\n}"
+    },
+    {
+      "content": "While in the block, return a list of an object whose number is 123, whose string is \"ABC\" and whose bool is true.",
+      "pseudocode": "{\n    return [{ \"number\": 123, \"string\": \"ABC\", \"bool\": true }]\n}"
+    },
+    {
+      "content": "While in the block, return an object whose number is 123, whose string is \"ABC\" and whose bool is true.",
+      "pseudocode": "{\n    return { number: 123, string: \"ABC\", bool: true }\n}"
+    },
+    {
+      "content": "While in the block, return a list of an object whose number is 123, whose string is \"ABC\" and whose bool is true.",
+      "pseudocode": "{\n    return [{ number: 123, string: \"ABC\", bool: true }]\n}"
+    },
+    {
+      "content": "name is \"AbCDE\". pointer is 0. if the character of name at pointer is not an uppercase letter, then throw \"INVALID_FIRST_CHARACTER\". name is \"bbCDE\". name is \"CbCDE\". pointer is 1.",
+      "pseudocode": "name = \"AbCDE\"\n\npointer = 0\n\nif not /[A-Z]/.test(name.charAt(pointer)):\n    throw \"INVALID_FIRST_CHARACTER\"\n\nname = \"bbCDE\"\n\nname = \"CbCDE\"\n\npointer = 1"
+    },
+    {
+      "content": "There is a User type. There is a Registration type. user1 is a User. registration1 is a Registration whose user is user1. registration2 is a Registration whose user is user1. if the number of registrations whose user is any user is more than one, then throw \"USER_ALREADY_REGISTERED\".",
+      "pseudocode": "class User:\n    pass\n\nclass Registration:\n    pass\n\nuser1 = User()\n\nregistration1 = Registration()\nregistration1.user = user1\n\nregistration2 = Registration()\nregistration2.user = user1\n\nif Registration.filter(r => r.user == $User).length > 1:\n    throw \"USER_ALREADY_REGISTERED\""
+    },
+    {
+      "content": "throw 'INVALID'. throw \"INVALID\".",
+      "pseudocode": "throw 'INVALID'\n\nthrow \"INVALID\""
+    },
+    {
+      "content": "throw 123.",
+      "pseudocode": "throw 123"
+    },
+    {
+      "content": "throw abc.",
+      "pseudocode": "throw abc"
+    },
+    {
+      "content": "There is a Review type. Any review's rate is the review's sum divided by 10. review1 is a Review. review1's sum is 42.",
+      "pseudocode": "class Review:\n    pass\n\n$Review.rate = $Review.sum / 10\n\nreview1 = Review()\n\nreview1.sum = 42"
+    },
+    {
+      "content": "There is a Shape type. shape1 is a Shape whose edge is 3. shape2 is a Shape whose edge is 3. Any shape's angle is the shape's edge minus 2, times 180. shape1's edge is 4.",
+      "pseudocode": "class Shape:\n    pass\n\nshape1 = Shape()\nshape1.edge = 3\n\nshape2 = Shape()\nshape2.edge = 3\n\n$Shape.angle = ($Shape.edge - 2) * 180\n\nshape1.edge = 4"
+    },
+    {
+      "content": "There is an Employee type. employee1 is an Employee whose id is 1. Any employee's username is \"E\" plus the employee's id. Any employee's username is \"F\" plus the employee's id. employee1's id is 2.",
+      "pseudocode": "class Employee:\n    pass\n\nemployee1 = Employee()\nemployee1.id = 1\n\n$Employee.username = \"E\" + $Employee.id\n\n$Employee.username = \"F\" + $Employee.id\n\nemployee1.id = 2"
+    },
+    {
+      "content": "There is a Ticket type. Any ticket whose date is after January 1, 1993 is expired. ticket1 is a Ticket. ticket1's date is February 1, 1993. ticket2 is a Ticket.",
+      "pseudocode": "class Ticket:\n    pass\n\nif $Ticket.date > Date(\"1993-1-1\"):\n    $Ticket.status = \"EXPIRED\"\n\nticket1 = Ticket()\n\nticket1.date = Date(\"1993-2-1\")\n\nticket2 = Ticket()"
+    },
+    {
+      "content": "There is a Student type. student1 is a Student whose age is 2 and whose class is \"Daycare\". student2 is a Student whose age is 2 and whose class is \"Daycare\". Any student whose age is 3 is in Preschool. student1's age is 3.",
+      "pseudocode": "class Student:\n    pass\n\nstudent1 = Student()\nstudent1.age = 2\nstudent1.class = \"Daycare\"\n\nstudent2 = Student()\nstudent2.age = 2\nstudent2.class = \"Daycare\"\n\nif $Student.age == 3:\n    $Student.class = \"Preschool\"\n\nstudent1.age = 3"
+    },
+    {
+      "content": "There is an Inventory type. inventory1 is an Inventory whose quantity is 0. inventory2 is an Inventory whose quantity is 1000. Any inventory whose quantity is 0 needs replenishment. Any inventory whose quantity is 0 does not need replenishment.",
+      "pseudocode": "class Inventory:\n    pass\n\ninventory1 = Inventory()\ninventory1.quantity = 0\n\ninventory2 = Inventory()\ninventory2.quantity = 1000\n\nif $Inventory.quantity == 0:\n    $Inventory.replenishment = true\n\nif $Inventory.quantity == 0:\n    $Inventory.replenishment = false"
+    },
+    {
+      "content": "There is a Count type. If any count's max is greater than 1000, then the count's reset is urgent, else the count's reset is regular. urgent is \"URGENT\". regular is \"REGULAR\". count1 is a Count. count1's max is 850. regular is \"R\".",
+      "pseudocode": "class Count:\n    pass\n\nif $Count.max > 1000:\n    $Count.reset = urgent\nelse:\n    $Count.reset = regular\n\nurgent = \"URGENT\"\n\nregular = \"REGULAR\"\n\ncount1 = Count()\n\ncount1.max = 850\n\nregular = \"R\""
+    },
+    {
+      "content": "There is a Concentration type. serialDilution is \"(c1V1+c2V2)/(V1+V2)\". directDilution is \"c1/V1\". concentration1 is a Concentration whose substances is 2. If any concentration's substances is 1, then the concentration's formula is directDilution, else the concentration's formula is serialDilution. serialDilution is \"(c1V1+c2V2+c3V3)/(V1+V2+V3)\".",
+      "pseudocode": "class Concentration:\n    pass\n\nserialDilution = \"(c1V1+c2V2)/(V1+V2)\"\n\ndirectDilution = \"c1/V1\"\n\nconcentration1 = Concentration()\nconcentration1.substances = 2\n\nif $Concentration.substances == 1:\n    $Concentration.formula = directDilution\nelse:\n    $Concentration.formula = serialDilution\n\nserialDilution = \"(c1V1+c2V2+c3V3)/(V1+V2+V3)\""
+    },
+    {
+      "content": "There is a Storage type. normal is \"NORMAL\", low is \"LOW\", and empty is \"EMPTY\". If any storage's capacity is greater than 25, then the storage's status is normal, else if the storage's capacity is greater than 0, then the storage's status is low, else the storage's status is empty. storage1 is a Storage. storage1's capacity is 23. low is \"L\".",
+      "pseudocode": "class Storage:\n    pass\n\nnormal = \"NORMAL\"; low = \"LOW\"; empty = \"EMPTY\"\n\nif $Storage.capacity > 25:\n    $Storage.status = normal\nelse if $Storage.capacity > 0:\n    $Storage.status = low\nelse:\n    $Storage.status = empty\n\nstorage1 = Storage()\n\nstorage1.capacity = 23\n\nlow = \"L\""
+    },
+    {
+      "content": "There is a Registration type. yes is \"YES\", pending is \"PENDING\", and no is \"NO\". registration1 is a Registration whose available is 0. If any registration's available is greater than 10, then the registration's accepted is yes, else if the registration's available is greater than 0, then the registration's accepted is pending, else the registration's accepted is no. yes is true, and no is false.",
+      "pseudocode": "class Registration:\n    pass\n\nyes = \"YES\"; pending = \"PENDING\"; no = \"NO\"\n\nregistration1 = Registration()\nregistration1.available = 0\n\nif $Registration.available > 10:\n    $Registration.accepted = yes\nelse if $Registration.available > 0:\n    $Registration.accepted = pending\nelse:\n    $Registration.accepted = no\n\nyes = true; no = false"
+    },
+    {
+      "content": "There is a Capacity type. If any capacity's spare divided by the capacity's available is greater than 0.5, then the capacity's total is the capacity's available plus the capacity's spare, else if any capacity's spare divided by the capacity's available is greater than 0.1, then the capacity's total is the capacity's available plus the capacity's spare times 2, else the capacity's total is the capacity's available plus the capacity's spare times 3. capacity1 is a Capacity. capacity1's available is 100. capacity1's spare is 5. capacity1's spare is 1.",
+      "pseudocode": "class Capacity:\n    pass\n\nif $Capacity.spare / $Capacity.available > 0.5:\n    $Capacity.total = $Capacity.available + $Capacity.spare\nelse if $Capacity.spare / $Capacity.available > 0.1:\n    $Capacity.total = $Capacity.available + $Capacity.spare * 2\nelse:\n    $Capacity.total = $Capacity.available + $Capacity.spare * 3\n\ncapacity1 = Capacity()\n\ncapacity1.available = 100\n\ncapacity1.spare = 5\n\ncapacity1.spare = 1"
+    },
+    {
+      "content": "There is a Shape type. shape1 is a Shape whose type is \"RECTANGLE\", whose x is 5 and whose y is 6. If any shape's type is \"SQUARE\", then the shape's area is the shape's x squared, else if any shape's type is \"TRIANGLE\", then the shape's area is the shape's x times the shape's y divided by 2, else the shape's area is the shape's x times the shape's y. shape1's x is 7.",
+      "pseudocode": "class Shape:\n    pass\n\nshape1 = Shape()\nshape1.type = \"RECTANGLE\"\nshape1.x = 5\nshape1.y = 6\n\nif $Shape.type == \"SQUARE\":\n    $Shape.area = Math.pow($Shape.x, 2)\nelse if $Shape.type == \"TRIANGLE\":\n    $Shape.area = $Shape.x * $Shape.y / 2\nelse:\n    $Shape.area = $Shape.x * $Shape.y\n\nshape1.x = 7"
+    },
+    {
+      "content": "There is a Stock type. while in the block, change is a local variable that is any stock's before times 4 divided by 100, and the stock's after is the stock's before plus change. stock1 is a Stock. stock1's before is 57.25. stock1's before is 59.5.",
+      "pseudocode": "class Stock:\n    pass\n\n{\n    change = $Stock.before * 4 / 100\n    $Stock.after = $Stock.before + change\n}\n\nstock1 = Stock()\n\nstock1.before = 57.25\n\nstock1.before = 59.5"
+    },
+    {
+      "content": "There is a Purchase type. purchase1 is a Purchase whose price is 99. while in the block, retail is a local variable that is any purchase's price times 1.15, and the purchase's retail price is retail. purchase1's price is 199.",
+      "pseudocode": "class Purchase:\n    pass\n\npurchase1 = Purchase()\npurchase1.price = 99\n\n{\n    retail = $Purchase.price * 1.15\n    $Purchase.retailPrice = retail\n}\n\npurchase1.price = 199"
+    },
+    {
+      "content": "There is a Compound type. while in the block, mol is a local variable that is 69.94 divided by any compound's substance, and in a nested block, the compound's sample is the floor of mol times the compound's mol. compound1 is a Compound. compound1's substance is 55.85. compound1's mol is 1000.",
+      "pseudocode": "class Compound:\n    pass\n\n{\n    mol = 69.94 / $Compound.substance\n    {\n        $Compound.sample = Math.floor(mol * $Compound.mol)\n    }\n}\n\ncompound1 = Compound()\n\ncompound1.substance = 55.85\n\ncompound1.mol = 1000"
+    },
+    {
+      "content": "There is a Bug type. bug1 is a Bug whose initial score is 1000 and whose aging is 24. while in the block, score is a local variable that is any bug's aging times 10, and in a nested block, the bug's priority score is score plus the bug's initial score.",
+      "pseudocode": "class Bug:\n    pass\n\nbug1 = Bug()\nbug1.initialScore = 1000\nbug1.aging = 24\n\n{\n    score = $Bug.aging * 10\n    {\n        $Bug.priorityScore = score + $Bug.initialScore\n    }\n}"
+    },
+    {
+      "content": "There is a Mortgage type. rate1 is \"EXCEPTIONAL\". while in the block, interest is a local variable that is any mortgage's annual divided by 12, and if interest is less than 4, then the mortgage's rate is rate1. mortgage1 is a Mortgage. mortgage1's annual is 46. rate1 is \"E\".",
+      "pseudocode": "class Mortgage:\n    pass\n\nrate1 = \"EXCEPTIONAL\"\n\n{\n    interest = $Mortgage.annual / 12\n    if interest < 4:\n        $Mortgage.rate = rate1\n}\n\nmortgage1 = Mortgage()\n\nmortgage1.annual = 46\n\nrate1 = \"E\""
+    },
+    {
+      "content": "There is a Building type. buildingType1 is \"SKYSCRAPER\". building1 is a Building whose floors is 20. while in the block, height is a local variable that is any building's floors times 14, and if height is greater than 330, then the building's type is buildingType1. building1's floors is 25. buildingType1 is \"S\".",
+      "pseudocode": "class Building:\n    pass\n\nbuildingType1 = \"SKYSCRAPER\"\n\nbuilding1 = Building()\nbuilding1.floors = 20\n\n{\n    height = $Building.floors * 14\n    if height > 330:\n        $Building.type = buildingType1\n}\n\nbuilding1.floors = 25\n\nbuildingType1 = \"S\""
+    },
+    {
+      "content": "There is an Account type. noAlert is \"NO_ALERT\". lowAlert is \"LOW_ALERT\". while in the block, balance is a local variable that is any account's balance, and if balance is greater than 1000, then the account's alert is noAlert, else the account's alert is lowAlert. account1 is an Account. account1's balance is 950. lowAlert is \"L\".",
+      "pseudocode": "class Account:\n    pass\n\nnoAlert = \"NO_ALERT\"\n\nlowAlert = \"LOW_ALERT\"\n\n{\n    balance = $Account.balance\n    if balance > 1000:\n        $Account.alert = noAlert\n    else:\n        $Account.alert = lowAlert\n}\n\naccount1 = Account()\n\naccount1.balance = 950\n\nlowAlert = \"L\""
+    },
+    {
+      "content": "There is a Question type. high is \"HIGH\". low is \"LOW\". question1 is a Question whose count is 1. while in the block, score is a local variable that is any question's count times 10, and if score is greater than 100, then the question's type is high, else the question's type is low. low is \"L\". question1's count is 11.",
+      "pseudocode": "class Question:\n    pass\n\nhigh = \"HIGH\"\n\nlow = \"LOW\"\n\nquestion1 = Question()\nquestion1.count = 1\n\n{\n    score = $Question.count * 10\n    if score > 100:\n        $Question.type = high\n    else:\n        $Question.type = low\n}\n\nlow = \"L\"\n\nquestion1.count = 11"
+    },
+    {
+      "content": "There is a Room type. Any room's level is the room's number divided by 10. There is a Guest type. Any guest's room is a Room. guest1 is a Guest. guest1's room's number is 30. guest2 is a Guest.",
+      "pseudocode": "class Room:\n    pass\n\n$Room.level = $Room.number / 10\n\nclass Guest:\n    pass\n\n$Guest.room = Room()\n\nguest1 = Guest()\n\nguest1.room.number = 30\n\nguest2 = Guest()"
+    },
+    {
+      "content": "There is a Channel type. There is a Frequency type. channel1 is a Channel. Any channel's frequency is a Frequency. Any frequency's hertz is 1 divided by the frequency's period. channel1's frequency's period is 0.0025. channel2 is a Channel.",
+      "pseudocode": "class Channel:\n    pass\n\nclass Frequency:\n    pass\n\nchannel1 = Channel()\n\n$Channel.frequency = Frequency()\n\n$Frequency.hertz = 1 / $Frequency.period\n\nchannel1.frequency.period = 0.0025\n\nchannel2 = Channel()"
+    },
+    {
+      "content": "There is a Hospital type. There is a Clinic type. Any hospital's clinic is a Clinic. Any hospital's patients is the hospital's clinic's beds times 746. hospital1 is a Hospital. hospital1's clinic's beds is 2678. hospital1's clinic's beds is 3000.",
+      "pseudocode": "class Hospital:\n    pass\n\nclass Clinic:\n    pass\n\n$Hospital.clinic = Clinic()\n\n$Hospital.patients = $Hospital.clinic.beds * 746\n\nhospital1 = Hospital()\n\nhospital1.clinic.beds = 2678\n\nhospital1.clinic.beds = 3000"
+    },
+    {
+      "content": "There is a Server type. There is an OS type. Any server's os is an OS. server1 is a Server. server1's os's version is 14. Any server's build is the server's os's version plus \".526291\". server1's os's version is 15.",
+      "pseudocode": "class Server:\n    pass\n\nclass OS:\n    pass\n\n$Server.os = OS()\n\nserver1 = Server()\n\nserver1.os.version = 14\n\n$Server.build = $Server.os.version + \".526291\"\n\nserver1.os.version = 15"
+    },
+    {
+      "content": "There is a Phone type. any phone's line's wired is true.",
+      "pseudocode": "class Phone:\n    pass\n\n$Phone.line.wired = true"
+    },
+    {
+      "content": "There is a Question type, which has a rate as a number. question1 is a Question whose rate is 4. question2 is a Question whose rate is 5. There is a Summary type, which has a question as a Question. Any summary's rate is the value of the summary's question's rate. For each question of Question, there is a Summary whose question is the question.",
+      "pseudocode": "class Question(rate: int):\n    this.rate = rate\n\nquestion1 = Question(4)\n\nquestion2 = Question(5)\n\nclass Summary(question):\n    this.question = question\n\n$Summary.rate = $Summary.question.rate.value\n\nfor question of Question:\n    Summary(question)"
+    },
+    {
+      "content": "There is an Item type. item1 is an Item. item2 is an Item. VALUE is 10. For each item of Item, while in the block, i is a local variable that is 10 times VALUE, and the item's score is i. VALUE is 20. For each item of Item, while in the block, i is a local variable that is 10 times VALUE, and the item's score is i. item3 is an Item.",
+      "pseudocode": "class Item:\n    pass\n\nitem1 = Item()\n\nitem2 = Item()\n\nVALUE = 10\n\nfor item of Item:\n    i = 10 * VALUE\n    item.score = i\n\nVALUE = 20\n\nfor item of Item:\n    i = 10 * VALUE\n    item.score = i\n\nitem3 = Item()"
+    },
+    {
+      "content": "array is an empty list. There is an Item type. item1 is an Object, and item1 is added to array. item2 is an object whose id is \"item3\", and item2 is added to array. item4 is an Item, and item4 is added to array. item5 is an object whose id is \"item4\", and item5 is added to array. count is 0. items is an empty list. For each item of array, count is count plus 1, and the item is added to items.",
+      "pseudocode": "array = []\n\nclass Item:\n    pass\n\nitem1 = Object()\narray.push(item1)\n\nitem2 = { \"id\": \"item3\" }\narray.push(item2)\n\nitem4 = Item()\narray.push(item4)\n\nitem5 = { \"id\": \"item4\" }\narray.push(item5)\n\ncount = 0\n\nitems = []\n\nfor item of array:\n    count = count + 1\n    items.push(item)"
+    },
+    {
+      "content": "There is a Question type. question1 is a Question. question2 is a Question, which is archived. question3 is a Question. There is a Summary type, which has a question as a Question. Any summary's type is \"DAILY\". For each question of Question, if the question is not archived, then there is a Summary whose question is the question. Any summary's type is \"WEEKLY\".",
+      "pseudocode": "class Question:\n    pass\n\nquestion1 = Question()\n\nquestion2 = Question()\nquestion2.archived = true\n\nquestion3 = Question()\n\nclass Summary(question):\n    this.question = question\n\n$Summary.type = \"DAILY\"\n\nfor question of Question:\n    if not question.archived:\n        Summary(question)\n\n$Summary.type = \"WEEKLY\""
+    },
+    {
+      "content": "test assigns 2 to a and returns the value of the assignment. b is 1. Call test with b.",
+      "pseudocode": "def test(a):\n    return a = 2\n\nb = 1\n\ntest(b)"
+    },
+    {
+      "content": "a is an Object. c is 1. test assigns a to b and returns the value of the assignment.",
+      "pseudocode": "a = Object()\n\nc = 1\n\ndef test(b):\n    return b = a"
+    },
+    {
+      "content": "test assigns \"abc\" to a and returns the value of the assignment. b is 1. Call test with b.",
+      "pseudocode": "def test(a):\n    return a = \"abc\"\n\nb = 1\n\ntest(b)"
+    },
+    {
+      "content": "test assigns an Object to a and returns the value of the assignment. b is 1. Call test with b.",
+      "pseudocode": "def test(a):\n    return a = Object()\n\nb = 1\n\ntest(b)"
+    },
+    {
+      "content": "test returns a plus 23. data is \"UUID-1\". Call test with data.",
+      "pseudocode": "def test(a):\n    return a + 23\n\ndata = \"UUID-1\"\n\ntest(data)"
+    },
+    {
+      "content": "While in the block, return 123, and return \"abc\".",
+      "pseudocode": "{\n    return 123\n    return \"abc\"\n}"
+    },
+    {
+      "content": "There is a Test type, which has a prop as a number. There is a Test whose prop is 123.",
+      "pseudocode": "class Test(prop: int):\n    this.prop = prop\n\nTest(123)"
+    },
+    {
+      "content": "a is 1. b is a plus 2. c is b times 2.",
+      "pseudocode": "a = 1\n\nb = a + 2\n\nc = b * 2"
+    },
+    {
+      "content": "a is 1. b is a plus 2.",
+      "pseudocode": "a = 1\n\nb = a + 2"
+    },
+    {
+      "content": "There is a Human type, which has a name as a string. Every human is mortal. Socrates is a Human.",
+      "pseudocode": "class Human(name: str):\n    this.name = name\n\n$Human.mortal = true\n\nsocrates = Human(\"Socrates\")"
+    },
+    {
+      "content": "a is 1. b is a plus 2. c is b times 2.",
+      "pseudocode": "a = 1\n\nb = a + 2\n\nc = b * 2"
+    },
+    {
+      "content": "a is 1. b is a plus 2. c is b times 2.",
+      "pseudocode": "a = 1\n\nb = a + 2\n\nc = b * 2"
+    },
+    {
+      "content": "a is 1. b is a plus 2. c is b times 2. trace is why c. a is 5.",
+      "pseudocode": "a = 1\n\nb = a + 2\n\nc = b * 2\n\ntrace = why c\n\na = 5"
+    },
+    {
+      "content": "a is 1. b is a plus 2. trace is why b.",
+      "pseudocode": "a = 1\n\nb = a + 2\n\ntrace = why b"
+    },
+    {
+      "content": "a is 1. b is a plus 2.",
+      "pseudocode": "a = 1\n\nb = a + 2"
+    },
+    {
+      "content": "explain nothing.",
+      "pseudocode": "why nothing"
+    },
+    {
+      "content": "why is 1.",
+      "pseudocode": "why = 1"
+    },
+    {
+      "content": "seed and live are independent sources. Snapshots remain fixed while live dependencies change.",
+      "pseudocode": "seed = 1\nlive = 10\n\nvalues = [seed.value, live]\nrecord = { \"frozen\": seed.value, \"live\": live }\nlabel = `${seed.value}-${live}`\ntext = \"abcd\"\nstart = 1\nend = 3\npart = text[start.value:end]\ntail = text[start.value:]\nhead = text[:end.value]\n\nseed = 2\nlive = 20\nstart = 2\nend = 4\ntext = \"wxyz\""
     }
   ]
 }
