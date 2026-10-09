@@ -82,7 +82,6 @@ async function generate({
   let response;
   try {
     response = await bedrock.send(command);
-    console.debug("[bedrock] response:", JSON.stringify(response));
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);
     if (msg.includes("http2") || msg.includes("did not get a response")) {
@@ -127,7 +126,6 @@ async function generate({
   }
 
   const outputContent = response.output?.message?.content;
-  console.debug("[bedrock] raw content:", JSON.stringify(outputContent));
 
   const toolUseBlock = outputContent?.find((block) => "toolUse" in block);
   if (toolUseBlock && "toolUse" in toolUseBlock) {

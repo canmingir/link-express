@@ -148,8 +148,6 @@ function createOpenAICompatibleAdapter(
         const startedAt = Date.now();
         response = await request();
 
-        console.debug(`[${providerLabel}] response:`, JSON.stringify(response));
-
         const choice = response.choices?.[0];
 
         if (choice) {

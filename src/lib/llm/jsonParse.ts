@@ -212,10 +212,6 @@ function parseJsonWithRepair(content: string, providerLabel: string): unknown {
       } catch {}
     }
   }
-  console.error(
-    `Failed to parse ${providerLabel} response as JSON:`,
-    content.substring(0, 500),
-  );
   throw new SyntaxError(
     `Failed to parse ${providerLabel} response as JSON. Content starts with: ${content.substring(
       0,
