@@ -16,6 +16,7 @@ import oauth from "./routes/oauth";
 import organizations from "./routes/organizations";
 import permissions from "./routes/permissions";
 import projects from "./routes/projects";
+import pseudocode from "./routes/pseudocode";
 import settings from "./routes/settings";
 
 const app = express();
@@ -60,6 +61,7 @@ function mountRoutes(): void {
   app.use("/projects/:projectId/settings", settings);
   app.use("/notebooks", notebooks);
   app.use("/notebook-blocks", notebookBlocks);
+  app.use("/pseudocode", pseudocode);
 }
 
 export default app;
