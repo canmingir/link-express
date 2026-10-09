@@ -1,0 +1,44 @@
+{
+  "data": [
+    {
+      "content": "Check product availability, if not exist, create order.",
+      "pseudocode": "class Product:\n    pass\n\nclass Order(product):\n    this.product = product\n\nif not $Product.available:\n    Order($Product)"
+    },
+    {
+      "content": "Check the parking lot; if there are no spaces available, put the person in line.",
+      "pseudocode": "class ParkingLot:\n    pass\n\nclass Person:\n    pass\n\nqueue = []\n\nif parkingLot.spaces == 0:\n    queue.push(person)"
+    },
+    {
+      "content": "Human beings are mortal.",
+      "pseudocode": "class Human:\n    pass\n\n$Human.mortal = true"
+    },
+    {
+      "content": "If it rains, the ground becomes wet.",
+      "pseudocode": "if weather == \"RAIN\":\n    ground.state = \"WET\""
+    },
+    {
+      "content": "If an employee works more than 40 hours in a week, they receive overtime pay.",
+      "pseudocode": "class Employee:\n    pass\n\nif $Employee.weeklyHours > 40:\n    $Employee.overtime = true"
+    },
+    {
+      "content": "Orders above 1000 need manager approval, orders above 100 need team lead approval, the rest are approved automatically.",
+      "pseudocode": "class Order:\n    pass\n\nif $Order.amount > 1000:\n    $Order.approval = \"MANAGER\"\nelse if $Order.amount > 100:\n    $Order.approval = \"TEAM_LEAD\"\nelse:\n    $Order.approval = \"AUTOMATIC\""
+    },
+    {
+      "content": "Find the customer by email. If there is no customer, reject the request with CUSTOMER_NOT_FOUND, otherwise return the customer.",
+      "pseudocode": "class Customer(email: str):\n    this.email = email\n\n{\n    customer = Customer.find(c => c.email == email)\n    if not customer:\n        throw \"CUSTOMER_NOT_FOUND\"\n    return customer\n}"
+    },
+    {
+      "content": "For every open ticket, send a reminder to its assignee.",
+      "pseudocode": "class Ticket:\n    pass\n\nreminders = []\n\nfor ticket of Ticket:\n    if ticket.status == \"OPEN\":\n        reminders.push(ticket.assignee)"
+    },
+    {
+      "content": "The invoice total is the subtotal plus 18 percent tax.",
+      "pseudocode": "class Invoice:\n    pass\n\n$Invoice.tax = $Invoice.subtotal * 18 / 100\n\n$Invoice.total = $Invoice.subtotal + $Invoice.tax"
+    },
+    {
+      "content": "A user's password must be at least 8 characters.",
+      "pseudocode": "class User:\n    pass\n\nif $User.password.length < 8:\n    throw \"INVALID_PASSWORD\""
+    }
+  ]
+}
