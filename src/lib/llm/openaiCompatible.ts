@@ -14,6 +14,9 @@ type OpenAICompatibleOptions = {
   jsonModeFallback?: boolean;
   forceJsonSystemPrompt?: boolean;
   extractCost?: boolean;
+  extraBody?:
+    | Record<string, unknown>
+    | (() => Record<string, unknown> | undefined);
 };
 
 type ProviderError = {
@@ -79,6 +82,7 @@ function createOpenAICompatibleAdapter(
     jsonModeFallback = false,
     forceJsonSystemPrompt = false,
     extractCost = false,
+    extraBody,
   } = options;
 
   const client =
@@ -115,6 +119,7 @@ function createOpenAICompatibleAdapter(
       ];
 
       const baseParams: Parameters<typeof client.chat.completions.create>[0] = {
+        ...(typeof extraBody === "function" ? extraBody() : extraBody),
         model,
         messages: chatMessages as OpenAI.ChatCompletionMessageParam[],
         stream: false,
