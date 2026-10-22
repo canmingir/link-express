@@ -11,13 +11,15 @@ const client = new OpenAI({
   },
 });
 
+const DEFAULT_PROVIDERS = ["deepinfra/bf16"];
+
 function providerPreferences() {
-  const order = (process.env.OPENROUTER_PROVIDER || "")
+  const fromEnv = (process.env.OPENROUTER_PROVIDER || "")
     .split(",")
     .map((slug) => slug.trim())
     .filter(Boolean);
 
-  if (!order.length) return undefined;
+  const order = fromEnv.length ? fromEnv : DEFAULT_PROVIDERS;
 
   return { provider: { order, allow_fallbacks: false } };
 }
@@ -25,7 +27,7 @@ function providerPreferences() {
 export default createOpenAICompatibleAdapter({
   providerLabel: "openrouter",
   client,
-  defaultModel: "openai/gpt-4o-mini",
+  defaultModel: "qwen/qwen3.8-27b",
   jsonModeFallback: true,
   extractCost: true,
   extraBody: providerPreferences,
