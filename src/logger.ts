@@ -30,7 +30,7 @@ const logger = pino(
       },
     },
   },
-  pino.multistream(streams)
+  pino.multistream(streams),
 );
 
 export default logger;

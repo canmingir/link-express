@@ -11,10 +11,22 @@ const client = new OpenAI({
   },
 });
 
+function providerPreferences() {
+  const order = (process.env.OPENROUTER_PROVIDER || "")
+    .split(",")
+    .map((slug) => slug.trim())
+    .filter(Boolean);
+
+  if (!order.length) return undefined;
+
+  return { provider: { order, allow_fallbacks: false } };
+}
+
 export default createOpenAICompatibleAdapter({
   providerLabel: "openrouter",
   client,
   defaultModel: "openai/gpt-4o-mini",
   jsonModeFallback: true,
   extractCost: true,
+  extraBody: providerPreferences,
 }) satisfies LLMAdapter;
