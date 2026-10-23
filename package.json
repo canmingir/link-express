@@ -40,6 +40,9 @@
       ],
       "llm": [
         "src/lib/llm/index.ts"
+      ],
+      "dataset": [
+        "src/lib/dataset/index.ts"
       ]
     }
   },
@@ -59,7 +62,8 @@
     "./event/client": "./dist/src/event/client/index.js",
     "./event/server": "./dist/src/event/server/server.js",
     "./pseudocode": "./dist/src/functions/pseudocode.js",
-    "./llm": "./dist/src/lib/llm/index.js"
+    "./llm": "./dist/src/lib/llm/index.js",
+    "./dataset": "./dist/src/lib/dataset/index.js"
   },
   "scripts": {
     "prepare": "bun run prepare.ts",
