@@ -13,38 +13,36 @@ import {
 } from "./jsonParse";
 import type { GenerateParams, LLMAdapter, LLMLogEntry } from "./types";
 
-function createClient(): BedrockRuntimeClient {
+type BedrockCredentials = {
+  accessKeyId?: string;
+  secretAccessKey?: string;
+  region?: string;
+};
+
+type Send = (command: ConverseCommand) => Promise<ConverseCommandOutput>;
+
+function createClient({
+  accessKeyId = process.env.AWS_ACCESS_KEY_ID || "",
+  secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY || "",
+  region = process.env.AWS_REGION || "us-east-1",
+}: BedrockCredentials): BedrockRuntimeClient {
   return new BedrockRuntimeClient({
-    region: process.env.AWS_REGION || "us-east-1",
-    credentials: {
-      accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
-      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "",
-    },
+    region,
+    credentials: { accessKeyId, secretAccessKey },
   });
 }
 
-const bedrock = createClient();
-
-async function send(command: ConverseCommand): Promise<ConverseCommandOutput> {
-  try {
-    return await bedrock.send(command);
-  } catch (err: unknown) {
-    const msg = errorMessage(err);
-    if (msg.includes("http2") || msg.includes("did not get a response")) {
-      return await createClient().send(command);
-    }
-    throw err;
-  }
-}
-
-async function generate({
-  model = "meta.llama3-3-70b-instruct-v1:0",
-  messages = [],
-  responseFormat,
-  temperature = 0,
-  max_tokens = 8192,
-  meta,
-}: GenerateParams): Promise<Record<string, unknown>> {
+async function generate(
+  send: Send,
+  {
+    model = "meta.llama3-3-70b-instruct-v1:0",
+    messages = [],
+    responseFormat,
+    temperature = 0,
+    max_tokens = 8192,
+    meta,
+  }: GenerateParams
+): Promise<Record<string, unknown>> {
   const systemPrompts: { text: string }[] = [];
   const conversationMessages: Message[] = [];
 
@@ -196,4 +194,28 @@ function parseOutput(
   throw new Error("Bedrock is not responding");
 }
 
-export default { generate } satisfies LLMAdapter;
+function createBedrockAdapter(
+  credentials: BedrockCredentials = {}
+): LLMAdapter {
+  const bedrock = createClient(credentials);
+
+  async function send(
+    command: ConverseCommand
+  ): Promise<ConverseCommandOutput> {
+    try {
+      return await bedrock.send(command);
+    } catch (err: unknown) {
+      const msg = errorMessage(err);
+      if (msg.includes("http2") || msg.includes("did not get a response")) {
+        return await createClient(credentials).send(command);
+      }
+      throw err;
+    }
+  }
+
+  return { generate: (params) => generate(send, params) };
+}
+
+export type { BedrockCredentials };
+export { createBedrockAdapter };
+export default createBedrockAdapter() satisfies LLMAdapter;

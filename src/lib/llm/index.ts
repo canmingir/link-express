@@ -1,5 +1,6 @@
 import { basename } from "node:path";
 import { adapterNames, getAdapter, hasAdapter } from "./registry";
+import router, { usesRouter } from "./router";
 import type { LLMMeta } from "./types";
 
 function parseProviderModel(raw: string): {
@@ -114,6 +115,19 @@ async function generate({
   }
 
   const resolved = resolveProvider(provider);
+
+  if (usesRouter(messages)) {
+    return await router.generate({
+      provider: resolved.provider,
+      model: model ?? resolved.model,
+      messages,
+      responseFormat: json_format,
+      temperature,
+      max_tokens,
+      meta: resolvedSource ? { ...meta, source: resolvedSource } : meta,
+    });
+  }
+
   const llm = await getAdapter(resolved.provider);
 
   return await llm.generate({
@@ -138,6 +152,7 @@ export {
 } from "./registry";
 export type { AdapterSource, AdapterExtender } from "./registry";
 export { createOpenAICompatibleAdapter } from "./openaiCompatible";
+export { createAdapter, credentialFor } from "./credentials";
 export type { OpenAICompatibleOptions } from "./openaiCompatible";
 export { parseJsonWithRepair } from "./jsonParse";
 export type {

@@ -4,24 +4,17 @@ import { errorMessage, log } from "./logger";
 import { parseJsonWithRepair } from "./jsonParse";
 import type { GenerateParams, LLMAdapter, LLMLogEntry } from "./types";
 
-const apiKey = process.env.ANTHROPIC_API_KEY;
-if (!apiKey || apiKey.trim() === "") {
-  throw new Error(
-    "Missing ANTHROPIC_API_KEY environment variable. Please set it to your Anthropic API key."
-  );
-}
-const anthropic = new Anthropic({
-  apiKey,
-});
-
-async function generate({
-  model = "claude-haiku-4-5-20251001",
-  messages = [],
-  responseFormat,
-  temperature = 0,
-  max_tokens = 4096,
-  meta,
-}: GenerateParams) {
+async function generate(
+  anthropic: Anthropic,
+  {
+    model = "claude-haiku-4-5-20251001",
+    messages = [],
+    responseFormat,
+    temperature = 0,
+    max_tokens = 4096,
+    meta,
+  }: GenerateParams
+) {
   const systemMessages = messages.filter((msg) => msg.role === "system");
   const conversationMessages = messages.filter((msg) => msg.role !== "system");
 
@@ -105,4 +98,24 @@ async function generate({
   }
 }
 
-export default { generate } satisfies LLMAdapter;
+function createAnthropicAdapter({
+  apiKey = process.env.ANTHROPIC_API_KEY,
+}: { apiKey?: string } = {}): LLMAdapter {
+  if (!apiKey || apiKey.trim() === "") {
+    throw new Error(
+      "Missing ANTHROPIC_API_KEY environment variable. Please set it to your Anthropic API key."
+    );
+  }
+
+  const anthropic = new Anthropic({ apiKey });
+
+  return { generate: (params) => generate(anthropic, params) };
+}
+
+let fallback: LLMAdapter | null = null;
+
+export { createAnthropicAdapter };
+export default {
+  generate: (params: GenerateParams) =>
+    (fallback ??= createAnthropicAdapter()).generate(params),
+} satisfies LLMAdapter;
