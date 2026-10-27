@@ -25,9 +25,6 @@ function createOpenRouterAdapter({
     client: new OpenAI({
       apiKey,
       baseURL,
-      defaultHeaders: {
-        "X-Title": "GreyCollar",
-      },
     }),
     defaultModel: "qwen/qwen3.8-27b",
     jsonModeFallback: true,
