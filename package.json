@@ -1,7 +1,7 @@
 {
   "name": "@canmingir/link-express",
   "license": "Apache-2.0",
-  "version": "1.7.39",
+  "version": "1.7.40",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/canmingir/link-express.git"
