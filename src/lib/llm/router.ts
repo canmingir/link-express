@@ -1,5 +1,4 @@
 import { hasRef } from "../dataset";
-import { credentialFor } from "./credentials";
 import { errorMessage, log } from "./logger";
 import type { GenerateParams, LLMAdapter } from "./types";
 
@@ -23,14 +22,13 @@ async function generate({
   meta,
 }: GenerateParams & { provider?: string }) {
   const url = process.env.PLATFORM_ROUTER_URL;
+  const token = process.env.PLATFORM_ROUTER_TOKEN;
 
-  if (!url) {
+  if (!url || !token) {
     throw new Error(
-      "Dataset references are served by the router. Set PLATFORM_ROUTER_URL."
+      "Dataset references are served by the router. Set PLATFORM_ROUTER_URL and PLATFORM_ROUTER_TOKEN."
     );
   }
-
-  const key = provider ? credentialFor(provider) : undefined;
 
   const startedAt = Date.now();
 
@@ -38,13 +36,12 @@ async function generate({
     const response = await fetch(`${url.replace(/\/+$/, "")}/generate`, {
       method: "POST",
       headers: {
-        ...(key && { Authorization: `Bearer ${key}` }),
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
         provider,
         model,
-        ...(provider === "bedrock" && { region: process.env.AWS_REGION }),
         messages,
         responseFormat,
         temperature,
