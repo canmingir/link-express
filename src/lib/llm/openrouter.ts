@@ -12,8 +12,43 @@ function providerPreferences() {
     .filter(Boolean);
 
   const order = fromEnv.length ? fromEnv : DEFAULT_PROVIDERS;
+  const reasoning = reasoningPreferences();
 
-  return { provider: { order, allow_fallbacks: false } };
+  return {
+    provider: { order, allow_fallbacks: false },
+    ...(reasoning && { reasoning }),
+  };
+}
+
+const REASONING_EFFORTS = new Set(["minimal", "low", "medium", "high", "xhigh"]);
+const REASONING_DISABLED = new Set(["", "off", "none", "false"]);
+const REASONING_MODEL_DEFAULT = new Set(["on", "true", "default"]);
+
+function reasoningPreferences() {
+  const value = (process.env.PLATFORM_LLM_REASONING || "").trim().toLowerCase();
+
+  if (REASONING_DISABLED.has(value)) {
+    return { enabled: false };
+  }
+
+  if (REASONING_MODEL_DEFAULT.has(value)) {
+    return undefined;
+  }
+
+  if (REASONING_EFFORTS.has(value)) {
+    return { effort: value };
+  }
+
+  const maxTokens = Number(value);
+
+  if (Number.isInteger(maxTokens) && maxTokens > 0) {
+    return { max_tokens: maxTokens };
+  }
+
+  throw new Error(
+    `Invalid PLATFORM_LLM_REASONING="${process.env.PLATFORM_LLM_REASONING}". ` +
+      `Expected off, on, ${[...REASONING_EFFORTS].join(", ")} or a positive token count.`
+  );
 }
 
 function createOpenRouterAdapter({

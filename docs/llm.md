@@ -50,7 +50,7 @@ await generate({ provider: "bedrock", content, json_format });
 | Name | Environment variables |
 |---|---|
 | `openai` | `OPENAI_API_KEY` |
-| `openrouter` | `OPENROUTER_API_KEY`, `OPENROUTER_PROVIDER` (comma-separated provider order, no fallbacks; defaults to `deepinfra/bf16` for the default model `qwen/qwen3.8-27b`, set it when you pick another model) |
+| `openrouter` | `OPENROUTER_API_KEY`, `OPENROUTER_PROVIDER` (comma-separated provider order, no fallbacks; defaults to `deepinfra/bf16` for the default model `qwen/qwen3.8-27b`, set it when you pick another model), `PLATFORM_LLM_REASONING` (reasoning is off when unset; `on` leaves the model default, or set `minimal`, `low`, `medium`, `high`, `xhigh` or a reasoning token budget) |
 | `anthropic` | `ANTHROPIC_API_KEY` |
 | `bedrock` | `AWS_REGION`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` |
 | `local` | `PLATFORM_LLM_URL` (defaults to Ollama: `http://localhost:11434/v1`) |
