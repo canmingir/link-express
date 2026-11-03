@@ -72,4 +72,12 @@ describe("openrouter adapter", () => {
       allow_fallbacks: false,
     });
   });
+
+  it("disables reasoning", async () => {
+    const { default: openrouter } = await import("../openrouter");
+
+    await openrouter.generate({ messages: [{ role: "user", content: "hi" }] });
+
+    assert.deepEqual(calls[0].reasoning, { enabled: false });
+  });
 });

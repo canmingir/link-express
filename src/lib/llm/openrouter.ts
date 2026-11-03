@@ -13,7 +13,10 @@ function providerPreferences() {
 
   const order = fromEnv.length ? fromEnv : DEFAULT_PROVIDERS;
 
-  return { provider: { order, allow_fallbacks: false } };
+  return {
+    provider: { order, allow_fallbacks: false },
+    reasoning: { enabled: false },
+  };
 }
 
 function createOpenRouterAdapter({
