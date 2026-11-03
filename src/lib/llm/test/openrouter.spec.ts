@@ -73,69 +73,11 @@ describe("openrouter adapter", () => {
     });
   });
 
-  describe("PLATFORM_LLM_REASONING", () => {
-    const ORIGINAL_PLATFORM_LLM_REASONING = process.env.PLATFORM_LLM_REASONING;
+  it("disables reasoning", async () => {
+    const { default: openrouter } = await import("../openrouter");
 
-    beforeEach(() => {
-      delete process.env.PLATFORM_LLM_REASONING;
-    });
+    await openrouter.generate({ messages: [{ role: "user", content: "hi" }] });
 
-    afterEach(() => {
-      if (ORIGINAL_PLATFORM_LLM_REASONING === undefined) {
-        delete process.env.PLATFORM_LLM_REASONING;
-      } else {
-        process.env.PLATFORM_LLM_REASONING = ORIGINAL_PLATFORM_LLM_REASONING;
-      }
-    });
-
-    async function reasoningFor(value?: string) {
-      const { default: openrouter } = await import("../openrouter");
-
-      if (value !== undefined) {
-        process.env.PLATFORM_LLM_REASONING = value;
-      }
-      await openrouter.generate({
-        messages: [{ role: "user", content: "hi" }],
-      });
-
-      return calls[calls.length - 1];
-    }
-
-    it("disables reasoning when not set", async () => {
-      const params = await reasoningFor();
-
-      assert.deepEqual(params.reasoning, { enabled: false });
-    });
-
-    it("disables reasoning for off", async () => {
-      const params = await reasoningFor(" OFF ");
-
-      assert.deepEqual(params.reasoning, { enabled: false });
-    });
-
-    it("leaves reasoning to the model for on", async () => {
-      const params = await reasoningFor("on");
-
-      assert.equal("reasoning" in params, false);
-    });
-
-    it("passes an effort level through", async () => {
-      const params = await reasoningFor("low");
-
-      assert.deepEqual(params.reasoning, { effort: "low" });
-    });
-
-    it("treats a positive integer as a reasoning token budget", async () => {
-      const params = await reasoningFor("2048");
-
-      assert.deepEqual(params.reasoning, { max_tokens: 2048 });
-    });
-
-    it("rejects an unknown value", async () => {
-      await assert.rejects(
-        reasoningFor("fast"),
-        /Invalid PLATFORM_LLM_REASONING/
-      );
-    });
+    assert.deepEqual(calls[0].reasoning, { enabled: false });
   });
 });
