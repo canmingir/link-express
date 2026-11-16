@@ -1,9 +1,7 @@
-import { Model, Sequelize } from "sequelize-typescript";
 import config from "./config";
 import path from "path";
 import fs from "fs";
-import { DBMetrics } from "./metrics/dbMetrics";
-import { InstanceDestroyOptions } from "sequelize";
+import { createSequelize, internalModels } from "./database";
 
 const appConfig = config();
 
@@ -15,137 +13,15 @@ if (!postgres) {
   throw new Error("Postgres configuration is required");
 }
 
-let dbMetrics: DBMetrics | null = null;
-
-if (metricsConfig && metricsConfig.enabled) {
-  dbMetrics = new DBMetrics();
-  dbMetrics.startPushgateway(metricsConfig);
-}
-
-interface SequelizeOptions {
-  metricsTimer?: () => number;
-  metricsType?: string;
-}
-
-const originalDestroy = Model.prototype.destroy;
-Model.prototype.destroy = async function (
-  options?: InstanceDestroyOptions,
-): Promise<void> {
-  return originalDestroy.call(this, {
-    ...options,
-    individualHooks: true,
-  }) as Promise<void>;
-};
-
-const sequelize = new Sequelize(process.env.PG || postgres.uri, {
-  logging: postgres.debug && console.log,
+const sequelize = createSequelize({
+  uri: postgres.uri,
+  debug: postgres.debug,
   models: [
-    path.join(__dirname, "models/*.model.js"),
-    path.join(__dirname, "models/*.model.ts"),
+    ...internalModels,
     path.join(process.cwd(), "src/models/[A-Z]*.js"),
     path.join(process.cwd(), "src/models/[A-Z]*.ts"),
   ],
-  define: {
-    freezeTableName: true,
-    underscored: true,
-    timestamps: false,
-    paranoid: false,
-  },
-  hooks:
-    metricsConfig && metricsConfig.enabled
-      ? {
-          beforeFind: (options = {}) => {
-            const timer = dbMetrics!.dbReadLatency.startTimer();
-            (options as SequelizeOptions).metricsTimer = timer;
-            (options as SequelizeOptions).metricsType = "read";
-          },
-          afterFind: (_result, options = {}) => {
-            const opts = options as SequelizeOptions;
-            if (opts?.metricsTimer) {
-              opts.metricsTimer();
-              dbMetrics!.dbReadOps.inc();
-            }
-          },
-
-          beforeCreate: (_instance, options = {}) => {
-            const timer = dbMetrics!.dbWriteLatency.startTimer();
-            (options as SequelizeOptions).metricsTimer = timer;
-            (options as SequelizeOptions).metricsType = "write";
-          },
-          afterCreate: (_instance, options = {}) => {
-            const opts = options as SequelizeOptions;
-            if (opts?.metricsTimer) {
-              opts.metricsTimer();
-              dbMetrics!.dbWriteOps.inc();
-            }
-          },
-
-          beforeUpdate: (_instance, options = {}) => {
-            const timer = dbMetrics!.dbWriteLatency.startTimer();
-            (options as SequelizeOptions).metricsTimer = timer;
-            (options as SequelizeOptions).metricsType = "write";
-          },
-          afterUpdate: (_instance, options = {}) => {
-            const opts = options as SequelizeOptions;
-            if (opts?.metricsTimer) {
-              opts.metricsTimer();
-              dbMetrics!.dbWriteOps.inc();
-            }
-          },
-
-          beforeDestroy: (_instance, options = {}) => {
-            const timer = dbMetrics!.dbWriteLatency.startTimer();
-            (options as SequelizeOptions).metricsTimer = timer;
-            (options as SequelizeOptions).metricsType = "write";
-          },
-          afterDestroy: (_instance, options = {}) => {
-            const opts = options as SequelizeOptions;
-            if (opts?.metricsTimer) {
-              opts.metricsTimer();
-              dbMetrics!.dbWriteOps.inc();
-            }
-          },
-
-          beforeBulkCreate: (_instances, options = {}) => {
-            const timer = dbMetrics!.dbWriteLatency.startTimer();
-            (options as SequelizeOptions).metricsTimer = timer;
-            (options as SequelizeOptions).metricsType = "write";
-          },
-          afterBulkCreate: (instances, options = {}) => {
-            const opts = options as SequelizeOptions;
-            if (opts?.metricsTimer) {
-              opts.metricsTimer();
-              dbMetrics!.dbWriteOps.inc(instances.length || 1);
-            }
-          },
-
-          beforeBulkUpdate: (_instances, options = {}) => {
-            const timer = dbMetrics!.dbWriteLatency.startTimer();
-            (options as SequelizeOptions).metricsTimer = timer;
-            (options as SequelizeOptions).metricsType = "write";
-          },
-          afterBulkUpdate: (_instances, options = {}) => {
-            const opts = options as SequelizeOptions;
-            if (opts?.metricsTimer) {
-              opts.metricsTimer();
-              dbMetrics!.dbWriteOps.inc(1);
-            }
-          },
-
-          beforeBulkDestroy: (options = {}) => {
-            const timer = dbMetrics!.dbWriteLatency.startTimer();
-            (options as SequelizeOptions).metricsTimer = timer;
-            (options as SequelizeOptions).metricsType = "write";
-          },
-          afterBulkDestroy: (options = {}) => {
-            const opts = options as SequelizeOptions;
-            if (opts?.metricsTimer) {
-              opts.metricsTimer();
-              dbMetrics!.dbWriteOps.inc(1);
-            }
-          },
-        }
-      : {},
+  metrics: metricsConfig,
 });
 
 const seed = async (): Promise<void> => {

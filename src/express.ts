@@ -50,19 +50,28 @@ if (appConfig.project) {
   app.use(authorization.verify);
 }
 
+const internalRoutes = (): { path: string; router: express.Router }[] =>
+  appConfig.project
+    ? [
+        { path: "/projects", router: projects },
+        { path: "/organizations", router: organizations },
+        { path: "/permissions", router: permissions },
+        { path: "/projects/:projectId/settings", router: settings },
+        { path: "/notebooks", router: notebooks },
+        { path: "/notebook-blocks", router: notebookBlocks },
+        { path: "/pseudocode", router: pseudocode },
+      ]
+    : [];
+
 let routesMounted = false;
 function mountRoutes(): void {
   if (routesMounted || !appConfig.project) return;
   routesMounted = true;
 
-  app.use("/projects", projects);
-  app.use("/organizations", organizations);
-  app.use("/permissions", permissions);
-  app.use("/projects/:projectId/settings", settings);
-  app.use("/notebooks", notebooks);
-  app.use("/notebook-blocks", notebookBlocks);
-  app.use("/pseudocode", pseudocode);
+  for (const { path, router } of internalRoutes()) {
+    app.use(path, router);
+  }
 }
 
 export default app;
-export { mountRoutes, publicRouter };
+export { internalRoutes, mountRoutes, publicRouter };

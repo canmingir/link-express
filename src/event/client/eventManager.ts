@@ -60,6 +60,9 @@ export class EventManager {
       default:
         throw new Error(`Unknown adapter type`);
     }
+    for (const type of this.callbacks.keys()) {
+      await this.adapter.subscribe(type);
+    }
     await this.adapter.connect();
 
     this.adapter.onMessage((type, payload) => {

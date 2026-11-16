@@ -42,6 +42,20 @@ async function init(config: Partial<Config> = {}): Promise<void> {
   setImmediate(mountRoutes);
 }
 
+function setModules(modules: {
+  express: Application;
+  publicRouter: Router;
+  postgres?: { sequelize: Sequelize };
+  dynamodb?: { docClient: DynamoDBDocumentClient };
+  logger: Logger | Console;
+}): void {
+  _express = modules.express;
+  _publicRouter = modules.publicRouter;
+  if (modules.postgres) _postgres = modules.postgres;
+  if (modules.dynamodb) _dynamodb = modules.dynamodb;
+  _logger = modules.logger;
+}
+
 const getModules = () => ({
   Postgres: _postgres,
   DynamoDB: _dynamodb,
@@ -55,6 +69,7 @@ export {
   _express as express,
   _publicRouter as publicRouter,
   getModules,
+  setModules,
   importModule,
   authorization,
   error,

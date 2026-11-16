@@ -30,8 +30,11 @@ const handle = (
     return res.status(400).json({ error: err });
   }
 
-  if (err instanceof ValidationError) {
-    return res.status(400).json({ message: err.message });
+  if (
+    err instanceof ValidationError ||
+    (err as { isJoi?: boolean }).isJoi === true
+  ) {
+    return res.status(400).json({ message: (err as Error).message });
   }
 
   if (err instanceof AuthorizationError) {
