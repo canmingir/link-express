@@ -19,37 +19,43 @@
   "typesVersions": {
     "*": {
       "models": [
-        "src/models/index.ts"
+        "dist/src/models/index.d.ts"
       ],
       "test": [
-        "src/test.ts"
+        "dist/src/test.d.ts"
       ],
       "authorization": [
-        "src/authorization.ts"
+        "dist/src/authorization.d.ts"
       ],
       "error": [
-        "src/error.ts"
+        "dist/src/error.d.ts"
       ],
       "types": [
-        "src/types/index.ts"
+        "dist/src/types/index.d.ts"
       ],
       "sequelize": [
-        "src/sequelize.ts"
+        "dist/src/sequelize.d.ts"
       ],
       "event": [
-        "src/event/index.ts"
+        "dist/src/event/index.d.ts"
+      ],
+      "event/client": [
+        "dist/src/event/client/index.d.ts"
+      ],
+      "event/server": [
+        "dist/src/event/server/server.d.ts"
       ],
       "pseudocode": [
-        "src/functions/pseudocode.ts"
+        "dist/src/functions/pseudocode.d.ts"
       ],
       "llm": [
-        "src/lib/llm/index.ts"
+        "dist/src/lib/llm/index.d.ts"
       ],
       "dataset": [
-        "src/lib/dataset/index.ts"
+        "dist/src/lib/dataset/index.d.ts"
       ],
       "link": [
-        "src/link/index.ts"
+        "dist/src/link/index.d.ts"
       ]
     }
   },

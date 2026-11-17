@@ -4,14 +4,21 @@ import * as error from "./error";
 import { Application, Router } from "express";
 import { Config } from "./config";
 import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
-import type { Logger } from "pino";
 import { Sequelize } from "sequelize-typescript";
+
+type PlatformLogger = {
+  trace(...args: unknown[]): void;
+  debug(...args: unknown[]): void;
+  info(...args: unknown[]): void;
+  warn(...args: unknown[]): void;
+  error(...args: unknown[]): void;
+};
 
 let _express: Application;
 let _publicRouter: Router;
 let _postgres: { sequelize: Sequelize };
 let _dynamodb: { docClient: DynamoDBDocumentClient };
-let _logger: Logger | Console = console;
+let _logger: PlatformLogger = console;
 
 async function init(config: Partial<Config> = {}): Promise<void> {
   const configModule = await import("./config");
@@ -47,7 +54,7 @@ function setModules(modules: {
   publicRouter: Router;
   postgres?: { sequelize: Sequelize };
   dynamodb?: { docClient: DynamoDBDocumentClient };
-  logger: Logger | Console;
+  logger: PlatformLogger;
 }): void {
   _express = modules.express;
   _publicRouter = modules.publicRouter;
@@ -75,3 +82,4 @@ export {
   error,
   _logger as logger,
 };
+export type { PlatformLogger };
