@@ -64,7 +64,8 @@
   },
   "author": "NucTeam",
   "bin": {
-    "event-listener": "./bin/event-listener.ts"
+    "event-listener": "./bin/event-listener.ts",
+    "link-dataset": "./bin/dataset.ts"
   },
   "exports": {
     ".": "./dist/index.js",
