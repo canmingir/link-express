@@ -1,5 +1,6 @@
 import fs from "node:fs";
-import path from "node:path";
+
+import { directory, file } from "./location";
 
 const MARKER = '"$dataset":';
 
@@ -10,15 +11,6 @@ type DatasetRef = {
 
 type Source<T> = T[] | DatasetRef;
 
-function directory(): string {
-  return process.env.DATASET_DIR || path.resolve("src", "dataset");
-}
-
-function file(name: string, dir = directory()): string {
-  const [group, ...rest] = name.split("-");
-  return path.join(dir, group, `${rest.join("-")}.json`);
-}
-
 function isRef<T>(source: Source<T>): source is DatasetRef {
   return !Array.isArray(source);
 }
@@ -28,14 +20,20 @@ function hasRef(value: unknown): boolean {
   return !!text && text.includes(MARKER);
 }
 
+function hasRouter(): boolean {
+  return !!(
+    process.env.PLATFORM_ROUTER_URL && process.env.PLATFORM_ROUTER_TOKEN
+  );
+}
+
 function load(name: string): Source<unknown> {
   const location = file(name);
 
-  if (!fs.existsSync(location)) {
-    return { $dataset: name };
+  if (fs.existsSync(location)) {
+    return JSON.parse(fs.readFileSync(location, "utf8")).data;
   }
 
-  return JSON.parse(fs.readFileSync(location, "utf8")).data;
+  return hasRouter() ? { $dataset: name } : [];
 }
 
 function pick(value: unknown, key: string): unknown {
@@ -64,4 +62,6 @@ function select<T>(
 }
 
 export type { DatasetRef, Source };
-export { file, hasRef, isRef, load, select };
+export type { PullOptions, PullResult } from "./pull";
+export { directory, file, hasRef, isRef, load, select };
+export { pull } from "./pull";

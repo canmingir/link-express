@@ -54,6 +54,9 @@
       "dataset": [
         "dist/src/lib/dataset/index.d.ts"
       ],
+      "decision": [
+        "dist/src/lib/decision/index.d.ts"
+      ],
       "link": [
         "dist/src/link/index.d.ts"
       ]
@@ -61,7 +64,8 @@
   },
   "author": "NucTeam",
   "bin": {
-    "event-listener": "./bin/event-listener.ts"
+    "event-listener": "./bin/event-listener.ts",
+    "link-dataset": "./bin/dataset.ts"
   },
   "exports": {
     ".": "./dist/index.js",
@@ -77,6 +81,7 @@
     "./pseudocode": "./dist/src/functions/pseudocode.js",
     "./llm": "./dist/src/lib/llm/index.js",
     "./dataset": "./dist/src/lib/dataset/index.js",
+    "./decision": "./dist/src/lib/decision/index.js",
     "./link": "./dist/src/link/index.js"
   },
   "scripts": {
@@ -95,6 +100,7 @@
     "@aws-sdk/client-dynamodb": "^3.614.0",
     "@aws-sdk/lib-dynamodb": "^3.614.0",
     "@elastic/ecs-pino-format": "^1.5.0",
+    "@typesafe-ai/sdk": "^0.6.0",
     "aws-jwt-verify": "^5.1.1",
     "axios": "^1.7.2",
     "cors": "^2.8.5",
