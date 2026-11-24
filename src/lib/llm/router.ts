@@ -1,5 +1,6 @@
 import { hasRef } from "../dataset";
 import { errorMessage, log } from "./logger";
+import { routerFetch } from "../routerFetch";
 import type { GenerateParams, LLMAdapter } from "./types";
 
 type RouterResponse = {
@@ -33,7 +34,7 @@ async function generate({
   const startedAt = Date.now();
 
   try {
-    const response = await fetch(`${url.replace(/\/+$/, "")}/generate`, {
+    const response = await routerFetch(`${url.replace(/\/+$/, "")}/generate`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,

@@ -1,6 +1,7 @@
 import type { Questions } from "@typesafe-ai/sdk";
 
 import { errorMessage, log } from "../llm/logger";
+import { routerFetch } from "../routerFetch";
 import type { DecisionAdapter, DecisionAnswers, DecisionParams } from "./types";
 
 type RouterResponse<Q extends Questions> = {
@@ -33,7 +34,7 @@ async function ask<const Q extends Questions>({
   const startedAt = Date.now();
 
   try {
-    const response = await fetch(`${url.replace(/\/+$/, "")}/decide`, {
+    const response = await routerFetch(`${url.replace(/\/+$/, "")}/decide`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
