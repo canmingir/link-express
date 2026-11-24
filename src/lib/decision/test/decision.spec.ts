@@ -113,6 +113,90 @@ describe("decision.ask", () => {
     assert.strictEqual(logs[0].meta?.source, "test");
   });
 
+  it("retries the router after a rate limit and then succeeds", async () => {
+    const { ask } = await import("../index");
+
+    process.env.PLATFORM_ROUTER_URL = "https://router.test";
+    process.env.PLATFORM_ROUTER_TOKEN = "secret";
+
+    const statuses = [429, 502, 200];
+    let calls = 0;
+    globalThis.fetch = (async () => {
+      const status = statuses[calls++];
+      return status === 200
+        ? new Response(JSON.stringify({ answers: { pick: "router" } }), {
+            status,
+          })
+        : new Response(JSON.stringify({ error: "busy" }), {
+            status,
+            headers: { "Retry-After": "0" },
+          });
+    }) as unknown as typeof fetch;
+
+    const answers = await ask({
+      state: {},
+      questions: {
+        pick: { few_shots: { $dataset: "decision-example" } },
+      } as never,
+    });
+
+    assert.deepStrictEqual(answers, { pick: "router" });
+    assert.strictEqual(calls, 3);
+  });
+
+  it("gives up after three rate limited attempts", async () => {
+    const { ask } = await import("../index");
+
+    process.env.PLATFORM_ROUTER_URL = "https://router.test";
+    process.env.PLATFORM_ROUTER_TOKEN = "secret";
+
+    let calls = 0;
+    globalThis.fetch = (async () => {
+      calls++;
+      return new Response(
+        JSON.stringify({ error: "Upstream rate limit exceeded" }),
+        { status: 429, headers: { "Retry-After": "0" } },
+      );
+    }) as unknown as typeof fetch;
+
+    await assert.rejects(
+      () =>
+        ask({
+          state: {},
+          questions: {
+            pick: { few_shots: { $dataset: "decision-example" } },
+          } as never,
+        }),
+      /router request failed \(429\): Upstream rate limit exceeded/,
+    );
+    assert.strictEqual(calls, 3);
+  });
+
+  it("does not retry a client error", async () => {
+    const { ask } = await import("../index");
+
+    process.env.PLATFORM_ROUTER_URL = "https://router.test";
+    process.env.PLATFORM_ROUTER_TOKEN = "secret";
+
+    let calls = 0;
+    globalThis.fetch = (async () => {
+      calls++;
+      return new Response(JSON.stringify({ error: "bad" }), { status: 400 });
+    }) as unknown as typeof fetch;
+
+    await assert.rejects(
+      () =>
+        ask({
+          state: {},
+          questions: {
+            pick: { few_shots: { $dataset: "decision-example" } },
+          } as never,
+        }),
+      /router request failed \(400\)/,
+    );
+    assert.strictEqual(calls, 1);
+  });
+
   it("fails clearly when a dataset reference is used without a router", async () => {
     const { ask } = await import("../index");
 

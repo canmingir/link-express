@@ -3,7 +3,7 @@ import OpenAI from "openai";
 import { createOpenAICompatibleAdapter } from "./openaiCompatible";
 import type { LLMAdapter } from "./types";
 
-const DEFAULT_PROVIDERS = ["deepinfra/bf16"];
+const DEFAULT_PROVIDERS = ["deepinfra/fp8"];
 
 function providerPreferences() {
   const fromEnv = (process.env.OPENROUTER_PROVIDER || "")

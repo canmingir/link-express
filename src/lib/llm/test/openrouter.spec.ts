@@ -62,13 +62,13 @@ describe("openrouter adapter", () => {
     });
   });
 
-  it("routes to deepinfra/bf16 when OPENROUTER_PROVIDER is not set", async () => {
+  it("routes to deepinfra/fp8 when OPENROUTER_PROVIDER is not set", async () => {
     const { default: openrouter } = await import("../openrouter");
 
     await openrouter.generate({ messages: [{ role: "user", content: "hi" }] });
 
     assert.deepEqual(calls[0].provider, {
-      order: ["deepinfra/bf16"],
+      order: ["deepinfra/fp8"],
       allow_fallbacks: false,
     });
   });
