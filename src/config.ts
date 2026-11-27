@@ -13,6 +13,10 @@ interface LoggerConfig {
 interface ProjectConfig {
   name: string;
   version: string;
+  credentials?: {
+    username?: string;
+    password?: string;
+  };
   oauth?: {
     jwt: {
       identifier: string;

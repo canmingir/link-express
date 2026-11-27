@@ -57,8 +57,8 @@ router.post(
         refreshToken: Joi.string().optional(),
         redirectUri: Joi.string().optional(),
         identityProvider: Joi.string().required(),
-        username: Joi.string().optional().allow("admin"),
-        password: Joi.string().optional().allow("admin"),
+        username: Joi.string().optional(),
+        password: Joi.string().optional(),
       })
         .required()
         .options({ stripUnknown: true }),
@@ -74,7 +74,12 @@ router.post(
     };
 
     if (username && password && identityProvider.toUpperCase() === "DEMO") {
-      if (username !== "admin" || password !== "admin") {
+      const {
+        username: demoUsername = "admin",
+        password: demoPassword = "admin",
+      } = project.credentials || {};
+
+      if (username !== demoUsername || password !== demoPassword) {
         throw new AuthenticationError("Invalid demo credentials");
       }
 
